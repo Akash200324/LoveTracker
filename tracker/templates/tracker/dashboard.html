@@ -1,0 +1,2859 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Us. — Our Love Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink-bg: #fff5f7;
+    --rose: #ff4d6d;
+    --rose-light: #ff8fa3;
+    --rose-dark: #c9184a;
+    --white: #ffffff;
+    --charcoal: #2d2d2d;
+    --gray: #6b7280;
+    --blush: #ffe6eb;
+    --glass: rgba(255,255,255,0.15);
+    --glass-border: rgba(255,255,255,0.3);
+    --shadow: 0 20px 60px rgba(255,77,109,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--pink-bg);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 68px;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,77,109,0.1);
+    box-shadow: 0 4px 30px rgba(255,77,109,0.06);
+    transition: background 0.3s;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo .heart-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(255,77,109,0.4);
+    animation: heartbeat 2s ease-in-out infinite;
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    14% { transform: scale(1.15); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.1); }
+    70% { transform: scale(1); }
+  }
+  .nav-logo span {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--rose);
+    letter-spacing: -0.5px;
+  }
+
+  /* Hamburger — hidden on desktop */
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    list-style: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--charcoal);
+    letter-spacing: 0.3px;
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: var(--rose);
+    border-radius: 2px;
+    transition: width 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--rose); }
+  .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+  .nav-add-btn {
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    color: white !important;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px rgba(255,77,109,0.35);
+    transition: transform 0.2s, box-shadow 0.2s !important;
+  }
+  .nav-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,77,109,0.45) !important;
+  }
+  .nav-add-btn::after { display: none !important; }
+
+  .nav-couple {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .couple-avatars {
+    display: flex;
+    align-items: center;
+  }
+  .couple-avatars .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2.5px solid white;
+    object-fit: cover;
+    background: linear-gradient(135deg, #ffb3c1, #ff8fa3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+    overflow: hidden;
+    position: relative;
+  }
+  .couple-avatars .avatar:last-child { margin-left: -10px; }
+  .couple-avatars .avatar:hover { transform: scale(1.1) translateY(-2px); z-index: 1; }
+  .couple-avatars .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--charcoal);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  /* --- PREMIUM GLASSY MENU --- */
+  .premium-menu-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10002;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 77, 109, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.15);
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  @media (min-width: 769px) {
+      .premium-menu-btn { display: none; }
+  }
+  .premium-menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--rose, #ff4d6d);
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .premium-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .premium-menu-btn.open span:nth-child(2) { opacity: 0; }
+  .premium-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .premium-overlay-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      background: rgba(15, 15, 15, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+  .premium-overlay-menu.open {
+      opacity: 1;
+      pointer-events: all;
+  }
+  .premium-menu-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+      z-index: 10003;
+      transform: translateZ(0); /* Force hardware acceleration */
+  }
+  .premium-menu-content a {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #ff4d6d;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: color 0.2s, transform 0.2s;
+  }
+  .premium-menu-content a:hover {
+      color: var(--rose, #ff4d6d);
+      transform: scale(1.05);
+  }
+
+  /* --- APPLE SMOOTH PAGE TRANSITIONS --- */
+  body {
+      animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+  @keyframes fadeInPage {
+      from { opacity: 0; }
+      to { opacity: 1; }
+  }
+
+  @media (max-width: 768px) {
+    nav {
+        padding: 0 1.5rem;
+    }
+    .nav-links {
+        display: none !important;
+    }
+
+    .mood-grid {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 600px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    section { padding: 3rem 1.2rem; }
+    .hero-overlay {
+      padding: 1.8rem 1.2rem;
+    }
+    .hero-names {
+      font-size: 1.8rem;
+    }
+    .counter-grid {
+      gap: 8px;
+    }
+    .counter-item {
+      padding: 6px 8px;
+      min-width: 48px;
+      border-radius: 10px;
+    }
+    .counter-item span {
+      font-size: 1.05rem;
+    }
+    .counter-item label {
+      font-size: 0.55rem;
+      letter-spacing: 0.5px;
+    }
+    .counter-label {
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+    }
+    .hero-actions {
+      gap: 8px;
+    }
+    .btn {
+      padding: 9px 18px;
+      font-size: 0.8rem;
+    }
+    .slide-nav {
+      width: 38px;
+      height: 38px;
+    }
+    .slide-prev { left: 0.4rem; }
+    .slide-next { right: 0.4rem; }
+    .hero-add-photo {
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 8px 14px;
+      font-size: 0.75rem;
+    }
+    .mood-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .mood-card {
+      padding: 1.2rem 1rem;
+      border-radius: 18px;
+    }
+    .mood-emoji {
+      font-size: 1.8rem;
+    }
+    .mood-value {
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .mood-grid {
+      grid-template-columns: 1fr;
+      max-width: 320px;
+    }
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+    margin-top: 68px;
+  }
+
+  /* Slideshow */
+  .slideshow {
+    position: absolute;
+    inset: 0;
+    display: flex;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.9s ease, transform 1.2s cubic-bezier(.4,0,.2,1);
+    transform: scale(1.04);
+    background: #1a1a2e center/cover no-repeat;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.5) 100%);
+    z-index: 2;
+  }
+  .slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Empty state */
+  .slide-empty {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffe6eb 0%, #ffd6e0 40%, #ffb3c6 100%);
+    gap: 1rem;
+    cursor: pointer;
+  }
+  .slide-empty .empty-icon { font-size: 4rem; }
+  .slide-empty p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--rose-dark);
+    font-style: italic;
+  }
+  .slide-empty small {
+    font-size: 0.85rem;
+    color: var(--rose);
+    opacity: 0.8;
+  }
+
+  /* Floating hearts */
+  .hearts-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .floating-heart {
+    position: absolute;
+    bottom: -40px;
+    font-size: 18px;
+    animation: floatUp linear infinite;
+    opacity: 0;
+    pointer-events: none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Overlay card */
+  .hero-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    padding: 2.5rem 3.5rem;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+    min-width: 340px;
+    animation: overlayIn 1s ease both;
+  }
+  @keyframes overlayIn {
+    from { opacity: 0; transform: translate(-50%, -44%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,77,109,0.6);
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .hero-names {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero-names .amp {
+    color: #ff8fa3;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .hero-counter {
+    font-size: 1rem;
+    color: #ffffff;
+    margin-bottom: 1.8rem;
+    letter-spacing: 0.5px;
+  }
+  .hero-counter #days-count {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 11px 24px;
+    border-radius: 50px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    color: white;
+    box-shadow: 0 6px 20px rgba(255,77,109,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,77,109,0.5); }
+  .btn-glass {
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px);
+  }
+  .btn-glass:hover { background: rgba(255,255,255,0.28); transform: translateY(-2px); }
+
+  /* Slideshow controls */
+  .slide-controls {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+  }
+  .slide-dot.active {
+    background: white;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .slide-nav {
+    position: absolute;
+    top: 50%; z-index: 20;
+    transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s;
+  }
+  .slide-nav:hover { background: rgba(255,255,255,0.3); }
+  .slide-prev { left: 1.5rem; }
+  .slide-next { right: 1.5rem; }
+
+  /* Delete btn on slide */
+  .slide-delete {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    z-index: 30;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    display: none;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0;
+  }
+  .hero:hover .slide-delete { opacity: 1; display: flex; }
+
+  /* Add photo btn */
+  .hero-add-photo {
+    position: absolute;
+    bottom: 2rem; right: 2rem;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s;
+  }
+  .hero-add-photo:hover { background: rgba(255,255,255,0.3); }
+
+  #photo-input { display: none; }
+
+  /* 🎇 CROP MODAL 🎇 */
+  .crop-modal-content { max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; width: 600px; padding: 24px; }
+  .crop-container { width: 100%; height: 50vh; background: #000; overflow: hidden; margin: 20px 0; border-radius: 12px; }
+  .crop-container img { max-width: 100%; }
+
+  /* 🎇 MODAL 🎇 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    max-width: 480px;
+    width: 92%;
+    box-shadow: 0 30px 80px rgba(255,77,109,0.2);
+    animation: slideUp 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--charcoal);
+    margin-bottom: 0.5rem;
+  }
+  .modal p { color: var(--gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .modal-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #ffe0e7;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+    background: #fff8fa;
+  }
+  .modal-input:focus { border-color: var(--rose); }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  .btn-cancel {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1.5px solid #ffe0e7;
+    background: transparent;
+    color: var(--gray);
+    font-size: 0.88rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { background: var(--pink-bg); }
+
+  /* ─── SECTION COMMONS ─── */
+  section { padding: 5rem 2rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+  }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    color: var(--charcoal);
+    font-weight: 700;
+  }
+  .section-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #ffe6eb, #ffd6e0);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .view-all {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--rose);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 4px;
+    transition: gap 0.2s;
+  }
+  .view-all:hover { gap: 8px; }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* ─── MEMORY GALLERY ─── */
+  .memory-section { background: var(--white); }
+
+  .memory-track-wrapper {
+    overflow: hidden;
+    border-radius: 20px;
+    position: relative;
+    cursor: grab;
+  }
+  .memory-track-wrapper:active { cursor: grabbing; }
+
+  .memory-track {
+    display: flex;
+    gap: 18px;
+    animation: scrollMemory 30s linear infinite;
+    width: max-content;
+    padding-bottom: 8px;
+  }
+  .memory-track:hover { animation-play-state: paused; }
+
+  @keyframes scrollMemory {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .memory-card {
+    position: relative;
+    width: 220px;
+    height: 280px;
+    border-radius: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(255,77,109,0.12);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    group: true;
+  }
+  .memory-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 40px rgba(255,77,109,0.22); }
+  .memory-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+  .memory-card:hover img { transform: scale(1.05); }
+
+  .memory-card-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    padding: 1.2rem 1rem 1rem;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+  }
+  .memory-card:hover .memory-card-overlay { transform: translateY(0); }
+
+  .memory-card-overlay p {
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .memory-card-delete {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    color: var(--rose);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 10;
+  }
+  .memory-card:hover .memory-card-delete { opacity: 1; transform: scale(1.05); }
+
+  .memory-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #fff5f7, #ffe6eb);
+    border-radius: 20px;
+    border: 2px dashed #ffb3c6;
+  }
+  .memory-empty p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--rose);
+    font-style: italic;
+    margin-top: 1rem;
+  }
+  .memory-empty small { color: var(--gray); font-size: 0.85rem; }
+
+  .memory-add-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  /* ─── MOOD CARDS ─── */
+  .mood-section { background: var(--pink-bg); }
+
+  .mood-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .mood-card {
+    background: white;
+    border-radius: 24px;
+    padding: 1.5rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 8px 30px rgba(255,77,109,0.06);
+    border: 1px solid rgba(255,77,109,0.04);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, border-color 0.3s;
+    animation: cardIn 0.6s ease both;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+  .mood-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #ff4d6d, #ff8fa3);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .mood-card:hover::before {
+    opacity: 1;
+  }
+  .mood-card:hover { 
+    transform: translateY(-6px) scale(1.02); 
+    box-shadow: 0 16px 40px rgba(255,77,109,0.15); 
+    border-color: rgba(255,77,109,0.15);
+  }
+  .mood-card:active {
+    transform: translateY(-2px) scale(0.97);
+    box-shadow: 0 8px 20px rgba(255,77,109,0.1);
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mood-emoji { 
+    font-size: 2rem; 
+    transition: transform 0.3s ease;
+  }
+  .mood-card:hover .mood-emoji {
+    transform: scale(1.1) rotate(5deg);
+  }
+  .mood-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray); font-weight: 600; }
+  .mood-value { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--charcoal); font-weight: 700; }
+
+  .mood-bar-wrap {
+    height: 6px;
+    background: #ffe6eb;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .mood-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff4d6d, #ff8fa3);
+    border-radius: 3px;
+    transition: width 1.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline-section { background: white; }
+
+  .timeline {
+    position: relative;
+    padding-left: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 24px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #ff4d6d, #ffb3c6);
+    border-radius: 1px;
+  }
+  
+  .btn-milestone {
+    background: var(--rose);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.2);
+  }
+  .btn-milestone:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+    background: #ff3355;
+  }
+
+  .timeline-item {
+    position: relative;
+    background: var(--pink-bg);
+    border-radius: 16px;
+    padding: 1.2rem 1.4rem;
+    border-left: 3px solid #ffe0e7;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .timeline-item:hover { transform: translateX(6px); box-shadow: 0 6px 20px rgba(255,77,109,0.1); }
+
+  .timeline-dot {
+    position: absolute;
+    left: -3rem;
+    top: 1.2rem;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--rose);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+  }
+
+  .timeline-date {
+    font-size: 0.75rem;
+    color: var(--rose);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .timeline-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--charcoal);
+    margin-bottom: 3px;
+  }
+  .timeline-desc { font-size: 0.85rem; color: var(--gray); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: linear-gradient(135deg, #fff0f3, #fff5f7);
+    border-top: 1px solid #ffe0e7;
+    text-align: center;
+    padding: 2.5rem 2rem;
+  }
+  footer .footer-heart { font-size: 1.5rem; animation: heartbeat 2s ease-in-out infinite; display: inline-block; }
+  footer p { color: var(--gray); font-size: 0.85rem; margin-top: 8px; }
+  footer strong { font-family: 'Playfair Display', serif; color: var(--rose); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    z-index: 3000;
+    background: var(--charcoal);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(.4,0,.2,1);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  /* ─── MOBILE RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    /* Navbar overrides */
+    nav { padding: 0 1.2rem; height: 60px; }
+    .nav-logo span { font-size: 1.15rem; }
+
+
+    /* Hero */
+    .hero { height: 100svh; min-height: 420px; }
+    .hero-overlay {
+      padding: 1.5rem 1.2rem;
+      min-width: unset;
+      width: calc(100% - 2.5rem);
+      max-width: 340px;
+    }
+    .hero-names { font-size: clamp(1.6rem, 8vw, 2.4rem); }
+    .hero-counter { font-size: 0.9rem; margin-bottom: 1.2rem; }
+    .hero-actions { gap: 8px; }
+    .btn { padding: 9px 16px; font-size: 0.82rem; }
+    .slide-nav { width: 36px; height: 36px; }
+    .slide-prev { left: 0.6rem; }
+    .slide-next { right: 0.6rem; }
+    .hero-add-photo { bottom: 1.2rem; right: 1rem; padding: 8px 14px; font-size: 0.78rem; }
+
+    /* Sections */
+    section { padding: 3rem 1rem; }
+    .section-title h2 { font-size: 1.4rem; }
+    .container { padding: 0; }
+
+    /* Mood Grid → 2 columns on mobile */
+    .mood-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .mood-card { padding: 1.1rem 1rem; border-radius: 18px; }
+    .mood-emoji { font-size: 1.6rem; }
+    .mood-value { font-size: 1rem; }
+
+    /* Memory */
+    .memory-card { width: 170px; height: 220px; }
+
+    /* Timeline */
+    .timeline { padding-left: 3rem; gap: 1.4rem; }
+    .timeline::before { left: 16px; }
+    .timeline-dot { left: -2.5rem; }
+    .timeline-item { padding: 1rem 1.1rem; }
+
+    /* Modal */
+    .modal { padding: 1.8rem 1.4rem; border-radius: 18px; }
+    .modal h3 { font-size: 1.25rem; }
+    .toast { bottom: 1rem; right: 1rem; left: 1rem; right: 1rem; font-size: 0.82rem; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-names { font-size: clamp(1.3rem, 9vw, 2rem); }
+    .mood-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .mood-card { padding: 0.9rem 0.8rem; }
+    .hero-overlay { padding: 1.2rem 1rem; }
+    .section-title h2 { font-size: 1.25rem; }
+    .memory-card { width: 145px; height: 185px; }
+    .hero-add-photo { padding: 7px 12px; font-size: 0.74rem; }
+  }
+  /* ─── VIBE + NOTEBOOK TWO-COLUMN LAYOUT ─── */
+  .vibe-notebook-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 40px;
+    align-items: start;
+  }
+  .vibe-col { /* left */ }
+  .notebook-col { /* right */ }
+
+  /* Mood grid: 2x2 then bottom row */
+  .mood-grid-6 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* ─── 3D SPIRAL NOTEBOOK ─── */
+  .notebook-wrapper {
+    perspective: 1400px;
+    width: 100%;
+    position: relative;
+    user-select: none;
+  }
+  .notebook {
+    position: relative;
+    width: 100%;
+    border-radius: 4px 16px 16px 4px;
+    box-shadow: 0 20px 60px rgba(255,77,109,0.18), 0 6px 16px rgba(0,0,0,0.1);
+  }
+
+  /* Spiral rings at top */
+  .notebook-rings {
+    position: absolute;
+    top: -15px;
+    left: 0; right: 0;
+    height: 35px;
+    z-index: 30;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 0 24px;
+    pointer-events: none;
+  }
+  .ring {
+    width: 14px; height: 16px;
+    background: #2a2a2a;
+    border-radius: 3px;
+    box-shadow: inset 0 4px 6px rgba(0,0,0,0.9), 0 1px 1px rgba(255,255,255,0.4);
+    position: relative;
+    transform: translateY(8px);
+  }
+  .ring::before, .ring::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    width: 4px; height: 28px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #c9184a 0%, #ff4d6d 40%, #ff8fa3 70%, #c9184a 100%);
+    box-shadow: -2px 3px 5px rgba(0,0,0,0.4), inset 1px 0 2px rgba(255,255,255,0.3);
+    z-index: 2;
+  }
+  .ring::before { left: 1px; }
+  .ring::after { right: 1px; }
+
+  /* Cover page */
+  .notebook-cover {
+    width: 100%;
+    background: linear-gradient(145deg, #fff0f3 0%, #ffd6e0 50%, #ffb3c6 100%);
+    border-radius: 4px 16px 16px 4px;
+    padding: 36px 30px 28px;
+    position: relative;
+    z-index: 20;
+    transform-origin: top center;
+    will-change: transform;
+    backface-visibility: hidden;
+    cursor: pointer;
+    border: 1px solid rgba(255,77,109,0.15);
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    transition: box-shadow 0.3s;
+  }
+  .notebook-cover:hover { box-shadow: 0 0 0 3px rgba(255,77,109,0.25); }
+  .cover-glass {
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 16px;
+    padding: 20px 32px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(255,77,109,0.12);
+  }
+  .cover-title {
+    font-family: 'Caveat', cursive;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--rose-dark);
+    line-height: 1.2;
+  }
+  .cover-sub {
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem;
+    color: var(--rose);
+    margin-top: 6px;
+  }
+  .cover-hint {
+    font-size: 0.82rem;
+    color: var(--rose);
+    opacity: 0.8;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cover-doodle { font-size: 4rem; }
+
+  /* Inner pages */
+  .notebook-pages {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: #fefefe;
+    border-radius: 4px 16px 16px 4px;
+    min-height: 500px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255,77,109,0.1);
+  }
+  .notebook-pages.open { display: flex; }
+
+  /* Ruled lines header */
+  .notebook-header {
+    padding: 20px 24px 12px;
+    background: linear-gradient(135deg, #fff0f3, #ffe6eb);
+    border-bottom: 2px solid #ffb3c6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .notebook-header-title {
+    font-family: 'Caveat', cursive;
+    font-size: 2.0rem;
+    font-weight: 700;
+    color: var(--rose-dark);
+  }
+  .notebook-add-btn {
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 7px 16px;
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(255,77,109,0.3);
+  }
+  .notebook-add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,77,109,0.4); }
+
+  /* Inline add form */
+  .notebook-add-form {
+    display: none;
+    padding: 12px 24px;
+    background: #fff8fa;
+    border-bottom: 1px solid #ffe0e7;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .notebook-add-form.visible { display: flex; }
+  .notebook-add-form input[type="text"] {
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffb3c6;
+    background: transparent;
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    color: var(--charcoal);
+    outline: none;
+    padding: 4px 8px;
+    min-width: 140px;
+    transition: border-color 0.2s;
+  }
+  .notebook-add-form input:focus { border-color: var(--rose); }
+  .notebook-priority-select {
+    border: 1px solid #ffb3c6;
+    border-radius: 50px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    color: var(--rose-dark);
+    cursor: pointer;
+    outline: none;
+  }
+  .notebook-save-btn {
+    background: var(--rose);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 5px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .notebook-save-btn:hover { background: var(--rose-dark); }
+
+  /* Ruled lines */
+  .notebook-lines {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 35px,
+        rgba(255,77,109,0.08) 35px,
+        rgba(255,77,109,0.08) 36px
+      );
+    background-attachment: local;
+  }
+  .notebook-lines::-webkit-scrollbar { width: 4px; }
+  .notebook-lines::-webkit-scrollbar-thumb { background: #ffb3c6; border-radius: 4px; }
+
+  /* Each notebook item row */
+  .nb-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 24px;
+    min-height: 36px;
+    border-bottom: 1px solid rgba(255,77,109,0.06);
+    transition: background 0.2s;
+    position: relative;
+  }
+  .nb-item:hover { background: rgba(255,77,109,0.03); }
+  .nb-item:hover .nb-delete { opacity: 1; }
+
+  /* Custom checkbox */
+  .nb-check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid #ffb3c6;
+    background: white;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nb-check.done {
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    border-color: #ff4d6d;
+  }
+  .nb-check.done::after {
+    content: '✓';
+    font-size: 11px;
+    color: white;
+    font-weight: 700;
+  }
+
+  /* Item text with animated strikethrough */
+  .nb-text {
+    flex: 1;
+    font-family: 'Caveat', cursive;
+    font-size: 1.65rem;
+    color: var(--charcoal);
+    position: relative;
+    line-height: 1.3;
+    transition: color 0.3s;
+    word-break: break-word;
+  }
+  .nb-text.done {
+    color: #aaa;
+  }
+  .nb-strikethrough {
+    position: absolute;
+    top: 50%; left: 0;
+    height: 2px;
+    background: var(--rose);
+    border-radius: 2px;
+    width: 0;
+    transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    transform: translateY(-50%);
+  }
+  .nb-text.done .nb-strikethrough { width: 100%; }
+
+  /* Priority dot */
+  .nb-priority {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .nb-priority.high { background: #ef4444; }
+  .nb-priority.medium { background: #f59e0b; }
+  .nb-priority.low { background: #10b981; }
+
+  .nb-delete {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: #ffb3c6;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: opacity 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .nb-delete:hover { color: var(--rose); }
+
+  /* Pagination */
+  .notebook-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 24px;
+    border-top: 1px solid #ffe0e7;
+    background: #fff8fa;
+  }
+  .nb-page-btn {
+    background: white;
+    border: 1.5px solid #ffb3c6;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    color: var(--rose);
+    font-size: 0.9rem;
+  }
+  .nb-page-btn:hover:not(:disabled) { background: var(--rose); color: white; border-color: var(--rose); }
+  .nb-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nb-page-info {
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+    color: var(--gray);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* Empty notebook state */
+  .nb-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 10px;
+    color: var(--gray);
+    font-family: 'Caveat', cursive;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  .nb-empty-icon { font-size: 3rem; }
+
+  @media (max-width: 960px) {
+    .vibe-notebook-layout { grid-template-columns: 1fr; gap: 24px; }
+  }
+  @media (max-width: 480px) {
+    .cover-title { font-size: 2.2rem; }
+    .cover-sub { font-size: 1.2rem; }
+    .notebook-header-title { font-size: 1.6rem; }
+    .nb-text { font-size: 1.4rem; }
+    .notebook-add-form input[type="text"] { font-size: 1.3rem; }
+  }
+</style>
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="theme-color" content="#ff4d6d">
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav id="navbar">
+  <a class="nav-logo" href="#">
+    <div class="heart-icon">💞</div>
+    <span>Love Tracker</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li>
+      <a href="{% url 'dashboard' %}" class="active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Dashboard
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'profile' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Profile
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'logout' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+      </a>
+    </li>
+  </ul>
+  <div class="nav-couple">
+    <div class="couple-avatars" onclick="handleNavCoupleClick()" style="cursor:pointer" title="Menu">
+      <div class="avatar" id="avatar1">
+          {% if request.user.profile.image and request.user.profile.image.name != 'default.jpg' %}
+              <img src="{{ request.user.profile.image.url }}" style="width:100%;height:100%;object-fit:cover;">
+          {% else %}
+              {{ request.user.name|slice:":1"|upper|default:request.user.username|slice:":1"|upper }}
+          {% endif %}
+      </div>
+      {% if partner %}
+      <div class="avatar" id="avatar2">
+          {% if partner.profile.image and partner.profile.image.name != 'default.jpg' %}
+              <img src="{{ partner.profile.image.url }}" style="width:100%;height:100%;object-fit:cover;">
+          {% else %}
+              {{ partner.name|slice:":1"|upper|default:partner.username|slice:":1"|upper }}
+          {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+
+
+<!-- Premium Glassy Overlay Menu -->
+<div class="premium-overlay-menu" id="premiumMenu">
+    <div class="premium-menu-content">
+        <a href="{% url 'dashboard' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'profile' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile
+        </a>
+        <a href="{% url 'logout' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+        </a>
+    </div>
+</div>
+
+<!-- Hidden file inputs -->
+<input type="file" id="photo-input" accept="image/*" multiple style="display:none;" />
+<input type="file" id="memory-photo-input" accept="image/*" multiple style="display:none;" />
+
+<!-- ─── HERO ─── -->
+<section class="hero" id="hero">
+  <!-- Required for the JavaScript to talk to Django -->
+  {% csrf_token %}
+  <div class="slideshow" id="slideshow">
+    <!-- Slides injected by JS -->
+  </div>
+  <div class="hearts-canvas" id="heartsCanvas"></div>
+  <div class="hero-overlay">
+    <div class="hero-tag">OUR STORY</div>
+    <div class="hero-names" id="heroNames">
+        {% if couple.user1.user == request.user %}
+          {{ couple.user1.name }} <span class="amp">&amp;</span> {{ couple.user2.name|default:"Partner" }}
+        {% else %}
+          {{ couple.user2.name|default:"Partner" }} <span class="amp">&amp;</span> {{ couple.user1.name|default:"Partner" }}
+        {% endif %}
+    </div>
+
+    <!-- Updated format to ensure JS reads it correctly -->
+    <div id="hero-counter" class="hero-counter" data-since="{{ couple.start_date|date:'Y-m-d' }}">
+        <span id="days-count">0</span> Days of Love &amp; Counting
+    </div>
+
+    <div class="hero-actions">
+      <!-- Triggers the modal where you pick the date -->
+      <button class="btn btn-primary" onclick="if(checkPartner()) openSetupModal()">✏️ Edit Story</button>
+      <button class="btn btn-glass" onclick="if(checkPartner()) document.getElementById('photo-input').click()">📸 Add Photos</button>
+    </div>
+  </div>
+
+  <!-- Navigation & Controls -->
+  <button class="slide-nav slide-prev" id="slidePrev" onclick="changeSlide(-1)" aria-label="Previous Slide">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+  </button>
+  <button class="slide-nav slide-next" id="slideNext" onclick="changeSlide(1)" aria-label="Next Slide">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+  </button>
+  <div class="slide-controls" id="slideControls"></div>
+
+  <!-- Photo Upload Logic -->
+  <input type="file" id="photo-input" style="display:none;" accept="image/*">
+  <button class="hero-add-photo" onclick="if(checkPartner()) document.getElementById('photo-input').click()">
+    ＋ Add Photo
+  </button>
+
+  <button class="slide-delete" id="slideDeleteBtn" onclick="deleteCurrentSlide()">✕</button>
+</section>
+
+
+<!-- ─── MEMORY GALLERY ─── -->
+<section class="memory-section" id="memories">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">🎞</div>
+        <h2>Our Snaps</h2>
+      </div>
+      <a href="#" class="view-all" onclick="if(checkPartner()) { openAddMemoryModal(); } return false;">Add Memory →</a>
+    </div>
+
+    <div id="memoryContainer">
+      <div class="memory-empty" id="memoryEmpty">
+        <div style="font-size:3rem">📸</div>
+        <p>Your memories will bloom here…</p>
+        <small>Add your first photo to begin the journey</small>
+      </div>
+    </div>
+
+    <div class="memory-add-row">
+      <button class="btn btn-primary" onclick="if(checkPartner()) openAddMemoryModal()">＋ Add New Memory</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TODAY'S VIBE + NOTEBOOK SECTION ─── -->
+<section class="mood-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">💫</div>
+        <h2>Today's Vibe</h2>
+      </div>
+    </div>
+
+    <div class="vibe-notebook-layout">
+
+      <!-- LEFT: 5 Vibe Cards -->
+      <div class="vibe-col">
+        <div class="mood-grid-6">
+
+          <!-- Your Mood Card -->
+          <a href="{% url 'moodtracker' %}" style="text-decoration: none; color: inherit;">
+            <div class="mood-card" style="animation-delay: 0s; cursor: pointer;">
+              <div class="mood-emoji">
+                {% if today_mood %}
+                    {% if today_mood.mood_type == 'ecstatic' %}🤩
+                    {% elif today_mood.mood_type == 'calm' %}😌
+                    {% elif today_mood.mood_type == 'sad' %}😔
+                    {% elif today_mood.mood_type == 'romantic' %}❤️
+                    {% elif today_mood.mood_type == 'naughty' %}😈
+                    {% else %}☀️{% endif %}
+                {% else %}☀️{% endif %}
+              </div>
+              <div class="mood-label">Your Mood</div>
+              <div class="mood-value">{% if today_mood %}{{ today_mood.get_mood_type_display|default:today_mood.mood_type|title }}{% else %}Not Set{% endif %}</div>
+              <div class="mood-bar-wrap"><div class="mood-bar" style="width: {{ today_mood.energy_percent|default:0 }}%"></div></div>
+            </div>
+          </a>
+
+          <!-- Partner's Mood Card -->
+          <a href="{% url 'partner_mood' %}" style="text-decoration: none; color: inherit;">
+            <div class="mood-card" style="animation-delay: 0.1s; cursor: pointer;">
+              <div class="mood-emoji">{{ partner_mood.mood_emoji|default:"❤️" }}</div>
+              <div class="mood-label">Partner's Mood</div>
+              <div class="mood-value">{{ partner_mood.mood_type|capfirst|default:"Not Logged" }}</div>
+              <div class="mood-bar-wrap"><div class="mood-bar" style="width: {{ partner_mood.energy_percent|default:0 }}%"></div></div>
+            </div>
+          </a>
+
+          <!-- Movie List Card -->
+          <a href="{% url 'movie_tracker' %}" style="text-decoration: none; color: inherit;">
+            <div class="mood-card" style="animation-delay: 0.2s; cursor: pointer;">
+              <div class="mood-emoji">🍿</div>
+              <div class="mood-label">Movie List</div>
+              <div class="mood-value" id="movieCount">{{ stats.movies|default:0 }} Movies</div>
+            </div>
+          </a>
+
+          <!-- Memories Card -->
+          <a href="{% url 'memories' %}" style="text-decoration: none; color: inherit;">
+            <div class="mood-card" style="animation-delay: 0.3s; cursor: pointer;">
+              <div class="mood-emoji">📸</div>
+              <div class="mood-label">Memories</div>
+              <div class="mood-value" id="memoryCount">{{ stats.memories|default:0 }} Captured</div>
+            </div>
+          </a>
+
+          <!-- Music Card -->
+          <a href="{% url 'songs' %}" style="text-decoration: none; color: inherit;">
+            <div class="mood-card" style="animation-delay: 0.4s; cursor: pointer;">
+              <div class="mood-emoji">🎵</div>
+              <div class="mood-label">Music</div>
+              <div class="mood-value">{{ stats.songs|default:0 }} Added</div>
+            </div>
+          </a>
+
+          <!-- Period Tracker Card -->
+          <a href="{% url 'period_tracker' %}" style="text-decoration: none; color: inherit;">
+            <div class="mood-card" style="animation-delay: 0.5s; cursor: pointer;">
+              <div class="mood-emoji">🌸</div>
+              <div class="mood-label">Period Tracker</div>
+              <div class="mood-value">
+                {% if current_phase == "Track Cycles" %}
+                    Track Cycles
+                {% else %}
+                    Phase: {{ current_phase }}
+                {% endif %}
+              </div>
+            </div>
+          </a>
+
+        </div>
+      </div><!-- end .vibe-col -->
+
+      <!-- RIGHT: 3D Spiral Notebook Bucket List -->
+      <div class="notebook-col">
+        <div class="notebook-wrapper">
+          <div class="notebook" id="notebook">
+
+            <!-- Metallic Spiral Rings -->
+            <div class="notebook-rings">
+              <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+              <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+              <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+            </div>
+
+            <!-- COVER PAGE -->
+            <div class="notebook-cover" id="notebookCover" onclick="flipOpenNotebook()">
+              <div class="cover-doodle">🎯</div>
+              <div class="cover-glass">
+                <div class="cover-title">Our Bucket List</div>
+                <div class="cover-sub">Dreams we'll chase together ✨</div>
+              </div>
+              <div class="cover-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Tap to open
+              </div>
+              <div style="position:absolute;bottom:24px;right:24px;font-size:0.75rem;color:var(--rose);opacity:0.6;">
+                {{ bucket_items|length }} dream{% if bucket_items|length != 1 %}s{% endif %}
+              </div>
+            </div>
+
+            <!-- INNER PAGES -->
+            <div class="notebook-pages" id="notebookPages">
+              <div class="notebook-header">
+                <div class="notebook-header-title">🎯 Our Bucket List</div>
+                <div style="display:flex;gap:10px;align-items:center;">
+                  <button class="notebook-add-btn" onclick="if(checkPartner()) toggleAddForm()">＋ Add Dream</button>
+                  <button onclick="flipCloseNotebook()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--rose);padding:4px 8px;border-radius:8px;transition:0.2s;" title="Close">✕</button>
+                </div>
+              </div>
+
+              <!-- Inline Add Form -->
+              <div class="notebook-add-form" id="nbAddForm">
+                <input type="text" id="nbTitleInput" placeholder="Write your dream here…" maxlength="200"
+                       onkeydown="if(event.key==='Enter') saveNbItem()"/>
+                <select class="notebook-priority-select" id="nbPriority">
+                  <option value="high">🔴 High</option>
+                  <option value="medium" selected>🟡 Medium</option>
+                  <option value="low">🟢 Low</option>
+                </select>
+                <button class="notebook-save-btn" onclick="saveNbItem()">Save</button>
+              </div>
+
+              <!-- Ruled Lines with Items -->
+              <div class="notebook-lines" id="nbLines">
+                <!-- Items rendered by JS from Django data -->
+              </div>
+
+              <!-- Pagination -->
+              <div class="notebook-pagination">
+                <button class="nb-page-btn" id="nbPrevBtn" onclick="nbChangePage(-1)" disabled>&#8592;</button>
+                <div class="nb-page-info" id="nbPageInfo">Page 1 / 1</div>
+                <button class="nb-page-btn" id="nbNextBtn" onclick="nbChangePage(1)" disabled>&#8594;</button>
+              </div>
+            </div><!-- end .notebook-pages -->
+
+          </div><!-- end .notebook -->
+        </div><!-- end .notebook-wrapper -->
+      </div><!-- end .notebook-col -->
+
+    </div><!-- end .vibe-notebook-layout -->
+  </div>
+</section>
+
+<!-- ─── TIMELINE ─── -->
+<section class="timeline-section">
+  <div class="container">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div class="section-title">
+        <div class="section-icon">⏳</div>
+        <h2>Milestone Moments</h2>
+      </div>
+      <button class="btn-milestone" onclick="if(checkPartner()) openMilestoneModal()">+ Add your milestone</button>
+    </div>
+    <div class="timeline" id="timeline" style="max-height: 400px; overflow-y: auto; padding-right: 15px; padding-bottom: 20px;">
+      {% for milestone in milestones %}
+      <div class="timeline-item">
+        <div class="timeline-dot">{{ milestone.icon }}</div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+          <div class="timeline-title" style="margin-bottom: 0;">{{ milestone.title }}</div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="timeline-date" style="margin-bottom: 0;">{{ milestone.date|date:"F j, Y" }}</div>
+            <button onclick="openEditMilestoneModal({{ milestone.id }}, '{{ milestone.date|date:'Y-m-d' }}', '{{ milestone.title|escapejs }}', '{{ milestone.description|escapejs }}', '{{ milestone.icon|escapejs }}')" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;" title="Edit">✏️</button>
+            <form method="POST" action="{% url 'delete_milestone' milestone.id %}" style="margin: 0;" onsubmit="return confirm('Are you sure you want to remove this milestone?');">
+              {% csrf_token %}
+              <button type="submit" style="background: none; border: none; cursor: pointer; color: var(--rose); font-size: 0.9rem;" title="Remove">✖️</button>
+            </form>
+          </div>
+        </div>
+        <div class="timeline-desc">{{ milestone.description }}</div>
+      </div>
+      {% empty %}
+      <div class="timeline-item">
+        <div class="timeline-dot">💞</div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+          <div class="timeline-title" style="margin-bottom: 0;">First Hello</div>
+          <div class="timeline-date" style="margin-bottom: 0;">The Beginning</div>
+        </div>
+        <div class="timeline-desc">Every great love story starts with a single moment… Add yours above!</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ─── MILESTONE MODAL ─── -->
+<div class="modal-overlay" id="addMilestoneModal">
+  <div class="modal" style="background: var(--pink-bg); font-family: var(--font);">
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--charcoal); margin-top: 0; margin-bottom: 20px;">Add Milestone</h3>
+    <form method="POST" action="{% url 'add_milestone' %}">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
+        <input type="date" name="date" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Title</label>
+        <input type="text" name="title" placeholder="e.g. First Trip Together" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Description</label>
+        <textarea name="description" rows="3" placeholder="A small text about it..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); font-family: inherit; outline: none;"></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom: 25px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Icon (Emoji)</label>
+        <input type="text" id="milestoneEmojiInput" name="icon" value="💞" maxlength="10" placeholder="Tap to open emoji keyboard" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit; font-size: 1.2rem;">
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Tap the box above and use your phone's native emoji keyboard to select any emoji!</div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button type="button" class="btn-milestone" style="background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none;" onclick="closeMilestoneModal()">Cancel</button>
+        <button type="submit" class="btn-milestone">Add Milestone</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ─── EDIT MILESTONE MODAL ─── -->
+<div class="modal-overlay" id="editMilestoneModal">
+  <div class="modal" style="background: var(--pink-bg); font-family: var(--font);">
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--charcoal); margin-top: 0; margin-bottom: 20px;">Edit Milestone</h3>
+    <form method="POST" id="editMilestoneForm" action="">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
+        <input type="date" id="editMilestoneDate" name="date" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Title</label>
+        <input type="text" id="editMilestoneTitle" name="title" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+      </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Description</label>
+        <textarea id="editMilestoneDesc" name="description" rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); font-family: inherit; outline: none;"></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom: 25px;">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Icon (Emoji)</label>
+        <input type="text" id="editMilestoneEmojiInput" name="icon" maxlength="10" placeholder="Tap to open emoji keyboard" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit; font-size: 1.2rem;">
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Tap the box above and use your phone's native emoji keyboard to select any emoji!</div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button type="button" class="btn-milestone" style="background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none;" onclick="closeEditMilestoneModal()">Cancel</button>
+        <button type="submit" class="btn-milestone">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-heart">💕</div>
+  <p>Made with love for <strong id="footerNames">Sarah &amp; Alex</strong></p>
+  <p style="margin-top:6px; font-size:0.78rem; opacity:0.6;">© 2026 Us. — Your Personal Love Tracker</p>
+</footer>
+
+<!-- ─── MODALS ─── -->
+
+<!-- Couple Setup Modal -->
+<div class="modal-overlay" id="setupModal">
+  <div class="modal">
+    <h3>💑 Couple Setup</h3>
+    <p>Tell us your names and when your love story began.</p>
+    <input class="modal-input" type="text" id="name1Input" placeholder="Your name (e.g. Sarah)" maxlength="20"/>
+    <input class="modal-input" type="text" id="name2Input" placeholder="Partner's name (e.g. Alex)" maxlength="20"/>
+    <input class="modal-input" type="date" id="dateInput" max="{% now 'Y-m-d' %}" />
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSetupModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSetup()">Save ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Memory Modal -->
+<div class="modal-overlay" id="memoryModal">
+  <div class="modal">
+    <h3>📸 Add a Memory</h3>
+    <p>Choose photos to add to your love gallery.</p>
+    <button class="btn btn-primary" style="width:100%; justify-content:center; margin-bottom:1rem;" onclick="document.getElementById('memory-photo-input').click()">Choose Photos from Device</button>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeMemoryModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Crop Modal -->
+<div class="modal-overlay" id="cropModalOverlay" style="display:none; z-index: 2000;" onclick="if(event.target===this) closeCropModal()">
+  <div class="modal-box crop-modal-content">
+    <h3 style="margin-bottom: 0;">Adjust Your Photo</h3>
+    <div class="crop-container">
+      <img id="cropTargetImage" src="">
+    </div>
+    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+      <button class="btn-cancel" onclick="closeCropModal()">Cancel</button>
+      <button class="btn btn-primary" id="btnSaveCrop">Save Crop</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ Saved!</div>
+
+<script>
+function handleNavCoupleClick() {
+    if (window.innerWidth <= 768) {
+        togglePremiumMenu();
+    } else {
+        if(checkPartner()) openSetupModal();
+    }
+}
+
+function checkPartner() {
+  {% if not couple or not couple.is_complete %}
+    window.location.href = "{% url 'no_partner' %}";
+    return false;
+  {% endif %}
+  return true;
+}
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let heroSlides = []; // array of {src, id}
+let currentSlide = 0;
+let slideshowTimer = null;
+
+let memories = []; // array of {src, id, label}
+
+let coupleData = {
+  name1: 'Sarah',
+  name2: 'Alex',
+  since: null
+};
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+function toggleNav() {
+  const navLinks = document.getElementById('navLinks');
+  const navToggle = document.getElementById('navToggle');
+  if (navLinks) navLinks.classList.toggle('open');
+  if (navToggle) navToggle.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════
+function init() {
+  // 1. Feed Django's images into the JavaScript slideshow array
+  heroSlides = [
+    {% for img in images %}
+      { src: "{{ img.image.url }}", id: "{{ img.id }}" },
+    {% endfor %}
+  ];
+
+  memories = [
+    {% for photo in recent_memories %}
+      { src: "{{ photo.image.url|escapejs }}", id: "{{ photo.id }}", label: "{{ photo.caption|escapejs }}" },
+    {% endfor %}
+  ];
+
+  // 2. Feed Django's couple data into the JavaScript names/dates
+  coupleData = {
+    name1: "{{ couple.user1.name|default:'Partner 1' }}",
+    name2: "{{ couple.user2.name|default:'Partner 2' }}",
+    since: "{{ couple.start_date|date:'Y-m-d' }}"
+  };
+
+  // 3. Initialize the UI using the data we just loaded from Django
+  updateHeroNames();
+  renderSlideshow();
+  renderMemories();
+  updateMoodCard();
+  startDaysCounter();
+  spawnHearts();
+}
+
+function saveToStorage() {
+  try {
+    localStorage.setItem('us_couple', JSON.stringify(coupleData));
+    localStorage.setItem('us_hero_slides', JSON.stringify(heroSlides));
+    localStorage.setItem('us_memories', JSON.stringify(memories));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════
+// DAYS COUNTER LOGIC
+// ═══════════════════════════════════════════════
+
+function startDaysCounter() {
+    updateDays();
+    setInterval(updateDays, 1000);
+}
+
+function updateDays() {
+    const container = document.getElementById('hero-counter');
+    if (!container) return;
+
+    const sinceDateStr = container.getAttribute('data-since');
+    if (!sinceDateStr) {
+        setCounterValues(0, 0, 0, 0);
+        return;
+    }
+
+    // Parse YYYY-MM-DD as local midnight
+    const parts = sinceDateStr.split('-');
+    if (parts.length < 3) {
+        setCounterValues(0, 0, 0, 0);
+        return;
+    }
+    const startDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    
+    if (isNaN(startDate.getTime())) {
+        setCounterValues(0, 0, 0, 0);
+        return;
+    }
+
+    const now = new Date();
+    const diffInMs = now - startDate;
+
+    if (diffInMs < 0) {
+        setCounterValues(0, 0, 0, 0);
+        return;
+    }
+
+    const diffInSecs = Math.floor(diffInMs / 1000);
+    const days = Math.floor(diffInSecs / 86400);
+    const hours = Math.floor((diffInSecs % 86400) / 3600);
+    const mins = Math.floor((diffInSecs % 3600) / 60);
+    const secs = diffInSecs % 60;
+
+    setCounterValues(days, hours, mins, secs);
+}
+
+function setCounterValues(d, h, m, s) {
+    // Only days shown in hero counter — update the days-count span
+    const dEl = document.getElementById('days-count');
+    if (dEl) dEl.textContent = d;
+}
+function openSetupModal() {
+  document.getElementById('setupModal').style.display = 'block';
+}
+function closeSetupModal() {
+  document.getElementById('setupModal').style.display = 'none';
+}
+function openMilestoneModal() {
+  document.getElementById('addMilestoneModal').classList.add('open');
+}
+function closeMilestoneModal() {
+  document.getElementById('addMilestoneModal').classList.remove('open');
+}
+function openEditMilestoneModal(id, date, title, desc, icon) {
+  document.getElementById('editMilestoneForm').action = "/dashboard/milestone/edit/" + id + "/";
+  document.getElementById('editMilestoneDate').value = date;
+  document.getElementById('editMilestoneTitle').value = title;
+  document.getElementById('editMilestoneDesc').value = desc;
+  document.getElementById('editMilestoneEmojiInput').value = icon;
+  document.getElementById('editMilestoneModal').classList.add('open');
+}
+function closeEditMilestoneModal() {
+  document.getElementById('editMilestoneModal').classList.remove('open');
+}
+function saveSetup() {
+    const name1 = document.getElementById('name1Input').value.trim();
+    const name2 = document.getElementById('name2Input').value.trim();
+    const newDate = document.getElementById('dateInput').value;
+
+    if (!name1 || !name2) {
+        alert("Please enter both names!");
+        return;
+    }
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch('/update-date/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrftoken
+        },
+        body: new URLSearchParams({ 'start_date': newDate, 'name1': name1, 'name2': name2 })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (newDate) {
+                document.getElementById('hero-counter').setAttribute('data-since', newDate);
+                updateDays();
+            }
+            coupleData.name1 = data.name1;
+            coupleData.name2 = data.name2;
+            if (data.new_date) coupleData.since = data.new_date;
+            
+            updateHeroNames();
+            closeSetupModal();
+            
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        } else {
+            alert(data.message || "An error occurred");
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function animateNumber(el, from, to, duration) {
+    let startTimestamp = null;
+    function step(timestamp) {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        el.textContent = Math.floor(ease * (to - from) + from);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        } else {
+            el.textContent = to;
+        }
+    }
+    window.requestAnimationFrame(step);
+}
+
+// ═══════════════════════════════════════════════
+// DATABASE SAVE LOGIC
+// ═══════════════════════════════════════════════
+
+// saveDateToDatabase is removed because saveSetup handles both names and date now
+
+document.addEventListener('DOMContentLoaded', startDaysCounter);
+// ═══════════════════════════════════════════════
+// SLIDESHOW
+// ═══════════════════════════════════════════════
+function renderSlideshow() {
+  const container = document.getElementById('slideshow');
+  const dots = document.getElementById('slideControls');
+  container.innerHTML = '';
+  dots.innerHTML = '';
+
+  if (heroSlides.length === 0) {
+    container.innerHTML = `
+      <div class="slide active" style="width:100%;height:100%">
+        <div class="slide-empty" onclick="if(checkPartner()) document.getElementById('photo-input').click()">
+          <div class="empty-icon">💕</div>
+          <p>Add your first photo together</p>
+          <small>Click anywhere here to upload</small>
+        </div>
+      </div>`;
+    document.getElementById('slideDeleteBtn').style.display = 'none';
+    return;
+  }
+
+  heroSlides.forEach((slide, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === currentSlide ? ' active' : '');
+    div.innerHTML = `<img src="${slide.src}" alt="couple photo" />`;
+    container.appendChild(div);
+
+    const dot = document.createElement('button');
+    dot.className = 'slide-dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+
+  document.getElementById('slideDeleteBtn').style.display = 'flex';
+  clearTimeout(slideshowTimer);
+  autoSlide();
+}
+
+function autoSlide() {
+  slideshowTimer = setTimeout(() => {
+    changeSlide(1);
+  }, 5000);
+}
+
+function changeSlide(dir) {
+  if (heroSlides.length === 0) return;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.slide-dot');
+  slides[currentSlide]?.classList.remove('active');
+  dots[currentSlide]?.classList.remove('active');
+  currentSlide = (currentSlide + dir + heroSlides.length) % heroSlides.length;
+  slides[currentSlide]?.classList.add('active');
+  dots[currentSlide]?.classList.add('active');
+  clearTimeout(slideshowTimer);
+  autoSlide();
+}
+
+function goToSlide(i) {
+  if (heroSlides.length === 0) return;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.slide-dot');
+  slides[currentSlide]?.classList.remove('active');
+  dots[currentSlide]?.classList.remove('active');
+  currentSlide = i;
+  slides[currentSlide]?.classList.add('active');
+  dots[currentSlide]?.classList.add('active');
+  clearTimeout(slideshowTimer);
+  autoSlide();
+}
+
+function deleteCurrentSlide() {
+  if (heroSlides.length === 0) return;
+  const slideId = heroSlides[currentSlide].id;
+
+  showToast('Removing photo... ⏳');
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}';
+
+  fetch(`/delete-image/${slideId}/`, {
+    method: "POST",
+    headers: {
+        'X-CSRFToken': csrftoken,
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Delete failed');
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      heroSlides.splice(currentSlide, 1);
+      if (currentSlide >= heroSlides.length) currentSlide = Math.max(0, heroSlides.length - 1);
+      saveToStorage();
+      renderSlideshow();
+      showToast('🗑 Photo removed');
+    } else {
+      alert("Error: " + (data.error || "Unknown error"));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to remove photo from backend.');
+  });
+}
+// Photo input for hero - SAVES TO DATABASE WITH CROPPER
+let cropperInstance = null;
+
+document.getElementById('photo-input').addEventListener('change', function(e) {
+  const files = e.target.files;
+  if (!files.length) return;
+  
+  const file = files[0];
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const cropImage = document.getElementById('cropTargetImage');
+    cropImage.src = evt.target.result;
+    document.getElementById('cropModalOverlay').style.display = 'flex';
+    
+    if (cropperInstance) cropperInstance.destroy();
+    cropperInstance = new Cropper(cropImage, {
+      viewMode: 1,
+      background: false,
+      autoCropArea: 0.9,
+      dragMode: 'move',
+      restore: false,
+      guides: false,
+      center: false,
+      highlight: false,
+      cropBoxMovable: true,
+      cropBoxResizable: true,
+      toggleDragModeOnDblclick: false
+    });
+  };
+  reader.readAsDataURL(file);
+  e.target.value = ''; // Reset input
+});
+
+function closeCropModal() {
+  document.getElementById('cropModalOverlay').style.display = 'none';
+  if (cropperInstance) {
+    cropperInstance.destroy();
+    cropperInstance = null;
+  }
+}
+
+document.getElementById('btnSaveCrop').addEventListener('click', function() {
+  if (!cropperInstance) return;
+  
+  showToast('Saving crop... 🚀');
+  const canvas = cropperInstance.getCroppedCanvas({
+    maxWidth: 2000,
+    maxHeight: 2000
+  });
+  
+  if (!canvas) {
+      alert("Failed to crop image.");
+      return;
+  }
+  
+  canvas.toBlob(function(blob) {
+    closeCropModal();
+    
+    const formData = new FormData();
+    const filename = 'hero_crop_' + Date.now() + '.jpg';
+    formData.append('images', blob, filename);
+    
+    fetch("{% url 'upload_couple_image' %}", {
+      method: "POST",
+      body: formData,
+      headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert("Error: " + (data.error || "Unknown error"));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Upload failed. Check your terminal for errors.');
+    });
+  }, 'image/jpeg', 0.9);
+});
+// ═══════════════════════════════════════════════
+// MEMORIES
+// ═══════════════════════════════════════════════
+function renderMemories() {
+  const container = document.getElementById('memoryContainer');
+  const empty = document.getElementById('memoryEmpty');
+
+  if (memories.length === 0) {
+    container.innerHTML = `<div class="memory-empty" id="memoryEmpty">
+      <div style="font-size:3rem">📸</div>
+      <p>Your memories will bloom here…</p>
+      <small>Add your first photo to begin the journey</small>
+    </div>`;
+    return;
+  }
+
+  const trackHTML = memories.map((m, i) => `
+    <div class="memory-card" data-id="${m.id}" data-real="1">
+      <img src="${m.src}" alt="memory" loading="lazy" />
+      <div class="memory-card-overlay">
+        <p>${m.label || 'A beautiful moment 💕'}</p>
+      </div>
+      <button class="memory-card-delete" onclick="deleteMemory('${m.id}', event)" title="Remove">✕</button>
+    </div>
+  `).join('');
+
+  container.innerHTML = `<div class="memory-track-wrapper">
+    <div class="memory-track" id="memoryTrack">${trackHTML}</div>
+  </div>`;
+
+  updateMoodCard();
+}
+
+function deleteMemory(id, e) {
+  e.stopPropagation();
+  
+  if (!confirm("Are you sure you want to delete this memory?")) return;
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+  fetch(`/dashboard/snap/delete/${id}/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'success') {
+      memories = memories.filter(m => String(m.id) !== String(id));
+      renderMemories();
+      showToast('🗑 Memory removed');
+    } else {
+      showToast('Failed to remove memory', 'error');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showToast('Network error', 'error');
+  });
+}
+
+document.getElementById('memory-photo-input').addEventListener('change', function(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const label = prompt('Add a title for these memories (optional):') || 'Dashboard Memory';
+  
+  const fd = new FormData();
+  fd.append('title', label);
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  fd.append('date', `${yyyy}-${mm}-${dd}`);
+  
+  files.forEach(file => {
+    fd.append('images', file);
+    fd.append('captions', label); // Using the same title as caption
+  });
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  fetch('{% url "dashboard_snap_upload" %}', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: fd
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'success') {
+      // Reload page to fetch new DB images so they have actual DB IDs
+      location.reload();
+    } else {
+      alert("Error: " + JSON.stringify(data.errors || data.message || "Unknown error"));
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Upload failed. Check console.');
+  });
+  
+  this.value = '';
+});
+
+// ═══════════════════════════════════════════════
+// MOOD / STATS
+// ═══════════════════════════════════════════════
+function updateMoodCard() {
+  const barEl = document.getElementById('memoryBar');
+  if (barEl) barEl.style.width = Math.min(memories.length * 10, 100) + '%';
+}
+
+// ═══════════════════════════════════════════════
+// FLOATING HEARTS
+// ═══════════════════════════════════════════════
+function spawnHearts() {
+  const canvas = document.getElementById('heartsCanvas');
+  const emojis = ['💕','💖','💗','💓','❤️','🌸','✨'];
+  function spawn() {
+    const el = document.createElement('div');
+    el.className = 'floating-heart';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.fontSize = (12 + Math.random() * 14) + 'px';
+    el.style.animationDuration = (8 + Math.random() * 8) + 's';
+    el.style.animationDelay = (Math.random() * 2) + 's';
+    canvas.appendChild(el);
+    setTimeout(() => el.remove(), 16000);
+  }
+  spawn();
+  setInterval(spawn, 2500);
+}
+
+// ═══════════════════════════════════════════════
+// COUPLE NAMES
+// ═══════════════════════════════════════════════
+function updateHeroNames() {
+  document.getElementById('heroNames').innerHTML =
+    `${coupleData.name1} <span class="amp">&amp;</span> ${coupleData.name2}`;
+  document.getElementById('footerNames').innerHTML =
+    `${coupleData.name1} &amp; ${coupleData.name2}`;
+}
+
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function openSetupModal() {
+  document.getElementById('name1Input').value = coupleData.name1;
+  document.getElementById('name2Input').value = coupleData.name2;
+  document.getElementById('dateInput').value = coupleData.since || '';
+  document.getElementById('setupModal').classList.add('open');
+}
+function closeSetupModal() {
+  document.getElementById('setupModal').classList.remove('open');
+}
+function saveSetup() {
+  const n1 = document.getElementById('name1Input').value.trim() || 'Sarah';
+  const n2 = document.getElementById('name2Input').value.trim() || 'Alex';
+  const dt = document.getElementById('dateInput').value;
+
+  if (dt && new Date(dt) > new Date()) {
+      alert("You cannot select a future date!");
+      return;
+  }
+
+  showToast('Saving... ⏳');
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}';
+
+  fetch('/update-date/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': csrftoken,
+          'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ 
+          'start_date': dt,
+          'name1': n1,
+          'name2': n2
+      })
+  })
+  .then(response => {
+      if (!response.ok) throw new Error('Failed to save setup');
+      return response.json();
+  })
+  .then(data => {
+      if (data.status === 'success') {
+          coupleData = { name1: data.name1, name2: data.name2, since: data.new_date || null };
+          saveToStorage();
+          updateHeroNames();
+          
+          const container = document.getElementById('hero-counter');
+          if (container) {
+              container.setAttribute('data-since', data.new_date || '');
+          }
+          updateDays();
+          closeSetupModal();
+          showToast('💞 Saved! Hello ' + data.name1 + ' & ' + data.name2);
+      } else {
+          alert("Error: " + (data.message || "Unknown error"));
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to save setup to server.');
+  });
+}
+
+function openAddMemoryModal() {
+  document.getElementById('memoryModal').classList.add('open');
+}
+function closeMemoryModal() {
+  document.getElementById('memoryModal').classList.remove('open');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// ═══════════════════════════════════════════════
+// NAVBAR
+// ═══════════════════════════════════════════════
+function toggleNav() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════════
+// SCROLL ANIMATIONS
+// ═══════════════════════════════════════════════
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.mood-card, .timeline-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+
+// ═══════════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') changeSlide(-1);
+  if (e.key === 'ArrowRight') changeSlide(1);
+  if (e.key === 'Escape') {
+    document.getElementById('setupModal').classList.remove('open');
+    document.getElementById('memoryModal').classList.remove('open');
+  }
+});
+
+// ═══════════════════════════════════════════════
+// 3D BUCKET LIST NOTEBOOK
+// ═══════════════════════════════════════════════
+const nbItems = [
+  {% for item in bucket_items %}
+  { id: {{ item.id }}, title: "{{ item.title|escapejs }}", priority: "{{ item.priority }}", done: {{ item.is_completed|yesno:"true,false" }} }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+
+let nbCurrentPage = 0;
+const NB_ITEMS_PER_PAGE = 7;
+let nbIsOpen = false;
+
+function flipOpenNotebook() {
+  if (nbIsOpen) return;
+  nbIsOpen = true;
+  const cover = document.getElementById('notebookCover');
+  const pages = document.getElementById('notebookPages');
+  
+  // 3D Flip animation
+  cover.style.transition = "transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)";
+  cover.style.transform = "rotateX(90deg)";
+  
+  setTimeout(() => {
+    cover.style.display = 'none';
+    pages.classList.add('open');
+    renderNbPage();
+  }, 300);
+}
+
+function flipCloseNotebook() {
+  if (!nbIsOpen) return;
+  nbIsOpen = false;
+  const cover = document.getElementById('notebookCover');
+  const pages = document.getElementById('notebookPages');
+  
+  pages.classList.remove('open');
+  cover.style.display = 'flex';
+  
+  // Reverse flip
+  setTimeout(() => {
+    cover.style.transform = "rotateX(0deg)";
+  }, 50);
+}
+
+function toggleAddForm() {
+  const form = document.getElementById('nbAddForm');
+  form.classList.toggle('visible');
+  if(form.classList.contains('visible')) {
+    document.getElementById('nbTitleInput').focus();
+  }
+}
+
+function saveNbItem() {
+  const titleInput = document.getElementById('nbTitleInput');
+  const priorityInput = document.getElementById('nbPriority');
+  const title = titleInput.value.trim();
+  if (!title) return;
+
+  const priority = priorityInput.value;
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  fetch('/bucket/add/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken
+    },
+    body: JSON.stringify({ title, priority })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'success') {
+      nbItems.unshift({ id: data.id, title: data.title, priority: data.priority, done: false });
+      titleInput.value = '';
+      toggleAddForm(); // hide form
+      nbCurrentPage = 0; // go to first page to see it
+      renderNbPage();
+      showToast('🎯 Dream added!');
+    }
+  })
+  .catch(err => console.error("Error adding dream:", err));
+}
+
+function toggleNbItem(id) {
+  const item = nbItems.find(i => i.id === id);
+  if(!item) return;
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+  fetch(`/bucket/toggle/${id}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrftoken }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === 'success') {
+      item.done = data.is_completed;
+      renderNbPage();
+      if(item.done) showToast('🎉 Dream accomplished!');
+    }
+  });
+}
+
+function deleteNbItem(id) {
+  if(!confirm("Are you sure you want to remove this dream?")) return;
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  fetch(`/bucket/delete/${id}/`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrftoken }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status === 'success') {
+      const idx = nbItems.findIndex(i => i.id === id);
+      if(idx > -1) {
+        nbItems.splice(idx, 1);
+        // Correct pagination if necessary
+        const maxPages = Math.max(0, Math.ceil(nbItems.length / NB_ITEMS_PER_PAGE) - 1);
+        if(nbCurrentPage > maxPages) nbCurrentPage = maxPages;
+        renderNbPage();
+      }
+    }
+  });
+}
+
+function nbChangePage(dir) {
+  const maxPages = Math.ceil(nbItems.length / NB_ITEMS_PER_PAGE) - 1;
+  nbCurrentPage += dir;
+  if(nbCurrentPage < 0) nbCurrentPage = 0;
+  if(nbCurrentPage > maxPages) nbCurrentPage = maxPages;
+  renderNbPage();
+}
+
+function renderNbPage() {
+  const lines = document.getElementById('nbLines');
+  const pageInfo = document.getElementById('nbPageInfo');
+  const btnPrev = document.getElementById('nbPrevBtn');
+  const btnNext = document.getElementById('nbNextBtn');
+
+  if (nbItems.length === 0) {
+    lines.innerHTML = `
+      <div class="nb-empty">
+        <div class="nb-empty-icon">✨</div>
+        <div>Your bucket list is empty.<br>What's your dream?</div>
+      </div>
+    `;
+    pageInfo.textContent = "0 / 0";
+    btnPrev.disabled = true;
+    btnNext.disabled = true;
+    return;
+  }
+
+  const maxPages = Math.ceil(nbItems.length / NB_ITEMS_PER_PAGE);
+  const startIdx = nbCurrentPage * NB_ITEMS_PER_PAGE;
+  const endIdx = Math.min(startIdx + NB_ITEMS_PER_PAGE, nbItems.length);
+  const pageItems = nbItems.slice(startIdx, endIdx);
+
+  pageInfo.textContent = `Page ${nbCurrentPage + 1} / ${maxPages}`;
+  btnPrev.disabled = (nbCurrentPage === 0);
+  btnNext.disabled = (nbCurrentPage >= maxPages - 1);
+
+  let html = '';
+  pageItems.forEach(item => {
+    html += `
+      <div class="nb-item">
+        <div class="nb-check ${item.done ? 'done' : ''}" onclick="toggleNbItem(${item.id})"></div>
+        <div class="nb-text ${item.done ? 'done' : ''}">
+          ${item.title}
+          <div class="nb-strikethrough"></div>
+        </div>
+        <div class="nb-priority ${item.priority}" title="${item.priority} priority"></div>
+        <button class="nb-delete" onclick="deleteNbItem(${item.id})" title="Delete">✕</button>
+      </div>
+    `;
+  });
+  lines.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════
+/* --- PREMIUM MENU & TRANSITIONS JS --- */
+function togglePremiumMenu() {
+    const btn = document.querySelector('.premium-menu-btn');
+    const menu = document.getElementById('premiumMenu');
+    if(btn) btn.classList.toggle('open');
+    if(menu) menu.classList.toggle('open');
+}
+
+// Apple-like smooth cross-page transition
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a').forEach(link => {
+        // Apply to internal links only
+        if (link.hostname === window.location.hostname && 
+            !link.hasAttribute('target') && 
+            !link.href.includes('#') && 
+            !link.href.startsWith('javascript:')) {
+            
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                // Close menu if open
+                const menu = document.getElementById('premiumMenu');
+                if(menu && menu.classList.contains('open')) {
+                    togglePremiumMenu();
+                }
+                
+                document.body.style.transition = 'opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'scale(0.98) translateY(10px)';
+                
+                setTimeout(() => { window.location = link.href; }, 300);
+            });
+        }
+    });
+});
+
+init();
+</script>
+
+{% if show_welcome_message %}
+<div class="modal-overlay open" id="welcomeModal" style="z-index: 3000;">
+  <div class="modal" style="background: var(--pink-bg); font-family: var(--font); text-align: center;">
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--charcoal); margin-top: 0; margin-bottom: 10px;">Welcome to Love Tracker</h3>
+    <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 25px; line-height: 1.5;">Every love story is unique—capture your moments, count your days, and grow together.</p>
+    <button type="button" class="btn-milestone" style="width: 100%;" onclick="document.getElementById('welcomeModal').classList.remove('open')">Get Started</button>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  }
+</script>
+</body>
+</html>

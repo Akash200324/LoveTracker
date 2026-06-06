@@ -1,0 +1,96 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Verify Email{% endblock %}
+
+{% block body_class %}auth-page{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+    <div class="auth-logo">✉️</div>
+    <h2 class="auth-title">Verify Email</h2>
+    <p class="auth-sub" style="margin-bottom: 25px;">We sent a 6-digit code to<br><strong>{{ email }}</strong></p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-msg" style="text-align: center; margin-bottom: 15px; font-size: 0.9rem; color: {% if message.tags == 'success' %}#2ecc71{% else %}#ff4d6d{% endif %}; background: transparent;">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-group">
+            <input type="text" name="otp" class="glass-input" placeholder="Enter 6-digit code" maxlength="6" pattern="\d{6}" required style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-bottom: 15px;">
+            Verify & Create Account
+        </button>
+    </form>
+
+    <div style="text-align: center;">
+        <button id="resendBtn" class="btn-glass" style="width: 100%; padding: 10px;" onclick="resendCode()" disabled>
+            Resend Code (wait <span id="timer">60</span>s)
+        </button>
+    </div>
+</div>
+
+<script>
+    let timeLeft = 60;
+    const timerSpan = document.getElementById('timer');
+    const resendBtn = document.getElementById('resendBtn');
+    let countdownInterval;
+
+    function startTimer() {
+        resendBtn.disabled = true;
+        timeLeft = 60;
+        timerSpan.parentElement.innerHTML = `Resend Code (wait <span id="timer">${timeLeft}</span>s)`;
+        
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            const newTimerSpan = document.getElementById('timer');
+            if (newTimerSpan) newTimerSpan.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                resendBtn.disabled = false;
+                resendBtn.innerHTML = "Resend Code";
+            }
+        }, 1000);
+    }
+
+    function resendCode() {
+        if(resendBtn.disabled) return;
+        
+        resendBtn.innerHTML = "Sending...";
+        resendBtn.disabled = true;
+
+        fetch("{% url 'resend_otp' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                startTimer();
+                alert("A new code has been sent!");
+            } else {
+                alert(data.message);
+                resendBtn.innerHTML = "Resend Code";
+                resendBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            resendBtn.innerHTML = "Resend Code";
+            resendBtn.disabled = false;
+        });
+    }
+
+    // Start timer on page load
+    document.addEventListener('DOMContentLoaded', startTimer);
+</script>
+{% endblock %}

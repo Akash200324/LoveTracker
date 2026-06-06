@@ -1,0 +1,90 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body_class %}auth-page{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+    <div class="auth-logo">💑</div>
+    <h2 class="auth-title">Welcome Back</h2>
+    <p class="auth-sub">Login to your love space</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-msg" style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-group">
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error-msg">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div style="text-align: right; margin-bottom: 15px;">
+            <a href="{% url 'password_reset' %}" style="color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.3s ease;">
+                Forgot Password?
+            </a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;">
+            Login
+        </button>
+    </form>
+
+    <div style="text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 0.9rem;">
+        &mdash; OR &mdash;
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+         data-client_id="525174801876-jub4aj46k5pi50ceai2snjr6ut34mo9k.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    
+    <div style="display: flex; justify-content: center; margin: 30px 0;">
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="pill"
+             data-logo_alignment="left">
+        </div>
+    </div>
+
+    <script>
+      function handleCredentialResponse(response) {
+          fetch("{% url 'google_login' %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: 'credential=' + response.credential
+          })
+          .then(res => res.json())
+          .then(data => {
+              if(data.success) {
+                  window.location.href = data.redirect_url;
+              } else {
+                  alert("Login failed: " + data.error);
+              }
+          });
+      }
+    </script>
+
+    <div class="auth-link">
+        Don't have an account?
+        <a href="{% url 'register' %}">Register here</a>
+    </div>
+</div>
+{% endblock %}

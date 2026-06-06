@@ -1,0 +1,1278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Our Memory — Love Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@600;700;800;900&family=Caveat:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Syne:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;600;700&family=Pacifico&family=Raleway:wght@400;700;800&family=Josefin+Sans:wght@400;600;700&family=Dancing+Script:wght@600;700&family=Abril+Fatface&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════
+   ROOT DESIGN TOKENS
+══════════════════════════════════════════════════════ */
+:root {
+  /* Sidebar dimensions */
+  --sb-w:       72px;
+  --sb-w-open:  260px;
+
+  /* Brand palette */
+  --bg:         #fdf2f4;
+  --bg-rgb:     253, 242, 244;
+  --white:      #ffffff;
+  --rose:       #ff4d6d;
+  --rose-lt:    #ff8fa3;
+  --blush:      #ffe6eb;
+  --violet:     #9B6DFF;
+  --violet-lt:  #EDE5FF;
+  --charcoal:   #1c1c1e;
+  --gray:       #6b6b7a;
+  --gray-lt:    #b8b8c8;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--charcoal);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; color: inherit; outline: none; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 77, 109, 0.3); border-radius: 10px; }
+
+/* ── ANIMATED BG ORBS ── */
+.bg-orbs { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); opacity: 0.55;
+  animation: floatOrb 12s ease-in-out infinite alternate;
+}
+.orb-1 { width: 45vw; height: 45vw; background: rgba(255,77,109,0.18); top: -10%; left: -5%; }
+.orb-2 { width: 55vw; height: 55vw; background: rgba(155,109,255,0.12); bottom: -25%; right: -10%; animation-delay: -4s; }
+.orb-3 { width: 38vw; height: 38vw; background: rgba(255,143,163,0.14); top: 35%; left: 52%; animation-delay: -8s; }
+@keyframes floatOrb {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(4vw, -4vh) scale(1.06); }
+  100% { transform: translate(-3vw, 3vh) scale(0.94); }
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR & PREMIUM MENU
+══════════════════════════════════════════════════════ */
+.sidebar {
+  position:fixed; left:0; top:0; height:100vh; width:var(--sb-w);
+  background:var(--bg);
+  backdrop-filter:blur(18px) saturate(1.6);
+  border-right:1px solid rgba(255,77,109,0.15);
+  z-index:5000;
+  transition:width 0.55s cubic-bezier(0.16,1,0.3,1), box-shadow 0.55s cubic-bezier(0.16,1,0.3,1);
+  overflow:visible; white-space:nowrap;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.sidebar:hover {
+  width:var(--sb-w-open);
+  box-shadow:12px 0 60px rgba(0,0,0,0.05);
+}
+.sb-logo { display:flex; align-items:center; padding:0 24px; cursor:pointer; position:absolute; top:28px; left:0; }
+.sb-logo-icon { font-size:24px; transition:transform 0.55s cubic-bezier(0.16,1,0.3,1); }
+.sidebar:hover .sb-logo-icon { transform:scale(1.1); }
+.sb-logo-text { opacity:0; width:0; overflow:hidden; transition:opacity 0.4s 0.1s, width 0s 0.4s; display:flex; flex-direction:column; margin-left:14px; }
+.sidebar:hover .sb-logo-text { opacity:1; width:auto; transition:opacity 0.4s 0.15s, width 0s 0s; }
+.sb-logo-title { font-family:'Montserrat',sans-serif; font-size:20px; font-weight:800; background:linear-gradient(135deg,#FF4D6D,#FF8FA3); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.sb-logo-sub { font-size:11px; color:var(--gray); font-weight:500; text-transform:uppercase; letter-spacing:0.6px; }
+
+.sb-nav-group { display:flex; flex-direction:column; gap:2px; }
+.sb-item { display:flex; align-items:center; height:52px; padding:0 26px; color:var(--gray); transition:color 0.3s, background 0.3s; position:relative; }
+.sb-item:hover { color:var(--charcoal); background:rgba(0,0,0,0.04); }
+.sb-item.active { color:var(--rose); background:rgba(255,77,109,0.08); }
+.sb-item.active::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:3px; height:28px; border-radius:0 3px 3px 0; background:linear-gradient(180deg,var(--rose),var(--violet)); box-shadow:0 0 14px rgba(255,77,109,0.4); }
+.sb-icon { display:flex; align-items:center; justify-content:center; flex-shrink:0; width:24px; transition:transform 0.3s; }
+.sb-item:hover .sb-icon { transform:scale(1.12); }
+.sb-icon svg { width:20px; height:20px; stroke:currentColor; stroke-width:1.8; fill:none; transition:filter 0.3s; }
+.sb-item:hover .sb-icon svg, .sb-item.active .sb-icon svg { filter:drop-shadow(0 0 8px rgba(255,77,109,0.3)); }
+.sb-text { font-weight:600; font-size:15px; opacity:0; width:0; overflow:hidden; transition:opacity 0.35s 0s, margin-left 0.35s; margin-left:0; }
+.sidebar:hover .sb-text { opacity:1; width:auto; margin-left:20px; transition-delay:0.08s; }
+
+.premium-menu-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 9999;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; gap: 5px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); transition: all 0.3s; display: none;
+}
+.premium-menu-btn span { display: block; width: 20px; height: 2px; background: var(--charcoal); border-radius: 2px; transition: all 0.3s; }
+.premium-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.premium-menu-btn.open span:nth-child(2) { opacity: 0; }
+.premium-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.premium-overlay-menu {
+    position: fixed; inset: 0; z-index: 10001;
+    background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+    display: flex; align-items: center; justify-content: center;
+}
+.premium-overlay-menu.open { opacity: 1; pointer-events: all; }
+.premium-menu-content { display: flex; flex-direction: column; gap: 2rem; align-items: center; transform: translateY(20px) scale(0.95); opacity: 0; transition: all 0.4s 0.1s; }
+.premium-overlay-menu.open .premium-menu-content { transform: translateY(0) scale(1); opacity: 1; }
+.premium-menu-content a { font-size: 1.4rem; font-weight: 600; color: var(--rose); text-decoration: none; letter-spacing: 0.5px; transition: color 0.3s, transform 0.3s; }
+.premium-menu-content a:hover { color: #fff; transform: translateY(-2px); }
+
+/* ══════════════════════════════════════════════════════
+   MAIN SHELL
+══════════════════════════════════════════════════════ */
+.main-shell {
+  margin-left: var(--sb-w);
+  min-height: 100vh;
+  position: relative; z-index: 1;
+  padding: 0 44px 80px 40px;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 44px 0 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  display: flex; flex-wrap: wrap; gap: 20px;
+  justify-content: space-between; align-items: flex-end;
+}
+.hero-left { max-width: 560px; }
+.hero-logo {
+  font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 800;
+  color: var(--gray); display: flex; align-items: center; gap: 6px;
+  margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1.2px;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 700; color: var(--charcoal);
+  line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 10px;
+}
+.hero-title em { font-family: 'Caveat', cursive; color: var(--rose); font-size: 1.1em; font-style: normal; }
+.hero-subtitle { font-size: 0.95rem; color: var(--gray); max-width: 460px; line-height: 1.55; }
+.hero-right { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+
+.new-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--rose), var(--violet));
+  color: white; border-radius: 50px; padding: 13px 28px;
+  font-size: 0.9rem; font-weight: 700;
+  box-shadow: 0 6px 22px rgba(255,77,109,0.28);
+  transition: all 0.3s cubic-bezier(0.25,1,0.5,1);
+}
+.new-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 30px rgba(255,77,109,0.38); }
+
+/* ── TIMELINE ── */
+.content { padding: 36px 0 80px; }
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-row {
+  display: grid; grid-template-columns: 70px 1fr;
+  gap: 0 24px; position: relative;
+  animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+.tl-row::before {
+  content: ''; position: absolute; left: 34px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, transparent, rgba(155,109,255,0.4) 10%, rgba(155,109,255,0.4) 90%, transparent);
+}
+.tl-row:last-child::before { bottom: 30px; }
+
+.tl-date { display: flex; flex-direction: column; align-items: center; padding-top: 16px; }
+.tl-date-pill {
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+  border: 1px solid rgba(155,109,255,0.25); border-radius: 18px;
+  width: 64px; padding: 10px 0; text-align: center;
+  box-shadow: 0 6px 18px rgba(155,109,255,0.12);
+  position: relative; z-index: 2;
+}
+.tl-mon { font-size: 0.63rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--violet); }
+.tl-day { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; font-weight: 900; color: var(--charcoal); line-height: 1.1; }
+.tl-yr  { font-size: 0.68rem; color: var(--gray); font-weight: 700; margin-top: 3px; }
+.tl-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--violet), var(--rose));
+  border: 2px solid var(--bg); box-shadow: 0 0 0 3px rgba(155,109,255,0.25);
+  z-index: 3; margin-top: 14px;
+}
+
+.tl-card {
+  background: rgba(255,255,255,0.65); backdrop-filter: blur(24px) saturate(2);
+  border: 1px solid rgba(255,255,255,0.9); border-radius: 24px;
+  padding: 6px; margin: 12px 0 32px; cursor: pointer; max-width: 460px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.04), inset 0 2px 0 rgba(255,255,255,1);
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.tl-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 24px 50px rgba(155,109,255,0.15); border-color: rgba(155,109,255,0.5); }
+.tl-inner { background: var(--white); border-radius: 18px; overflow: hidden; }
+.tl-img { position: relative; width: 100%; aspect-ratio: 16/10; overflow: hidden; background: linear-gradient(135deg, var(--violet-lt), var(--blush)); }
+.tl-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+.tl-card:hover .tl-img img { transform: scale(1.05); }
+.tl-collage { width: 100%; height: 100%; display: grid; gap: 2px; }
+.tl-collage.c2 { grid-template-columns: 1fr 1fr; }
+.tl-collage.c3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+.tl-collage.c3 .ci:first-child { grid-row: 1/3; }
+.tl-collage.c4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.ci { overflow: hidden; }
+.ci img { width: 100%; height: 100%; object-fit: cover; }
+.img-count {
+  position: absolute; bottom: 8px; right: 8px;
+  background: rgba(10,10,15,0.65); backdrop-filter: blur(8px);
+  color: white; border-radius: 50px; padding: 4px 10px;
+  font-size: 0.7rem; font-weight: 700;
+}
+.tl-img-empty { aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+.tl-body { padding: 20px; position: relative; }
+.tl-tag {
+  position: absolute; top: -14px; left: 20px;
+  background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+  color: #3b2a59; border-radius: 50px; padding: 5px 14px;
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(155,109,255,0.25), inset 0 2px 0 rgba(255,255,255,0.5);
+  display: flex; align-items: center; gap: 5px; z-index: 2;
+}
+.tl-title { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 800; color: #2A2A35; margin-top: 6px; margin-bottom: 6px; }
+.tl-desc { font-size: 0.85rem; color: #5B5B6D; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tl-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.05); }
+.tl-by { font-size: 0.75rem; color: #8A8A9E; }
+.tl-by strong { color: var(--violet); font-weight: 700; }
+.tl-actions { display: flex; gap: 6px; opacity: 0; transform: translateX(8px); transition: all 0.3s; }
+.tl-card:hover .tl-actions { opacity: 1; transform: translateX(0); }
+.tl-act-btn { padding: 5px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; color: var(--gray); background: rgba(0,0,0,0.03); transition: all 0.2s; }
+.tl-act-btn.del:hover { color: white; background: #ef4444; box-shadow: 0 4px 10px rgba(239,68,68,0.3); }
+
+/* Empty */
+.empty { padding: 80px 0; }
+.empty-icon { font-size: 4rem; margin-bottom: 16px; display: inline-block; animation: floatOrb 6s ease-in-out infinite; }
+.empty h3 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--charcoal); margin-bottom: 8px; }
+.empty p { color: var(--gray); font-size: 1rem; }
+
+/* ══════════════════════════════════════════════════════
+   GALLERY / FOLDER VIEW OVERLAY
+══════════════════════════════════════════════════════ */
+.gallery-ov {
+  position: fixed; inset: 0; z-index: 5500;
+  background: rgba(var(--bg-rgb), 0.97); backdrop-filter: blur(20px);
+  opacity: 0; pointer-events: none; transition: opacity 0.4s;
+  overflow-y: auto; overflow-x: hidden;
+  /* Left padding removed since no sidebar */
+  padding-left: 0;
+}
+.gallery-ov.open { opacity: 1; pointer-events: all; }
+
+/* Back button — offset from sidebar */
+.gal-back-float {
+  position: fixed; top: 20px;
+  left: 20px;
+  z-index: 5600;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(255,255,255,0.9); color: var(--rose); font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(255,77,109,0.18); transition: all 0.3s;
+  backdrop-filter: blur(12px);
+}
+.gal-back-float:hover { background: var(--rose); color: white; transform: scale(1.07); }
+
+/* Scrollable content wrapper */
+.gal-container {
+  width: 100%; max-width: 1080px;
+  margin: 0 auto;
+  padding: 80px 40px 120px;
+}
+
+/* ══════════════════════════════════════════════════════
+   FOLDER HERO BANNER
+   Full-width stretch banner (not a small box)
+   Images displayed at high quality / upscaled
+══════════════════════════════════════════════════════ */
+.gal-hero-banner {
+  position: relative;
+  width: 100%;
+  /* Wide cinematic banner ratio */
+  aspect-ratio: 21 / 7;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--violet-lt), var(--blush));
+  box-shadow: 0 28px 80px rgba(0,0,0,0.14);
+  margin-bottom: 0;
+}
+
+/* High-quality image rendering */
+.gal-hero-banner img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  /* Upscale / high-quality rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: high-quality;
+  -ms-interpolation-mode: bicubic;
+  transform: scale(1);   /* GPU compositing layer for quality */
+  will-change: transform;
+  display: none;
+}
+
+.gal-hero-banner img.loaded { display: block; }
+
+.gal-hero-empty-state {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 5rem;
+}
+
+/* Dark gradient overlay for text readability */
+.gal-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top,
+    rgba(10, 5, 20, 0.72) 0%,
+    rgba(10, 5, 20, 0.25) 45%,
+    transparent 75%);
+  display: flex; flex-direction: column;
+  justify-content: flex-end; align-items: flex-start;
+  padding: 28px 36px;
+}
+.gal-hero-date-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(255,255,255,0.65); margin-bottom: 8px;
+}
+.gal-hero-heading {
+  font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+  font-weight: 700; color: #fff;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.5);
+  line-height: 1.15; transition: font-family 0.2s;
+  word-break: break-word;
+}
+
+/* ══════════════════════════════════════════════════════
+   FONT SELECTOR BAR
+══════════════════════════════════════════════════════ */
+.font-bar {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 14px 0 4px; scrollbar-width: none;
+}
+.font-bar::-webkit-scrollbar { display: none; }
+.font-pill {
+  flex-shrink: 0; padding: 7px 18px; border-radius: 50px;
+  border: 2px solid rgba(155,109,255,0.2);
+  background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);
+  font-size: 0.82rem; cursor: pointer;
+  transition: all 0.25s; color: var(--charcoal); white-space: nowrap;
+}
+.font-pill:hover { border-color: var(--violet); background: var(--violet-lt); }
+.font-pill.active {
+  border-color: var(--violet); background: var(--violet); color: white;
+  box-shadow: 0 4px 14px rgba(155,109,255,0.3);
+}
+
+/* ══════════════════════════════════════════════════════
+   EMOJI PICKER
+══════════════════════════════════════════════════════ */
+.emoji-toolbar { position: relative; padding: 6px 0 14px; }
+.emoji-open-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.7); border: 2px solid rgba(155,109,255,0.2);
+  border-radius: 50px; padding: 7px 18px;
+  font-size: 0.85rem; font-weight: 600; color: var(--charcoal);
+  cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);
+}
+.emoji-open-btn:hover { border-color: var(--violet); background: var(--violet-lt); }
+
+.emoji-picker {
+  display: none;
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 200;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(24px);
+  border: 1px solid rgba(155,109,255,0.18); border-radius: 20px;
+  padding: 14px; width: 320px; max-height: 260px; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  flex-wrap: wrap; gap: 3px;
+}
+.emoji-picker.open { display: flex; }
+.ep-emoji {
+  font-size: 1.45rem; cursor: pointer; padding: 4px;
+  border-radius: 8px; transition: background 0.15s; line-height: 1.2;
+}
+.ep-emoji:hover { background: var(--violet-lt); }
+
+/* ══════════════════════════════════════════════════════
+   GALLERY INFO ROW
+══════════════════════════════════════════════════════ */
+.gal-info-row {
+  padding: 18px 0 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 28px;
+}
+.gal-info-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: #2A2A35; margin-bottom: 6px;
+}
+.gal-info-desc { font-size: 0.95rem; color: #5B5B6D; line-height: 1.65; }
+
+/* ══════════════════════════════════════════════════════
+   ADD YOUR MEMORY SECTION
+══════════════════════════════════════════════════════ */
+.add-mem-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.add-mem-hdr h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem; font-weight: 800; color: #2A2A35;
+}
+.add-photo-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, var(--violet), var(--rose));
+  color: white; border-radius: 50px; padding: 10px 24px;
+  font-size: 0.85rem; font-weight: 700; font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 6px 20px rgba(155,109,255,0.28); transition: all 0.3s;
+}
+.add-photo-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(155,109,255,0.38); }
+
+/* Upload panel */
+.upload-panel {
+  background: rgba(255,255,255,0.8); backdrop-filter: blur(18px);
+  border: 1px solid rgba(155,109,255,0.15); border-radius: 20px;
+  padding: 24px; margin-bottom: 24px; display: none;
+}
+.upload-panel.open { display: block; }
+.upload-panel h4 {
+  font-family: 'Montserrat', sans-serif; font-size: 0.92rem; font-weight: 800;
+  color: #2A2A35; margin-bottom: 14px;
+}
+.drop-zone {
+  border: 2px dashed rgba(155,109,255,0.3); border-radius: 14px;
+  padding: 20px; text-align: center; cursor: pointer;
+  background: rgba(237,229,255,0.3); position: relative; transition: all 0.3s;
+}
+.drop-zone:hover { border-color: var(--violet); background: var(--violet-lt); }
+.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.drop-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.drop-txt { font-size: 0.85rem; color: #5B5B6D; }
+.drop-txt strong { color: var(--violet); }
+
+/* Per-file captions */
+.caption-list { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.caption-item { display: flex; align-items: flex-start; gap: 10px; }
+.caption-thumb { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 2px solid var(--violet-lt); }
+.caption-input {
+  flex: 1; background: rgba(255,255,255,0.7);
+  border: 2px solid rgba(155,109,255,0.15); border-radius: 12px;
+  padding: 10px 14px; font-family: 'Inter', sans-serif;
+  font-size: 0.88rem; color: #2A2A35; outline: none;
+  transition: all 0.25s; resize: none; min-height: 54px;
+}
+.caption-input:focus { border-color: var(--violet); background: white; box-shadow: 0 4px 14px rgba(155,109,255,0.1); }
+.caption-input::placeholder { color: rgba(0,0,0,0.28); }
+
+.upload-actions { display: flex; gap: 10px; margin-top: 16px; }
+.btn-upload {
+  flex: 1; border-radius: 50px; padding: 12px 20px;
+  background: linear-gradient(135deg, var(--rose), var(--violet));
+  color: white; font-size: 0.9rem; font-weight: 800; font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 6px 18px rgba(255,77,109,0.2); transition: all 0.3s;
+}
+.btn-upload:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(155,109,255,0.3); }
+.btn-cancel-up {
+  background: white; border: 2px solid rgba(0,0,0,0.06); border-radius: 50px;
+  padding: 12px 20px; color: #6B6B7A; font-size: 0.88rem; font-weight: 700; transition: all 0.2s;
+}
+.btn-cancel-up:hover { border-color: #2A2A35; color: #2A2A35; }
+
+/* Photo grid */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+.photo-card {
+  background: rgba(255,255,255,0.8); border-radius: 20px; overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transition: all 0.35s cubic-bezier(0.25,1,0.5,1);
+}
+.photo-card:hover { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(155,109,255,0.16); }
+.photo-img-wrap {
+  position: relative; aspect-ratio: 1/1; overflow: hidden;
+  background: var(--violet-lt); cursor: pointer;
+}
+.photo-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  /* High quality rendering */
+  image-rendering: high-quality;
+  -ms-interpolation-mode: bicubic;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.photo-card:hover .photo-img-wrap img { transform: scale(1.06); }
+
+.photo-del-btn {
+  position: absolute; top: 8px; right: 8px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.95); color: #ef4444; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0; transition: all 0.2s; z-index: 2;
+}
+.photo-card:hover .photo-del-btn { opacity: 1; }
+.photo-del-btn:hover { background: #ef4444; color: white; transform: scale(1.1); }
+
+/* Caption below photo — standard medium font size */
+.photo-caption {
+  padding: 10px 14px 12px;
+  font-size: 0.9rem; color: #4A4A5A; line-height: 1.5;
+  font-family: 'Inter', sans-serif; font-weight: 400;
+}
+.photo-caption:empty { display: none; }
+
+.photo-grid-empty {
+  grid-column: 1/-1; text-align: center; padding: 48px 0;
+  color: var(--gray); font-size: 1rem;
+}
+.photo-grid-empty .big-em { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+/* ══════════════════════════════════════════════════════
+   CHOOSE + CREATE MODALS
+══════════════════════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0; z-index: 6000;
+  background: rgba(var(--bg-rgb), 0.75); backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+  border-radius: 28px; padding: 32px; width: min(480px, 92vw);
+  box-shadow: 0 30px 80px rgba(155,109,255,0.15), inset 0 2px 0 rgba(255,255,255,1);
+  border: 1px solid rgba(255,255,255,0.6);
+  transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-hd { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: #2A2A35; margin-bottom: 4px; }
+.modal-sub { font-size: 0.85rem; color: #6B6B7A; margin-bottom: 24px; }
+.choose-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.ch-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 24px 16px; border-radius: 20px;
+  background: var(--white); border: 2px solid transparent;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.03); cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1); text-align: center;
+}
+.ch-card:hover, .ch-card.sel { border-color: var(--violet); background: var(--violet-lt); transform: translateY(-3px); }
+.ch-icon { font-size: 2.5rem; }
+.ch-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 0.9rem; color: #2A2A35; }
+.ch-desc { font-size: 0.75rem; color: #6B6B7A; line-height: 1.4; }
+.fg { margin-bottom: 16px; }
+.fl { display: block; font-size: 0.68rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #4A4A5A; margin-bottom: 6px; }
+.fi, .ft {
+  width: 100%; background: rgba(255,255,255,0.6);
+  border: 2px solid rgba(155,109,255,0.15); border-radius: 14px;
+  padding: 12px 16px; color: #2A2A35;
+  font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: all 0.3s;
+}
+.fi:focus, .ft:focus { border-color: var(--violet); background: white; box-shadow: 0 6px 20px rgba(155,109,255,0.12); }
+.ft { resize: vertical; min-height: 80px; }
+.preview-strip { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.pthumb { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; border: 2px solid var(--violet-lt); }
+.m-actions { display: flex; gap: 10px; margin-top: 24px; }
+.btn-p {
+  flex: 1; border-radius: 50px; padding: 14px 20px;
+  background: linear-gradient(135deg, var(--rose), var(--violet));
+  color: white; font-size: 0.95rem; font-weight: 800; font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 6px 20px rgba(255,77,109,0.25); transition: all 0.3s;
+}
+.btn-p:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(155,109,255,0.35); }
+.btn-g { background: white; border: 2px solid rgba(0,0,0,0.07); border-radius: 50px; padding: 14px 20px; color: #6B6B7A; font-size: 0.9rem; font-weight: 700; transition: all 0.2s; }
+.btn-g:hover { border-color: #2A2A35; color: #2A2A35; }
+
+/* Lightbox */
+.lb { position: fixed; inset: 0; z-index: 7000; background: rgba(10,10,15,0.96); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.lb.open { opacity: 1; pointer-events: all; }
+.lb img { max-width: 90vw; max-height: 90vh; border-radius: 16px; object-fit: contain; box-shadow: 0 16px 50px rgba(0,0,0,0.5); image-rendering: high-quality; }
+.lb-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.15); color: white; font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.lb-close:hover { background: var(--rose); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: white; border-radius: 50px; padding: 12px 26px;
+  font-size: 0.9rem; font-weight: 700; color: #2A2A35;
+  box-shadow: 0 10px 30px rgba(155,109,255,0.2); z-index: 9999;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Sparkles */
+@keyframes sparkle { 0%,100%{transform:scale(0) rotate(0deg);opacity:0} 50%{transform:scale(1) rotate(180deg);opacity:1} }
+.sparkle { position: fixed; pointer-events: none; z-index: 9998; animation: sparkle 1.5s ease-in-out forwards; font-size: 1.8rem; }
+@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — Mobile & Tablet
+══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .gal-hero-banner { aspect-ratio: 16 / 6; }
+}
+
+@media (max-width: 768px) {
+  .sidebar { width: 0; overflow: hidden; border: none; }
+  .premium-menu-btn { display: flex; }
+  .main-shell { margin-left: 0; padding: 0 16px 90px 16px; }
+  .gallery-ov { padding-left: 0; padding-bottom: 100px; }
+  .gal-back-float { left: 16px; top: 14px; }
+  .gal-container { padding: 60px 16px 100px; }
+  .gal-hero-banner { aspect-ratio: 4/3; border-radius: 16px; }
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .hero { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .hero-right { width: 100%; }
+  .new-btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .gal-hero-banner { aspect-ratio: 3/2; border-radius: 14px; }
+  .photo-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tl-row { grid-template-columns: 54px 1fr; gap: 0 12px; }
+  .tl-row::before { left: 26px; }
+  .tl-card { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- BG ORBS -->
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">💕</div>
+    <div class="sb-logo-text">
+      <div class="sb-logo-title">Love Tracker</div>
+      <div class="sb-logo-sub">add memory with your lovers</div>
+    </div>
+  </div>
+
+  <div class="sb-nav-group">
+    <a href="{% url 'dashboard' %}" class="sb-item active">
+      <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+      <div class="sb-text">Dashboard</div>
+    </a>
+    <a href="{% url 'profile' %}" class="sb-item">
+      <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+      <div class="sb-text">Profile</div>
+    </a>
+    <a href="{% url 'logout' %}" class="sb-item">
+      <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+      <div class="sb-text">Logout</div>
+    </a>
+  </div>
+</aside>
+
+<!-- Premium Glassy Hamburger Menu Button -->
+<div class="premium-menu-btn" onclick="togglePremiumMenu()">
+    <span></span><span></span><span></span>
+</div>
+
+<!-- Premium Glassy Overlay Menu -->
+<div class="premium-overlay-menu" id="premiumMenu">
+    <div class="premium-menu-content">
+        <a href="{% url 'dashboard' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'profile' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile
+        </a>
+        <a href="{% url 'logout' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+        </a>
+    </div>
+</div>
+
+<!-- ════ MAIN SHELL ════ -->
+<div class="main-shell">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-logo">📸 Our Memory Book</div>
+      <h1 class="hero-title">Every Moment, <em>Treasured</em> 💕</h1>
+      <p class="hero-subtitle">Your shared timeline of beautiful memories, big and small. Relive your favorite chapters together.</p>
+    </div>
+    <div class="hero-right">
+      <button class="new-btn" onclick="openChoose()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        New Memory
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    {% csrf_token %}
+
+    {% if not memories %}
+    <div class="empty">
+      <div class="empty-icon">✨📷✨</div>
+      <h3>Start Your Story</h3>
+      <p>Create your first memory folder or add a single special photo.</p>
+    </div>
+    {% else %}
+    <div class="timeline" id="viewTL">
+      {% for memory in memories %}
+      {% with photos=memory.photos.all %}
+      <div class="tl-row" style="animation-delay:{{ forloop.counter0 }}50ms">
+
+        <div class="tl-date">
+          <div class="tl-date-pill">
+            <div class="tl-mon">{{ memory.date|date:"M" }}</div>
+            <div class="tl-day">{{ memory.date|date:"d" }}</div>
+            <div class="tl-yr">{{ memory.date|date:"Y" }}</div>
+          </div>
+          <div class="tl-dot"></div>
+        </div>
+
+        <div class="tl-card" onclick="openGallery({{ memory.pk }},'{{ memory.title|escapejs }}','{{ memory.date|date:'F d, Y' }}','{{ memory.description|escapejs }}')">
+          <div class="tl-inner">
+            {% if photos %}
+              {% with n=photos|length %}
+              {% if n == 1 %}
+              <div class="tl-img"><img src="{{ photos.0.image.url }}" alt=""/><div class="img-count">📸 1 photo</div></div>
+              {% elif n == 2 %}
+              <div class="tl-img"><div class="tl-collage c2">{% for p in photos|slice:":2" %}<div class="ci"><img src="{{ p.image.url }}" alt=""/></div>{% endfor %}</div><div class="img-count">📸 {{ n }} photos</div></div>
+              {% elif n == 3 %}
+              <div class="tl-img"><div class="tl-collage c3">{% for p in photos|slice:":3" %}<div class="ci"><img src="{{ p.image.url }}" alt=""/></div>{% endfor %}</div><div class="img-count">📸 {{ n }} photos</div></div>
+              {% else %}
+              <div class="tl-img"><div class="tl-collage c4">{% for p in photos|slice:":4" %}<div class="ci"><img src="{{ p.image.url }}" alt=""/></div>{% endfor %}</div><div class="img-count">📸 {{ n }} photos</div></div>
+              {% endif %}
+              {% endwith %}
+            {% else %}
+            <div class="tl-img-empty">📝</div>
+            {% endif %}
+            <div class="tl-body">
+              <div class="tl-tag">{% if photos %}📁 Folder{% else %}📝 Note{% endif %}</div>
+              <div class="tl-title">{{ memory.title }}</div>
+              {% if memory.description %}<div class="tl-desc">{{ memory.description }}</div>{% endif %}
+              <div class="tl-footer">
+                <div class="tl-by">Added by <strong class="user-display" data-name="{{ memory.added_by.first_name|default:memory.added_by.username }}"></strong></div>
+                <div class="tl-actions" onclick="event.stopPropagation()">
+                  <button class="tl-act-btn del" onclick="delMemory({{ memory.pk }},this)">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endwith %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ════ CHOOSE MODAL ════ -->
+<div class="overlay" id="chooseOv">
+  <div class="modal">
+    <div class="modal-hd">✨ Add a Memory</div>
+    <div class="modal-sub">Pick what kind of memory you'd like to create today</div>
+    <div class="choose-grid">
+      <div class="ch-card sel" id="chFolder" onclick="pickType('folder')">
+        <div class="ch-icon">📁</div>
+        <div class="ch-title">Memory Folder</div>
+        <div class="ch-desc">A trip or event with multiple photos</div>
+      </div>
+      <div class="ch-card" id="chSingle" onclick="pickType('single')">
+        <div class="ch-icon">📸</div>
+        <div class="ch-title">Single Photo</div>
+        <div class="ch-desc">One special moment, one photo</div>
+      </div>
+    </div>
+    <div class="m-actions" style="margin-top:0">
+      <button class="btn-g" onclick="closeChoose()">Cancel</button>
+      <button class="btn-p" onclick="goCreate()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CREATE MODAL ════ -->
+<div class="overlay" id="createOv">
+  <div class="modal">
+    <div class="modal-hd" id="cTitle">📁 New Memory Folder</div>
+    <div class="modal-sub" id="cSub">Give this memory a name and upload your photos</div>
+    <form id="createForm" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="fg"><label class="fl" id="cTitleLbl">Folder Title *</label><input class="fi" id="memTitle" placeholder="e.g. Paris Trip 🗼, Our Anniversary 💍"/></div>
+      <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="memDateText" max="{% now 'Y-m-d' %}"/></div>
+      <div class="fg"><label class="fl">Description / Note</label><textarea class="ft" id="memDesc" placeholder="Tell the story behind this moment..."></textarea></div>
+      <div class="fg" id="photoFg">
+        <label class="fl" id="cPhotoLbl">Photos</label>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="photoFiles" accept="image/*" multiple onchange="previewPics(this)"/>
+          <div class="drop-row"><span style="font-size:1.6rem">🖼️</span><div class="drop-txt"><strong>Click or drag</strong> photos here</div></div>
+        </div>
+        <div class="preview-strip" id="previewStrip"></div>
+      </div>
+      <div class="m-actions">
+        <button type="button" class="btn-g" onclick="closeCreate()">Back</button>
+        <button type="submit" class="btn-p" id="cSubmitBtn">✨ Create Memory</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ════ GALLERY (FOLDER VIEW) ════ -->
+<div class="gallery-ov" id="galOv">
+  <button class="gal-back-float" onclick="closeGallery()">←</button>
+
+  <div class="gal-container">
+
+    <!-- ── FULL-WIDTH BANNER HERO ── -->
+    <div class="gal-hero-banner" id="galBanner">
+      <div class="gal-hero-empty-state" id="galBannerEmpty">📁</div>
+      <img id="galBannerImg" src="" alt="cover"/>
+      <div class="gal-hero-overlay" id="galHeroOv" style="display:none">
+        <div class="gal-hero-date-label" id="galHeroDate"></div>
+        <div class="gal-hero-heading" id="galHeroHeading"></div>
+      </div>
+    </div>
+
+    <!-- ── FONT SELECTOR ── -->
+    <div class="font-bar" id="fontBar"></div>
+
+    <!-- ── EMOJI PICKER ── -->
+    <div class="emoji-toolbar" style="display:flex; gap:8px;">
+      <button class="emoji-open-btn" id="emojiBtn" onclick="toggleEmoji()">😊 Add Emoji</button>
+      <button class="emoji-open-btn" onclick="editTitle()">✏️ Edit Title</button>
+      <div class="emoji-picker" id="emojiPicker"></div>
+    </div>
+
+    <!-- ── INFO ROW ── -->
+    <div class="gal-info-row">
+      <div class="gal-info-title" id="galInfoTitle"></div>
+      <div class="gal-info-desc" id="galInfoDesc" style="display:none"></div>
+    </div>
+
+    <!-- ── ADD YOUR MEMORY ── -->
+    <div class="add-mem-hdr">
+      <h3>📷 Add Your Memory</h3>
+      <button class="add-photo-btn" onclick="toggleUpload()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Add Photos
+      </button>
+    </div>
+
+    <!-- Upload panel -->
+    <div class="upload-panel" id="uploadPanel">
+      <h4>Upload Photos + Captions</h4>
+      <div class="drop-zone">
+        <input type="file" id="galAddFiles" accept="image/*" multiple onchange="previewGalFiles(this)"/>
+        <div class="drop-row"><span style="font-size:1.6rem">🖼️</span><div class="drop-txt"><strong>Click or drag</strong> photos here</div></div>
+      </div>
+      <div class="caption-list" id="captionList"></div>
+      <div class="upload-actions">
+        <button class="btn-cancel-up" onclick="toggleUpload()">Cancel</button>
+        <button class="btn-upload" id="uploadBtn" onclick="submitGalPhotos()">📤 Upload</button>
+      </div>
+    </div>
+
+    <!-- Photo grid -->
+    <div class="photo-grid" id="photoGrid">
+      <div class="photo-grid-empty"><span class="big-em">⏳</span>Loading moments…</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lb" id="lb">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <img id="lbImg" src="" alt=""/>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+let activeId  = null;
+let selType   = 'folder';
+let galFiles  = [];
+
+/* ── Username display ── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.user-display').forEach(el => {
+    let n = el.getAttribute('data-name') || '';
+    if (n.includes('@')) n = n.split('@')[0];
+    el.textContent = n.charAt(0).toUpperCase() + n.slice(1);
+  });
+  buildFontBar();
+  buildEmojiPicker();
+});
+
+/* ── Toast ── */
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ══ FONTS ══ */
+const FONTS = [
+  { label:'Inter',      family:"'Inter', sans-serif"              },
+  { label:'Playfair',   family:"'Playfair Display', serif"        },
+  { label:'Montserrat', family:"'Montserrat', sans-serif"         },
+  { label:'Caveat',     family:"'Caveat', cursive"                },
+  { label:'Syne',       family:"'Syne', sans-serif"               },
+  { label:'Cormorant',  family:"'Cormorant Garamond', serif"      },
+  { label:'Pacifico',   family:"'Pacifico', cursive"              },
+  { label:'Raleway',    family:"'Raleway', sans-serif"            },
+  { label:'Josefin',    family:"'Josefin Sans', sans-serif"       },
+  { label:'Dancing',    family:"'Dancing Script', cursive"        },
+  { label:'Abril',      family:"'Abril Fatface', cursive"         },
+];
+let activeFont = FONTS[0];
+
+function buildFontBar() {
+  const bar = document.getElementById('fontBar');
+  FONTS.forEach((f, i) => {
+    const pill = document.createElement('button');
+    pill.className = 'font-pill' + (i === 0 ? ' active' : '');
+    pill.textContent = f.label;
+    pill.style.fontFamily = f.family;
+    pill.onclick = () => {
+      activeFont = f;
+      document.querySelectorAll('.font-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const h = document.getElementById('galHeroHeading');
+      if (h) h.style.fontFamily = f.family;
+    };
+    bar.appendChild(pill);
+  });
+}
+
+/* ══ EMOJI PICKER ══ */
+const EMOJIS = [
+  '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚',
+  '😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣',
+  '😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓',
+  '🤗','🤔','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪',
+  '😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','💀','💩','🤡','👻','🤖',
+  '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','♥️',
+  '🌹','💐','🌸','🌺','💒','💍','💑','👫','🥂','🍷',
+  '👍','👎','👌','✌️','🤞','🤟','🤘','🤙','👋','🤚','🖐️','✋','🖖','🤜','🤛','👏','🙌','🤝','🙏',
+  '🐶','🐱','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🙈','🙉','🙊','🐦','🦋',
+  '🌸','🌻','🌈','⭐','✨','💫','🌟','🔥','❄️','🌊',
+  '🍕','🍔','🍟','🍦','🧁','🎂','🍰','🍩','🍪','🍫','🍬','🍭','☕','🧃','🥤',
+  '🏠','🏡','🏖️','🏝️','⛰️','✈️','🚀','🚗','🚢','🎡','🎢',
+  '🎭','🎨','🎬','🎤','🎧','🎸','🎹','🎺','🎻','🥁','🎮','🕹️','🎲','🎯','🏆','🥇',
+  '🌙','☀️','⛅','🌈','🌺','🌸','🍁','🍂','🌿','🌾',
+  '💡','🔮','🎁','🎀','🎉','🎊','🎈','🎆','🎇','✨','🎏','🎐','🎑',
+];
+
+function buildEmojiPicker() {
+  const p = document.getElementById('emojiPicker');
+  EMOJIS.forEach(em => {
+    const s = document.createElement('span');
+    s.className = 'ep-emoji'; s.textContent = em;
+    s.onclick = () => {
+      const h = document.getElementById('galHeroHeading');
+      if (h) h.textContent = em + ' ' + h.textContent;
+      document.getElementById('emojiPicker').classList.remove('open');
+    };
+    p.appendChild(s);
+  });
+}
+
+function toggleEmoji() {
+  document.getElementById('emojiPicker').classList.toggle('open');
+}
+function editTitle() {
+  const h = document.getElementById('galHeroHeading');
+  if (h) {
+    const newTitle = prompt("Edit Title:", h.textContent);
+    if (newTitle !== null) {
+      h.textContent = newTitle;
+    }
+  }
+}
+document.addEventListener('click', e => {
+  const p  = document.getElementById('emojiPicker');
+  const b  = document.getElementById('emojiBtn');
+  if (p && !p.contains(e.target) && e.target !== b) p.classList.remove('open');
+});
+
+/* ══ CHOOSE + CREATE ══ */
+function openChoose()  { document.getElementById('chooseOv').classList.add('open'); pickType('folder'); }
+function closeChoose() { document.getElementById('chooseOv').classList.remove('open'); }
+function pickType(t) {
+  selType = t;
+  document.getElementById('chFolder').classList.toggle('sel', t==='folder');
+  document.getElementById('chSingle').classList.toggle('sel', t==='single');
+}
+function goCreate() {
+  closeChoose();
+  const isF = selType === 'folder';
+  document.getElementById('cTitle').textContent    = isF ? '📁 New Memory Folder' : '📸 Single Photo Memory';
+  document.getElementById('cSub').textContent      = isF ? 'Give this memory a name and upload your photos' : 'One special moment with a caption';
+  document.getElementById('cTitleLbl').textContent = isF ? 'Folder Title *' : 'Caption / Title *';
+  document.getElementById('memTitle').placeholder  = isF ? 'e.g. Paris Trip 🗼, Our Anniversary 💍' : 'e.g. First date coffee ☕';
+  document.getElementById('cPhotoLbl').textContent = isF ? 'Photos (multiple)' : 'Photo *';
+  document.getElementById('photoFiles').multiple   = isF;
+  document.getElementById('createOv').classList.add('open');
+  setTimeout(() => document.getElementById('memTitle').focus(), 300);
+}
+document.getElementById('chooseOv').addEventListener('click', e => { if(e.target===document.getElementById('chooseOv')) closeChoose(); });
+
+function parseTypedDate(str) {
+  let d = new Date(str);
+  if (isNaN(d)) d = new Date();
+  if (d > new Date()) d = new Date();
+  return d.toISOString().split('T')[0];
+}
+function closeCreate() {
+  document.getElementById('createOv').classList.remove('open');
+  document.getElementById('createForm').reset();
+  document.getElementById('previewStrip').innerHTML = '';
+}
+document.getElementById('createOv').addEventListener('click', e => { if(e.target===document.getElementById('createOv')) closeCreate(); });
+
+function previewPics(input) {
+  const strip = document.getElementById('previewStrip'); strip.innerHTML = '';
+  [...input.files].forEach(f => { const img=document.createElement('img'); img.className='pthumb'; img.src=URL.createObjectURL(f); strip.appendChild(img); });
+}
+
+document.getElementById('createForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const title = document.getElementById('memTitle').value.trim();
+  if (!title) return showToast('Please enter a title.');
+  const fd = new FormData();
+  fd.append('csrfmiddlewaretoken', csrf);
+  fd.append('title', title);
+  fd.append('date', parseTypedDate(document.getElementById('memDateText').value));
+  fd.append('description', document.getElementById('memDesc').value);
+  [...document.getElementById('photoFiles').files].forEach(f => fd.append('images', f));
+  const btn = document.getElementById('cSubmitBtn');
+  btn.textContent = 'Creating…'; btn.disabled = true;
+  try {
+    const r = await fetch('/memories/', { method:'POST', headers:{'X-Requested-With':'XMLHttpRequest'}, body:fd });
+    const d = await r.json();
+    if (d.status === 'success') {
+      closeCreate(); showToast('✨ Memory created!'); spawnSparkles();
+      setTimeout(() => location.reload(), 1200);
+    } else { showToast('Error: ' + JSON.stringify(d.errors)); }
+  } catch { showToast('Failed to create.'); }
+  finally { btn.textContent='✨ Create Memory'; btn.disabled=false; }
+});
+
+/* ══ GALLERY ══ */
+async function openGallery(id, title, date, desc) {
+  activeId = id;
+  // Info row
+  document.getElementById('galInfoTitle').textContent = title;
+  const dp = document.getElementById('galInfoDesc');
+  if (desc) { dp.textContent = desc; dp.style.display='block'; } else { dp.style.display='none'; }
+  // Hero banner text
+  document.getElementById('galHeroHeading').textContent = title;
+  document.getElementById('galHeroHeading').style.fontFamily = activeFont.family;
+  document.getElementById('galHeroDate').textContent = date;
+  document.getElementById('galOv').classList.add('open');
+  await loadGallery(id);
+}
+function closeGallery() {
+  document.getElementById('galOv').classList.remove('open');
+  activeId = null;
+  document.getElementById('uploadPanel').classList.remove('open');
+}
+
+async function loadGallery(id) {
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = '<div class="photo-grid-empty"><span class="big-em">⏳</span>Loading beautiful moments…</div>';
+  const r = await fetch(`/memories/${id}/get/`);
+  const d = await r.json();
+
+  // Update hero banner image
+  const bannerImg   = document.getElementById('galBannerImg');
+  const bannerEmpty = document.getElementById('galBannerEmpty');
+  const heroOv      = document.getElementById('galHeroOv');
+
+  if (d.photos && d.photos.length > 0) {
+    bannerImg.onload = () => { bannerImg.classList.add('loaded'); bannerEmpty.style.display='none'; };
+    bannerImg.src = d.photos[0].url;
+    heroOv.style.display = 'flex';
+  } else {
+    bannerImg.classList.remove('loaded');
+    bannerEmpty.style.display = 'flex';
+    heroOv.style.display = 'none';
+  }
+
+  if (!d.photos || !d.photos.length) {
+    grid.innerHTML = '<div class="photo-grid-empty"><span class="big-em">📷</span>No photos yet — tap "Add Photos" above!</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  d.photos.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.innerHTML = `
+      <div class="photo-img-wrap">
+        <img src="${p.url}" alt="${esc(p.caption)}" onclick="openLB('${p.url}')"/>
+        <button class="photo-del-btn" onclick="deletePhoto(${p.id},this)">✕</button>
+      </div>
+      ${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ══ UPLOAD PANEL ══ */
+function toggleUpload() {
+  const panel = document.getElementById('uploadPanel');
+  panel.classList.toggle('open');
+  if (!panel.classList.contains('open')) {
+    document.getElementById('galAddFiles').value = '';
+    document.getElementById('captionList').innerHTML = '';
+    galFiles = [];
+  }
+}
+
+function previewGalFiles(input) {
+  galFiles = [...input.files];
+  const list = document.getElementById('captionList'); list.innerHTML = '';
+  galFiles.forEach((f, i) => {
+    const url = URL.createObjectURL(f);
+    const item = document.createElement('div'); item.className = 'caption-item';
+    item.innerHTML = `
+      <img class="caption-thumb" src="${url}" alt=""/>
+      <textarea class="caption-input" id="cap-${i}" placeholder="Add a caption… (optional)" rows="2"></textarea>
+    `;
+    list.appendChild(item);
+  });
+}
+
+async function submitGalPhotos() {
+  if (!activeId) return;
+  if (!galFiles.length) { showToast('Select at least one photo.'); return; }
+  const fd = new FormData();
+  fd.append('csrfmiddlewaretoken', csrf);
+  galFiles.forEach(f => fd.append('images', f));
+  galFiles.forEach((_, i) => {
+    const cap = document.getElementById(`cap-${i}`);
+    fd.append('captions', cap ? cap.value : '');
+  });
+  const btn = document.getElementById('uploadBtn');
+  btn.textContent = 'Uploading…'; btn.disabled = true;
+  try {
+    const r = await fetch(`/memories/${activeId}/add-photo/`, { method:'POST', body:fd });
+    const d = await r.json();
+    if (d.status === 'success') {
+      toggleUpload(); showToast(`📸 ${d.photos.length} photo(s) added!`);
+      await loadGallery(activeId);
+    } else { showToast('Upload failed.'); }
+  } catch { showToast('Upload error.'); }
+  finally { btn.textContent='📤 Upload'; btn.disabled=false; }
+}
+
+/* ══ DELETE PHOTO ══ */
+async function deletePhoto(photoId, btnEl) {
+  if (!confirm('Delete this photo?')) return;
+  try {
+    const r = await fetch(`/memories/photo/delete/${photoId}/`, {
+      method:'POST', headers:{'X-CSRFToken':csrf,'X-Requested-With':'XMLHttpRequest'}
+    });
+    const d = await r.json();
+    if (d.status === 'success') {
+      const card = btnEl.closest('.photo-card');
+      card.style.transition = 'all 0.4s';
+      card.style.opacity='0'; card.style.transform='scale(0.8)';
+      setTimeout(() => { card.remove(); refreshBannerAfterDelete(); }, 400);
+      showToast('🗑 Photo deleted.');
+    } else { showToast('Could not delete.'); }
+  } catch { showToast('Delete failed.'); }
+}
+
+async function refreshBannerAfterDelete() {
+  if (!activeId) return;
+  const r = await fetch(`/memories/${activeId}/get/`);
+  const d = await r.json();
+  const bannerImg   = document.getElementById('galBannerImg');
+  const bannerEmpty = document.getElementById('galBannerEmpty');
+  const heroOv      = document.getElementById('galHeroOv');
+  if (d.photos && d.photos.length > 0) {
+    bannerImg.src = d.photos[0].url; bannerImg.classList.add('loaded');
+    bannerEmpty.style.display='none'; heroOv.style.display='flex';
+  } else {
+    bannerImg.classList.remove('loaded');
+    bannerEmpty.style.display='flex'; heroOv.style.display='none';
+  }
+}
+
+/* ══ DELETE MEMORY ══ */
+async function delMemory(id, el) {
+  if (!confirm('Delete this memory and all its photos forever?')) return;
+  const r = await fetch(`/memories/delete/${id}/`, {method:'POST',headers:{'X-CSRFToken':csrf,'X-Requested-With':'XMLHttpRequest'}});
+  const d = await r.json();
+  if (d.status==='success') { el.closest('.tl-row')?.remove(); showToast('🗑 Memory deleted.'); }
+}
+
+/* ══ LIGHTBOX ══ */
+function openLB(url) { document.getElementById('lbImg').src=url; document.getElementById('lb').classList.add('open'); }
+function closeLB()   { document.getElementById('lb').classList.remove('open'); }
+document.getElementById('lb').addEventListener('click', e => { if(e.target===document.getElementById('lb')) closeLB(); });
+
+/* ══ SPARKLES ══ */
+function spawnSparkles() {
+  ['✨','💖','🌸','⭐','💕'].forEach((s,i) => {
+    setTimeout(() => {
+      const el=document.createElement('div'); el.className='sparkle'; el.textContent=s;
+      el.style.left=(25+Math.random()*50)+'vw'; el.style.top=(25+Math.random()*40)+'vh';
+      document.body.appendChild(el); setTimeout(()=>el.remove(),1500);
+    }, i*180);
+  });
+}
+
+/* ── Escape helper ── */
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closeLB(); closeGallery(); closeCreate(); closeChoose(); }
+});
+// Premium Menu toggle
+function togglePremiumMenu() {
+    const btn = document.querySelector('.premium-menu-btn');
+    const menu = document.getElementById('premiumMenu');
+    if(btn) btn.classList.toggle('open');
+    if(menu) menu.classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('a').forEach(link => {
+        if (link.hostname === window.location.hostname && 
+            !link.hasAttribute('target') && 
+            !link.href.includes('#') && 
+            !link.href.startsWith('javascript:')) {
+            
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const menu = document.getElementById('premiumMenu');
+                if(menu && menu.classList.contains('open')) {
+                    togglePremiumMenu();
+                }
+                document.body.style.transition = 'opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'scale(0.98) translateY(10px)';
+                setTimeout(() => { window.location = link.href; }, 300);
+            });
+        }
+    });
+});
+</script>
+</body>
+</html>

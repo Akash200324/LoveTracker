@@ -1,0 +1,796 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Track Your Periods</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --bg-color: #fffafb;
+        --primary-pink: #f06a88;
+        --circle-pink: #ea7a94;
+        --text-dark: #333333;
+        --text-light: #888888;
+        --card-bg: #ffffff;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Nunito', sans-serif;
+        background: var(--bg-color);
+        background-image: radial-gradient(circle at 50% 30%, #fff1f4 0%, transparent 70%);
+        color: var(--text-dark);
+        -webkit-tap-highlight-color: transparent;
+        padding-bottom: 80px;
+    }
+
+    /* Top Nav */
+    .top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+    }
+    .logo-back {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--text-dark);
+    }
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-pink);
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+    .month-title {
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .nav-icons {
+        display: flex;
+        gap: 16px;
+        font-size: 20px;
+        color: var(--text-dark);
+    }
+
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        padding-bottom: 60px; /* Space for wave */
+        color: white;
+        text-align: center;
+        transition: background 0.5s ease;
+        overflow: hidden; /* Prevent margin collapse causing white top bar */
+    }
+    .hero-section.menstrual { background: linear-gradient(180deg, #ffb3c1, #ff7b93); }
+    .hero-section.follicular { background: linear-gradient(180deg, #a8e6cf, #56c596); }
+    .hero-section.ovulation { background: linear-gradient(180deg, #ffd166, #ffb703); }
+    .hero-section.luteal { background: linear-gradient(180deg, #cdb4db, #b185db); }
+    .hero-section.late { background: linear-gradient(180deg, #ff99c8, #ff5c8a); }
+
+    .top-nav {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+    }
+    .back-btn {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transition: background 0.3s;
+    }
+    .back-btn:hover { background: rgba(0,0,0,0.05); }
+    @media (max-width: 768px) { 
+        .top-nav { display: none; }
+        .week-calendar { margin-top: 0 !important; padding-top: 20px !important; margin-bottom: 15px !important; }
+        .hero-info { padding-top: 5px !important; }
+        .day-label { font-size: 48px; }
+    }
+
+    /* Week Calendar */
+    .week-calendar {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+        margin: 10px 0 30px;
+    }
+    .day-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 14%;
+        color: #333;
+    }
+    .day-name {
+        font-size: 10px;
+        color: rgba(51,51,51,0.8);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .day-name.today { color: #333; font-weight: 900; }
+    .day-num {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 50%;
+        color: #333;
+    }
+    .day-num.period {
+        background: rgba(0,0,0,0.1);
+    }
+    .day-num.period-outline {
+        border: 2px dashed rgba(0,0,0,0.3);
+    }
+    .day-num.ovulation-outline {
+        border: 2px dashed #64b5f6;
+        background: transparent;
+        color: #fff;
+    }
+    .day-num.today {
+        background: transparent;
+        border: 2px dashed #333;
+    }
+
+    .hero-info {
+        padding: 0 20px 20px;
+        position: relative;
+        z-index: 2;
+    }
+    .phase-label {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        opacity: 0.9;
+    }
+    .day-label {
+        font-size: 56px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 16px;
+    }
+    .btn-edit-dates {
+        background: white;
+        color: #ff7b93;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    .hero-section.follicular .btn-edit-dates { color: #56c596; }
+    .hero-section.ovulation .btn-edit-dates { color: #ffb703; }
+    .hero-section.luteal .btn-edit-dates { color: #b185db; }
+
+    .message-label {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        opacity: 0.9;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    /* Daily Insights */
+    .section-title {
+        font-size: 18px;
+        font-weight: 800;
+        margin: 0 20px 12px;
+    }
+    .insights-scroll {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 0 20px 20px;
+        scrollbar-width: none;
+    }
+    .insights-scroll::-webkit-scrollbar { display: none; }
+    
+    .insight-card {
+        background: white;
+        min-width: 140px;
+        width: 140px;
+        height: 162px;
+        border-radius: 16px;
+        padding: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        border: 2px solid transparent;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .card-title {
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+    .card-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #4ecdc4;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+    .card-icons-row {
+        display: flex;
+        gap: 4px;
+        color: var(--primary-pink);
+        font-size: 20px;
+    }
+
+    /* Full Month Calendar */
+    .calendar-card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+    .cal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        padding: 0 10px;
+    }
+    .cal-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--text-light);
+        margin-bottom: 12px;
+    }
+    .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px 4px;
+        text-align: center;
+    }
+    .cal-day {
+        position: relative;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 600;
+        z-index: 1;
+    }
+    .cal-day-inner {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.2s;
+    }
+    .cal-day.empty { visibility: hidden; }
+    .cal-day.period .cal-day-inner {
+        background: var(--primary-pink);
+        color: white;
+    }
+    .cal-day.ovulation .cal-day-inner {
+        background: transparent;
+        color: #64b5f6;
+        border: 2px dashed #64b5f6;
+        border-radius: 50%;
+        transform: scale(1.1);
+        z-index: 10;
+        font-weight: 800;
+    }
+    .cal-day.ovulation .cal-day-inner::before {
+        display: none;
+    }
+
+    .pregnant-chance-card {
+        background: #e1d5f2;
+        border-radius: 16px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+        color: #4a3b69;
+        margin-bottom: 20px;
+    }
+    .chance-badge {
+        background: white;
+        color: var(--primary-pink);
+        font-size: 24px;
+        font-weight: 800;
+        padding: 4px 20px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 12px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+    }
+    .modal-box {
+        background: white;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 24px 24px 0 0;
+        padding: 30px 20px;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .modal-overlay.open {
+        display: flex;
+    }
+    .modal-overlay.open .modal-box {
+        transform: translateY(0);
+    }
+    .modal-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 16px;
+    }
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-light);
+        margin-bottom: 6px;
+    }
+    .form-input {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        font-size: 16px;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        background: var(--primary-pink);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    /* Flow selection */
+    .flow-options {
+        display: flex;
+        gap: 10px;
+    }
+    .flow-option {
+        flex: 1;
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--text-light);
+    }
+    .flow-option.selected {
+        border-color: var(--primary-pink);
+        color: var(--primary-pink);
+        background: #fff0f3;
+    }
+</style>
+</head>
+<body>
+
+    <div class="hero-section {{ current_phase|lower }}">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="{% url 'dashboard' %}" class="back-btn" title="Dashboard">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+        </div>
+
+        <!-- Week Calendar -->
+        <div class="week-calendar" id="weekCalendar">
+            <!-- JS fills this -->
+        </div>
+
+        <!-- Hero Info -->
+        <div class="hero-info" style="padding-top: 20px;">
+            <div class="phase-label">{% if current_phase == 'Late' %}Delay Mode{% else %}{{ current_phase }}{% endif %}</div>
+            <div class="day-label">Day {{ current_day }}</div>
+            
+            {% if is_female %}
+                <button class="btn-edit-dates" onclick="openDatesModal()">Edit period dates</button>
+            {% else %}
+                <div style="font-size: 12px; font-weight: 700; background: rgba(0,0,0,0.1); padding: 4px 12px; border-radius: 20px; display:inline-block; margin-bottom: 20px;">Partner View Only</div>
+            {% endif %}
+            
+            <div class="message-label">{{ daily_message }}</div>
+        </div>
+
+        <!-- Wavy Bottom SVG -->
+        <svg viewBox="0 0 1440 120" style="position: absolute; bottom: -1px; left: 0; width: 100%; height: auto; z-index: 1;">
+            <path fill="#fdfaf6" d="M0,64L80,74.7C160,85,320,107,480,101.3C640,96,800,64,960,53.3C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+
+    <!-- Daily Insights -->
+    <h2 class="section-title">My daily insights</h2>
+    <div class="insights-scroll">
+        {% load static %}
+        {% if is_female %}
+        <div class="insight-card" onclick="openSymptomsModal()">
+            <div style="position: absolute; top:0; left:0; width:100%; height:40%; z-index: 2; background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);"></div>
+            <div style="position: absolute; bottom:0; left:0; width:100%; height:40%; z-index: 2; background: linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);"></div>
+            <div style="position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; text-shadow: 0 2px 10px white;">
+                <div class="card-title">Log your<br>symptoms</div>
+                <div class="card-icon" style="margin-top: auto; font-size: 24px; color: #4a3b69;"><i class="fa-solid fa-plus"></i></div>
+            </div>
+            <img src="{% static 'tracker/images/log_symptoms.png' %}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1;">
+        </div>
+        {% endif %}
+        
+        <div class="insight-card active">
+            <div style="position: absolute; top:0; left:0; width:100%; height:40%; z-index: 2; background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);"></div>
+            <div style="position: absolute; bottom:0; left:0; width:100%; height:50%; z-index: 2; background: linear-gradient(to top, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 100%);"></div>
+            <div style="position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; text-shadow: 0 2px 10px white;">
+                <div class="card-title">Today's<br>symptoms</div>
+                <div class="card-icons-row" id="todaySymptomsIcons" style="margin-top: auto;">
+                    <!-- Filled via JS if symptoms exist -->
+                    <i class="fa-solid fa-face-smile"></i>
+                </div>
+            </div>
+            <img src="{% static 'tracker/images/today_symptoms.png' %}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1;">
+        </div>
+        
+        <div class="insight-card">
+            <div style="position: absolute; top:0; left:0; width:100%; height:40%; z-index: 2; background: linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);"></div>
+            <div style="position: absolute; bottom:0; left:0; width:100%; height:40%; z-index: 2; background: linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);"></div>
+            <div style="position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; text-shadow: 0 2px 10px white;">
+                <div class="card-title">Chance of<br>getting pregnant</div>
+                <div style="font-size: 26px; font-weight: 800; margin-top: auto;">
+                    {% if current_phase == 'Ovulation' %}High
+                    {% elif current_phase == 'Follicular' %}Medium
+                    {% else %}Low{% endif %}
+                </div>
+            </div>
+            {% load static %}
+            {% if current_phase == 'Ovulation' %}
+                <img src="{% static 'tracker/images/chance_high.png' %}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1;">
+            {% elif current_phase == 'Follicular' %}
+                <img src="{% static 'tracker/images/chance_medium.png' %}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1;">
+            {% else %}
+                <img src="{% static 'tracker/images/chance_low.png' %}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1;">
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Predictive Calendar Section -->
+    <div style="padding: 0 20px; margin-bottom: 30px;">
+        <h1 style="font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 20px;">Predict<br><span style="font-weight: 400;">your fertile window</span></h1>
+        
+        <div class="calendar-card">
+            <div class="cal-header">
+                <i class="fa-solid fa-chevron-left" style="cursor:pointer;" onclick="prevMonth()"></i>
+                <span id="calMonthYear">August 2026</span>
+                <i class="fa-solid fa-chevron-right" style="cursor:pointer;" onclick="nextMonth()"></i>
+            </div>
+            <div class="cal-weekdays">
+                <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+            </div>
+            <div class="cal-grid" id="fullMonthGrid">
+                <!-- JS fills this -->
+            </div>
+        </div>
+        
+        <div class="pregnant-chance-card" style="background: #e1f5fe; color: #0277bd;">
+            <div style="font-size: 16px; font-weight: 800; position:relative; z-index:2;">Today's Couple Tip:</div>
+            <div style="position:relative; z-index:2; margin-top:10px; font-size: 14px; font-weight: 600; line-height: 1.5;">
+                {% if current_phase == 'Ovulation' %}
+                Plan a romantic and intimate evening together. Dim the lights, play some music, and reconnect!
+                {% elif current_phase == 'Follicular' %}
+                Energy is rising! Plan a fun, active date today like hiking, exploring a new neighborhood, or trying a new workout class together.
+                {% elif current_phase == 'Menstrual' %}
+                Rest is key right now. Bring her a hot water bottle, her favorite snacks, and suggest a cozy movie night in.
+                {% else %}
+                Surprise her with a small, unexpected gesture today. A sweet note or her favorite treat goes a long way!
+                {% endif %}
+            </div>
+            <i class="fa-solid fa-heart" style="position:absolute; right:10px; bottom:-10px; font-size: 80px; color: rgba(2,119,189,0.1); z-index: 1;"></i>
+        </div>
+    </div>
+
+    <!-- MODAL: Edit Dates -->
+    <div class="modal-overlay" id="datesModal" onclick="if(event.target===this) closeDatesModal()">
+        <div class="modal-box">
+            <div class="modal-title">Edit Period Dates</div>
+            <form method="POST" action="{% url 'period_tracker' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="log_period">
+                <input type="hidden" name="cycle_id" value="{% if current_cycle %}{{ current_cycle.id }}{% endif %}">
+                <div class="form-group">
+                    <label>Period Start Date</label>
+                    <input type="date" name="start_date" class="form-input" required value="{% if current_cycle %}{{ current_cycle.start_date|date:'Y-m-d' }}{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label>Period End Date (Optional)</label>
+                    <input type="date" name="end_date" class="form-input" value="{% if current_cycle and current_cycle.end_date %}{{ current_cycle.end_date|date:'Y-m-d' }}{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label>Average Cycle Length (Days)</label>
+                    <input type="number" name="cycle_length" class="form-input" required value="{% if current_cycle %}{{ current_cycle.cycle_length }}{% else %}28{% endif %}" min="20" max="45">
+                </div>
+                <button type="submit" class="btn-submit">Save Dates</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Log Symptoms -->
+    <div class="modal-overlay" id="symptomsModal" onclick="if(event.target===this) closeSymptomsModal()">
+        <div class="modal-box">
+            <div class="modal-title">Log Today's Symptoms</div>
+            <form method="POST" action="{% url 'period_tracker' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="log_symptom">
+                <input type="hidden" name="cycle_id" value="{% if current_cycle %}{{ current_cycle.id }}{% endif %}">
+                <input type="hidden" name="date" id="symptomDateInput" value="">
+                
+                {% if current_phase == 'Menstrual' %}
+                <div class="form-group">
+                    <label>Flow Intensity</label>
+                    <div class="flow-options">
+                        <div class="flow-option" onclick="selectFlow('Light')">Light</div>
+                        <div class="flow-option" onclick="selectFlow('Medium')">Medium</div>
+                        <div class="flow-option" onclick="selectFlow('Heavy')">Heavy</div>
+                    </div>
+                    <input type="hidden" name="flow" id="flowInput" value="">
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label>Mood</label>
+                    <input type="text" name="mood" class="form-input" placeholder="e.g. Happy, Crampy, Tired">
+                </div>
+                
+                {% if current_phase == 'Menstrual' %}
+                <div class="form-group">
+                    <label>Other Symptoms</label>
+                    <input type="text" name="symptoms" class="form-input" placeholder="Headache, cravings, etc.">
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn-submit">Save Log</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // Symptoms Data from Backend
+    const symptomsData = JSON.parse('{{ symptoms_json|escapejs }}' || '{}');
+    
+    // Set today's date for symptom logger
+    const today = new Date();
+    // Correct local timezone format YYYY-MM-DD
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+    const todayStr = localISOTime.split('T')[0];
+    
+    document.getElementById('symptomDateInput').value = todayStr;
+
+    // Cycle prediction logic
+    const cycleLength = {{ cycle_length|default:28 }};
+    const periodLength = {{ period_length|default:5 }};
+    const startDateStr = '{{ start_date_str|default:"" }}';
+    
+    let cycleStart = null;
+    if (startDateStr) {
+        const [sYear, sMonth, sDay] = startDateStr.split('-');
+        cycleStart = new Date(sYear, sMonth - 1, sDay);
+    }
+
+    // Week Calendar Generation Logic
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    let weekHtml = '';
+    let startOfWeek = new Date(today);
+    let day = startOfWeek.getDay() || 7; 
+    startOfWeek.setDate(today.getDate() - day + 1);
+
+    for(let i=0; i<7; i++) {
+        let loopDate = new Date(startOfWeek);
+        loopDate.setDate(loopDate.getDate() + i);
+        
+        let isToday = loopDate.toDateString() === today.toDateString();
+        let d = loopDate.getDate();
+
+        let dayInCycle = 999;
+        if (cycleStart) {
+            let diffTime = Date.UTC(loopDate.getFullYear(), loopDate.getMonth(), loopDate.getDate()) - 
+                           Date.UTC(cycleStart.getFullYear(), cycleStart.getMonth(), cycleStart.getDate());
+            let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays >= 0) {
+                dayInCycle = diffDays % cycleLength;
+            }
+        }
+
+        if(isToday) {
+            weekHtml += `
+            <div class="day-col">
+                <span class="day-name today">TODAY</span>
+                <div class="day-num today">${d}</div>
+            </div>`;
+        } else if (dayInCycle < periodLength) {
+            weekHtml += `
+            <div class="day-col">
+                <span class="day-name">${days[i]}</span>
+                <div class="day-num period-outline">${d}</div>
+            </div>`;
+        } else if (dayInCycle >= (cycleLength - 19) && dayInCycle <= (cycleLength - 14)) {
+            weekHtml += `
+            <div class="day-col">
+                <span class="day-name">${days[i]}</span>
+                <div class="day-num ovulation-outline">${d}</div>
+            </div>`;
+        } else {
+            weekHtml += `
+            <div class="day-col">
+                <span class="day-name">${days[i]}</span>
+                <div class="day-num">${d}</div>
+            </div>`;
+        }
+    }
+    document.getElementById('weekCalendar').innerHTML = weekHtml;
+
+    // Full Month Calendar Generation Logic
+    let currentMonthOffset = 0;
+    
+    function renderFullCalendar() {
+        let renderDate = new Date(today.getFullYear(), today.getMonth() + currentMonthOffset, 1);
+        let renderYear = renderDate.getFullYear();
+        let renderMonth = renderDate.getMonth();
+        
+        document.getElementById('calMonthYear').innerText = monthNames[renderMonth] + " " + renderYear;
+        
+        let daysInMonth = new Date(renderYear, renderMonth + 1, 0).getDate();
+        let firstDayIndex = new Date(renderYear, renderMonth, 1).getDay() || 7; 
+        firstDayIndex -= 1; // 0-indexed for Mon-Sun
+        
+        let calHtml = '';
+        for (let i = 0; i < firstDayIndex; i++) {
+            calHtml += `<div class="cal-day empty"></div>`;
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+            let loopDate = new Date(renderYear, renderMonth, d);
+            let classes = ['cal-day'];
+            
+            if (cycleStart) {
+                // Using UTC timestamp difference to avoid daylight saving time offset errors
+                let diffTime = Date.UTC(loopDate.getFullYear(), loopDate.getMonth(), loopDate.getDate()) - 
+                               Date.UTC(cycleStart.getFullYear(), cycleStart.getMonth(), cycleStart.getDate());
+                let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                let dayInCycle = ((diffDays % cycleLength) + cycleLength) % cycleLength;
+                if (dayInCycle >= 0 && dayInCycle < periodLength) {
+                    classes.push('period');
+                }
+                if (dayInCycle >= (cycleLength - 19) && dayInCycle <= (cycleLength - 14)) {
+                    classes.push('ovulation');
+                }
+            }
+            calHtml += `<div class="${classes.join(' ')}"><div class="cal-day-inner">${d}</div></div>`;
+        }
+        document.getElementById('fullMonthGrid').innerHTML = calHtml;
+    }
+
+    function prevMonth() {
+        currentMonthOffset--;
+        renderFullCalendar();
+    }
+    function nextMonth() {
+        currentMonthOffset++;
+        renderFullCalendar();
+    }
+    
+    // Initial render
+    renderFullCalendar();
+
+    // Check today's symptoms
+    if(symptomsData[todayStr]) {
+        let symps = symptomsData[todayStr];
+        let h = "";
+        let isMenstrual = '{{ current_phase }}' === 'Menstrual';
+        
+        if(symps.flow && isMenstrual) {
+            let color = "#ff7b93";
+            if(symps.flow === "Medium") color = "#e63946";
+            if(symps.flow === "Heavy") color = "#8b0000";
+            h += `<i class="fa-solid fa-droplet" style="color: ${color}; font-size: 20px; margin-right: 8px;" title="${symps.flow}"></i>`;
+        }
+        if(symps.mood) h += `<div style="font-size:12px; font-weight:700; background:rgba(0,0,0,0.05); padding:4px 10px; border-radius:12px; display:inline-block; margin-right:4px; margin-bottom:4px;">${symps.mood}</div>`;
+        
+        if(symps.symptoms && isMenstrual) {
+            h += `<div style="font-size:12px; font-weight:700; background:rgba(0,0,0,0.05); padding:4px 10px; border-radius:12px; display:inline-block; margin-bottom:4px;">${symps.symptoms}</div>`;
+        }
+        document.getElementById('todaySymptomsIcons').innerHTML = h || '<span style="font-size:12px; color:#888;">Logged</span>';
+    } else {
+        document.getElementById('todaySymptomsIcons').innerHTML = '<span style="font-size:12px; color:#888;">None</span>';
+    }
+
+    // Modals Logic
+    function openDatesModal() {
+        document.getElementById('datesModal').classList.add('open');
+    }
+    function closeDatesModal() {
+        document.getElementById('datesModal').classList.remove('open');
+    }
+    function openSymptomsModal() {
+        if (!'{{ current_cycle }}') {
+            alert("Please edit period dates to start a cycle first!");
+            return;
+        }
+        document.getElementById('symptomsModal').classList.add('open');
+    }
+    function closeSymptomsModal() {
+        document.getElementById('symptomsModal').classList.remove('open');
+    }
+    
+    // Flow Selection UI
+    function selectFlow(flowType) {
+        document.getElementById('flowInput').value = flowType;
+        document.querySelectorAll('.flow-option').forEach(el => el.classList.remove('selected'));
+        event.target.classList.add('selected');
+    }
+</script>
+</body>
+</html>

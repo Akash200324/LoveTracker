@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aria | Partner Wellness View</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        /* =============================================================
+           1. VARIABLES & THEME
+           ============================================================= */
+        :root {
+            --primary: #E8869A;
+            --primary-light: #F4A7B9;
+            --accent: #C06080;
+            --bg: #FDF8F9;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #3D3D3D;
+            --text-sub: #8E8E8E;
+            --shadow: 0 20px 40px rgba(232, 134, 154, 0.1);
+            --pink-bg: #fff5f7;
+            --rose: #ff4d6d;
+            --rose-light: #ff8fa3;
+            --rose-dark: #c9184a;
+            --white: #ffffff;
+            --charcoal: #2d2d2d;
+            --gray: #6b7280;
+        }
+
+        /* =============================================================
+           2. BASE RESET
+           ============================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-top: 68px;
+        }
+
+        /* Background Animated Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .orb-1 { width: 400px; height: 400px; background: var(--primary-light); top: -100px; right: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: #DDA0DD; bottom: -50px; left: -50px; }
+
+        /* ─── NAVBAR ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            height: 68px;
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255,77,109,0.1);
+            box-shadow: 0 4px 30px rgba(255,77,109,0.06);
+            transition: background 0.3s;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo .heart-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 14px rgba(255,77,109,0.4);
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+
+        .nav-logo span {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--rose);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            list-style: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--charcoal);
+            letter-spacing: 0.3px;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--rose);
+            border-radius: 2px;
+            transition: width 0.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        .nav-links a:hover {
+            color: var(--rose);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-couple {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .couple-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .couple-avatars .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2.5px solid white;
+            object-fit: cover;
+            background: linear-gradient(135deg, #ffb3c1, #ff8fa3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .couple-avatars .avatar:last-child {
+            margin-left: -10px;
+        }
+
+        .couple-avatars .avatar:hover {
+            transform: scale(1.1) translateY(-2px);
+            z-index: 1;
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--charcoal);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* --- PREMIUM GLASSY MENU --- */
+        .premium-menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @media (min-width: 769px) {
+            .premium-menu-btn { display: none; }
+        }
+        .premium-menu-btn span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--charcoal, #2d2d2d);
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .premium-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .premium-menu-btn.open span:nth-child(2) { opacity: 0; }
+        .premium-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .premium-overlay-menu {
+            position: fixed; inset: 0; z-index: 10001;
+            background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .premium-overlay-menu.open { opacity: 1; pointer-events: all; }
+        .premium-menu-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transition-delay: 0.1s;
+        }
+        .premium-overlay-menu.open .premium-menu-content { transform: translateY(0) scale(1); opacity: 1; }
+        .premium-menu-content a {
+            font-size: 1.4rem; font-weight: 600; color: #ff4d6d;
+            text-decoration: none; letter-spacing: 0.5px;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .premium-menu-content a:hover { color: var(--rose, #ff4d6d); transform: scale(1.05); }
+
+        /* --- APPLE SMOOTH PAGE TRANSITIONS --- */
+        body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ─── DASHBOARD GRID ─── */
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .pos-header { grid-column: 1; grid-row: 1; }
+        .pos-sleep { grid-column: 2; grid-row: 1 / span 2; }
+        .pos-progress { grid-column: 1; grid-row: 2; align-self: center; }
+        .pos-energy { grid-column: 2; grid-row: 3; }
+        .pos-journal { grid-column: 1; grid-row: 3; }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 32px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .time-chip {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .section-eyebrow {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .greeting-main {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 4px;
+            font-style: italic;
+        }
+
+        .calendar-strip {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .cal-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cal-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            font-size: 18px;
+            transition: 0.3s;
+            border: 1px solid rgba(232, 134, 154, 0.1);
+            cursor: pointer;
+        }
+
+        .cal-circle.today {
+            background: var(--primary);
+            border: none;
+            color: white;
+        }
+
+        .cal-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+        }
+
+        .cal-date {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .sleep-wrap {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .sleep-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .sleep-hours {
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .sleep-unit {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .sleep-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .time-box strong {
+            font-size: 16px;
+            color: var(--text-main);
+        }
+
+        .battery-outer {
+            height: 48px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .battery-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--accent));
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        .battery-label {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            mix-blend-mode: exclusion;
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .mood-btn {
+            background: white;
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 15px 5px;
+            text-align: center;
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .mood-btn.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            opacity: 1;
+            filter: grayscale(0);
+            transform: translateY(-5px);
+        }
+
+        .mood-emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .mood-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        .journal-area {
+            width: 100%;
+            min-height: 120px;
+            background: transparent;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            resize: none;
+            color: var(--text-main);
+            outline: none;
+            padding: 10px 0;
+            background-image: linear-gradient(transparent 31px, #f0f0f0 31px);
+            background-size: 100% 32px;
+            line-height: 32px;
+            pointer-events: none;
+        }
+
+        .popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup.open {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 40px;
+            border-radius: 40px;
+            width: 85%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .close-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 20px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 850px) {
+            .main-dashboard { grid-template-columns: 1fr; }
+            .pos-header, .pos-sleep, .pos-progress, .pos-energy, .pos-journal { grid-column: 1; grid-row: auto; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 1.5rem; }
+            .nav-links { display: none !important; }
+            .nav-couple { display: none; }
+            .nav-toggle { display: none; }
+            body { padding-top: 0; padding-bottom: 90px; }
+            .main-dashboard { padding-bottom: 90px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── NAVBAR ─── -->
+    <nav id="navbar">
+        <a class="nav-logo" href="#">
+            <div class="heart-icon">💞</div>
+            <span>Love Tracker</span>
+        </a>
+
+        <ul class="nav-links" id="navLinks">
+            <li>
+                <a href="{% url 'dashboard' %}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'profile' %}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profile
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-couple">
+            <div class="couple-avatars" onclick="openSetupModal()" style="cursor:pointer" title="Couple Setup">
+                <div class="avatar" id="avatar1"></div>
+                <div class="avatar" id="avatar2"></div>
+            </div>
+        </div>
+
+        <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- Premium Glassy Hamburger Menu Button -->
+    <div class="premium-menu-btn" onclick="togglePremiumMenu()">
+        <span></span><span></span><span></span>
+    </div>
+
+    <!-- Premium Glassy Overlay Menu -->
+    <div class="premium-overlay-menu" id="premiumMenu">
+        <div class="premium-menu-content">
+            <a href="{% url 'dashboard' %}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Dashboard
+            </a>
+            <a href="{% url 'profile' %}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Profile
+            </a>
+            <a href="{% url 'logout' %}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <main class="main-dashboard">
+
+        <!-- 1. HEADER SECTION -->
+        <div class="pos-header">
+            <header>
+                <div class="time-chip">
+                    <div class="time-dot"></div>
+                    <span id="liveTime">--:-- --</span>
+                </div>
+
+            </header>
+            <section style="margin-bottom: 32px;">
+                <div class="greeting-main">{{ partner.name|default:partner.username|default:"Partner" }} ✨</div>
+                <p style="color: var(--text-sub); font-size: 15px;">Viewing shared wellness data from today.</p>
+            </section>
+        </div>
+
+        <!-- 2. WEEKLY PROGRESS STRIP -->
+        <section class="glass-card fade-up pos-progress">
+            <div class="section-eyebrow">Weekly History</div>
+            <div class="calendar-strip">
+                {% for entry in history %}
+                <div class="cal-day">
+                    <div class="cal-circle {% if entry.date == today %}today{% endif %}"
+                         onclick="showPopup('{{ entry.date|date:'l, F j' }}', '{{ entry.mood_emoji }}', '{{ entry.sleep_hours }}', '{{ entry.energy_percent }}')">
+                        {{ entry.mood_emoji }}
+                    </div>
+                    <div class="cal-label">{{ entry.date|date:"D" }}</div>
+                    <div class="cal-date">{{ entry.date.day }}</div>
+                </div>
+                {% empty %}
+                <p style="font-size: 12px; color: var(--text-sub);">No shared history yet.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- 3. SLEEP -->
+        <section class="glass-card fade-up pos-sleep">
+            <div class="section-eyebrow">Rest & Vitality</div>
+            <div class="section-title">Sleep Quality</div>
+            <div class="sleep-wrap">
+                <canvas id="sleepCanvas" width="240" height="240"></canvas>
+                <div class="sleep-center">
+                    <div class="sleep-hours">{{ today_entry.sleep_hours|default:"0.0" }}</div>
+                    <div class="sleep-unit">hrs slept</div>
+                </div>
+            </div>
+            <div class="sleep-times">
+                <div class="time-box">
+                    <span>Bedtime</span>
+                    <strong>{{ today_entry.bedtime|default:"--" }}</strong>
+                </div>
+                <div class="time-box" style="text-align: right;">
+                    <span>Wake up</span>
+                    <strong>{{ today_entry.wake_time|default:"--" }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ENERGY & MOOD -->
+        <section class="glass-card fade-up pos-energy">
+            <div class="section-eyebrow">Mind & Body</div>
+            <div class="section-title">Daily Energy</div>
+            <div class="battery-outer">
+                <div class="battery-fill" style="width: {{ today_entry.energy_percent|default:0 }}%;"></div>
+                <div class="battery-label">{{ today_entry.energy_percent|default:0 }}%</div>
+            </div>
+
+            <div class="section-eyebrow" style="margin-top: 32px;">Reported Mood</div>
+            <div class="mood-grid">
+                <div class="mood-btn {% if today_entry.mood_type == 'ecstatic' %}active{% endif %}">
+                    <span class="mood-emoji">🤩</span><span class="mood-label">Happy</span>
+                </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'calm' %}active{% endif %}">
+                    <span class="mood-emoji">😌</span><span class="mood-label">Calm</span>
+                </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'sad' %}active{% endif %}">
+                    <span class="mood-emoji">😔</span><span class="mood-label">Low</span>
+                </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'romantic' %}active{% endif %}">
+                    <span class="mood-emoji">❤️</span><span class="mood-label">Love</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. REFLECTION -->
+        <section class="glass-card fade-up pos-journal">
+            <div class="section-eyebrow">Reflection</div>
+            <div class="section-title">Daily Journal</div>
+            <textarea class="journal-area" readonly>{{ today_entry.journal_text|default:"No notes shared for today." }}</textarea>
+
+            <div style="margin-top: 20px;">
+                <div class="section-eyebrow">Stat Analysis</div>
+                <canvas id="waveChart" style="width: 100%; height: 120px;"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <footer style="text-align: center; padding: 20px; color: var(--text-sub); font-size: 12px; font-weight: 700; letter-spacing: 1px;">
+        PARTNER VIEW &bull; 2026
+    </footer>
+
+    <!-- History Popup -->
+    <div id="dayPopup" class="popup" onclick="closePopup()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <div id="popupMood" style="font-size: 50px; margin-bottom: 10px;"></div>
+            <h3 id="popupDate" style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 10px;"></h3>
+            <p id="popupInfo" style="color: var(--text-sub); font-size: 14px;"></p>
+            <button class="close-btn" onclick="closePopup()">Close History</button>
+        </div>
+    </div>
+
+    <script>
+        // ─── NAVBAR TOGGLE ───
+        function toggleNav() {
+            document.getElementById('navLinks').classList.toggle('open');
+        }
+
+        // ─── AVATAR INITIALS LOGIC ───
+        function updateNavbarAvatars(name1, name2) {
+            const a1 = document.getElementById('avatar1');
+            const a2 = document.getElementById('avatar2');
+
+            if (a1) a1.textContent = name1[0]?.toUpperCase() || 'S';
+            if (a2) a2.textContent = name2[0]?.toUpperCase() || 'A';
+        }
+
+        // Initialize avatars with placeholder data (should be replaced with actual user data)
+        updateNavbarAvatars("{{ user.username }}", "{{ partner.username }}");
+
+        function updateTime() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            document.getElementById('liveTime').textContent = `${h}:${m.toString().padStart(2, '0')} ${ampm}`;
+        }
+        updateTime();
+        setInterval(updateTime, 30000);
+
+        function showPopup(date, mood, sleep, energy) {
+            document.getElementById('popupDate').textContent = date;
+            document.getElementById('popupMood').textContent = mood;
+            document.getElementById('popupInfo').innerHTML = `Slept <b>${sleep}h</b> · Energy <b>${energy}%</b>`;
+            document.getElementById('dayPopup').classList.add('open');
+        }
+
+        function closePopup() {
+            document.getElementById('dayPopup').classList.remove('open');
+        }
+
+        // Static Sleep Draw
+        const canvas = document.getElementById('sleepCanvas');
+        const ctx = canvas.getContext('2d');
+        const cx = 120, cy = 120, R = 100, r = 75;
+
+        function drawSleep() {
+            ctx.clearRect(0, 0, 240, 240);
+            ctx.beginPath();
+            ctx.arc(cx, cy, (R + r) / 2, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(232,134,154,0.05)';
+            ctx.lineWidth = R - r;
+            ctx.stroke();
+
+            const grad = ctx.createLinearGradient(0, 0, 240, 240);
+            grad.addColorStop(0, '#F4A7B9');
+            grad.addColorStop(1, '#C06080');
+            ctx.beginPath();
+            ctx.arc(cx, cy, (R + r) / 2, 5.5, 3.5);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = R - r - 2;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+        drawSleep();
+
+        // Wave Chart Analysis
+        const wc = document.getElementById('waveChart');
+        const wctx = wc.getContext('2d');
+        function initChart() {
+            const w = wc.offsetWidth, h = 120;
+            wc.width = w * 2; wc.height = h * 2; wctx.scale(2, 2);
+            const energy = {{ today_entry.energy_percent|default:50 }};
+            const sleep = {{ today_entry.sleep_hours|default:0 }} * 10;
+            const points = [{v: sleep}, {v: energy}, {v: (energy+sleep)/2}];
+            const pad = 40; const stepX = (w - pad * 2) / (points.length - 1);
+            wctx.beginPath();
+            points.forEach((p, i) => {
+                const x = pad + i * stepX;
+                const y = 30 + (1 - p.v / 100) * 60;
+                if (i === 0) wctx.moveTo(x, y);
+                else wctx.lineTo(x,y);
+            });
+            wctx.strokeStyle = '#E8869A'; wctx.lineWidth = 3; wctx.stroke();
+        }
+        initChart();
+
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-up').forEach((el) => obs.observe(el));
+
+        // Premium Menu toggle & transitions
+        function togglePremiumMenu() {
+            const btn = document.querySelector('.premium-menu-btn');
+            const menu = document.getElementById('premiumMenu');
+            if(btn) btn.classList.toggle('open');
+            if(menu) menu.classList.toggle('open');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(link => {
+                if (link.hostname === window.location.hostname && 
+                    !link.hasAttribute('target') && 
+                    !link.href.includes('#') && 
+                    !link.href.startsWith('javascript:')) {
+                    
+                    link.addEventListener('click', e => {
+                        e.preventDefault();
+                        const menu = document.getElementById('premiumMenu');
+                        if(menu && menu.classList.contains('open')) {
+                            togglePremiumMenu();
+                        }
+                        document.body.style.transition = 'opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                        document.body.style.opacity = '0';
+                        document.body.style.transform = 'scale(0.98) translateY(10px)';
+                        setTimeout(() => { window.location = link.href; }, 300);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Couple Love Tracker 💑{% endblock %}</title>
+
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'tracker/css/style.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="{% block body_class %}app-body{% endblock %}">
+
+{% if user.is_authenticated %}
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <div class="logo">💑 <span>LoveTracker</span></div>
+    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  </div>
+
+  <!-- COUPLE SECTION (FIXED) -->
+  {% if couple and couple.is_complete %}
+  <div class="couple-mini">
+
+    <div class="avatar-pair">
+      <div class="avatar" style="background:{{ user.avatar_color }}">
+        {{ couple.user1.name|first }}
+      </div>
+
+      <div class="heart-icon">❤️</div>
+
+      <div class="avatar" style="background:#9c27b0">
+        {{ couple.user2.name|first }}
+      </div>
+    </div>
+
+    <p>{{ couple.user1.name }} & {{ couple.user2.name }}</p>
+
+    {% if couple.start_date %}
+      <span class="days-badge">
+        {{ couple.days_together }} days together 💕
+      </span>
+    {% endif %}
+
+  </div>
+  {% endif %}
+
+  <!-- NAVIGATION -->
+  <nav class="sidebar-nav">
+
+    <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <span class="nav-icon">🏠</span><span>Dashboard</span>
+    </a>
+
+    <a href="{% url 'movie_tracker' %}" class="nav-item {% if request.resolver_match.url_name == 'movie_tracker' %}active{% endif %}">
+      <span class="nav-icon">🎬</span><span>Movies & Series</span>
+    </a>
+
+    <a href="{% url 'songs' %}" class="nav-item {% if request.resolver_match.url_name == 'songs' %}active{% endif %}">
+      <span class="nav-icon">🎵</span><span>Songs</span>
+    </a>
+
+    <a href="{% url 'memories' %}" class="nav-item {% if request.resolver_match.url_name == 'memories' %}active{% endif %}">
+      <span class="nav-icon">📸</span><span>Memories</span>
+    </a>
+
+    <a href="{% url 'bucket_list' %}" class="nav-item {% if request.resolver_match.url_name == 'bucket_list' %}active{% endif %}">
+      <span class="nav-icon">✅</span><span>Bucket List</span>
+    </a>
+
+    <a href="{% url 'profile' %}" class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+      <span class="nav-icon">👤</span><span>Profile</span>
+    </a>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="{% url 'logout' %}" class="logout-btn">🚪 Logout</a>
+  </div>
+
+</div>
+
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper">
+
+  <div class="topbar">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <h1 class="page-title">
+      {% block page_title %}Dashboard{% endblock %}
+    </h1>
+
+    <div class="topbar-right">
+      <span class="user-name">{{ user.name }}</span>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  {% if messages %}
+  <div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+      {{ message }}
+      <button onclick="this.parentElement.remove()">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+
+</div>
+
+{% else %}
+
+<!-- AUTH PAGES -->
+{% if messages %}
+<div class="messages-container auth-messages">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+    <button onclick="this.parentElement.remove()">✕</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% block auth_content %}{% endblock %}
+
+{% endif %}
+
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<script src="{% static 'tracker/js/app.js' %}"></script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Couple Setup ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --red: #ff2d55;
+            --deep-red: #8b0000;
+            --crimson: #c0143c;
+            --glow: rgba(255, 45, 85, 0.5);
+            --bg: #030008;
+            --card: rgba(12, 5, 20, 0.92);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--bg);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Animated Background ── */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            animation: drift linear infinite;
+        }
+        .orb-1 { width: 420px; height: 420px; background: radial-gradient(circle, #6b001a, transparent); top: -100px; left: -100px; animation-duration: 18s; }
+        .orb-2 { width: 300px; height: 300px; background: radial-gradient(circle, #3d0015, transparent); bottom: -80px; right: -80px; animation-duration: 22s; animation-direction: reverse; }
+        .orb-3 { width: 200px; height: 200px; background: radial-gradient(circle, #ff2d55, transparent); top: 40%; left: 60%; animation-duration: 14s; opacity: 0.15; }
+
+        @keyframes drift {
+            0%   { transform: translate(0,0) scale(1); }
+            33%  { transform: translate(30px, -20px) scale(1.05); }
+            66%  { transform: translate(-20px, 30px) scale(0.97); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Falling petals */
+        .petal {
+            position: absolute;
+            top: -30px;
+            font-size: 18px;
+            opacity: 0;
+            animation: fall linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+            10%  { opacity: 0.6; }
+            90%  { opacity: 0.3; }
+            100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
+        }
+
+        /* ── Card ── */
+        .container {
+            position: relative;
+            z-index: 10;
+            background: var(--card);
+            padding: 48px 44px 40px;
+            border-radius: 24px;
+            width: 500px;
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 45, 85, 0.2);
+            box-shadow:
+                0 0 0 1px rgba(255,45,85,0.08),
+                0 20px 80px rgba(0,0,0,0.7),
+                0 0 60px rgba(255,45,85,0.12),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+            animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Decorative top line */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 15%; right: 15%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--red), transparent);
+            border-radius: 50%;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .hearts-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .h-icon {
+            font-size: 20px;
+            animation: pulse-heart 2s ease-in-out infinite;
+        }
+        .h-icon:nth-child(1) { animation-delay: 0s; }
+        .h-icon:nth-child(2) { animation-delay: 0.3s; font-size: 28px; }
+        .h-icon:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes pulse-heart {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.3); filter: drop-shadow(0 0 6px var(--red)); }
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 24px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255,45,85,0.6);
+        }
+
+        .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 14px;
+            color: rgba(255,200,210,0.5);
+            margin-top: 6px;
+            letter-spacing: 1px;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 30px;
+            opacity: 0.4;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--red));
+        }
+        .divider::after { background: linear-gradient(270deg, transparent, var(--red)); }
+        .divider span { font-size: 14px; }
+
+        /* ── Form Fields ── */
+        .field {
+            margin-bottom: 20px;
+            animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .field:nth-child(1) { animation-delay: 0.15s; }
+        .field:nth-child(2) { animation-delay: 0.25s; }
+        .field:nth-child(3) { animation-delay: 0.35s; }
+
+        @keyframes fieldIn {
+            from { opacity: 0; transform: translateX(-16px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        label {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,45,85,0.7);
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,45,85,0.18);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: rgba(255,255,255,0.2);
+            font-style: italic;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            border-color: rgba(255,45,85,0.6);
+            background: rgba(255,45,85,0.06);
+            box-shadow: 0 0 0 3px rgba(255,45,85,0.08), 0 0 20px rgba(255,45,85,0.08);
+        }
+
+        /* Date input custom styling */
+        input[type="date"] {
+            color-scheme: dark;
+            cursor: pointer;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.6) sepia(1) saturate(3) hue-rotate(300deg);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: filter 0.2s;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            filter: invert(0.8) sepia(1) saturate(5) hue-rotate(300deg);
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+            line-height: 1.6;
+        }
+
+        /* ── Button ── */
+        .btn-wrap {
+            margin-top: 10px;
+            animation: fieldIn 0.6s 0.45s cubic-bezier(0.16,1,0.3,1) both;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #c0143c, #7a0020);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Cinzel', serif;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 30px rgba(192,20,60,0.4);
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(255,45,85,0.5);
+        }
+        button[type="submit"]:hover::before { opacity: 1; }
+        button[type="submit"]:active { transform: translateY(0); }
+
+        /* Shimmer sweep on hover */
+        button[type="submit"]::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s;
+        }
+        button[type="submit"]:hover::after { left: 160%; }
+
+        /* ── Footer note ── */
+        .note {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 22px;
+            color: rgba(255,200,210,0.3);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Animated background -->
+<div class="bg-canvas">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <!-- Petals generated by JS below -->
+</div>
+
+<div class="container">
+
+    <div class="header">
+        <div class="hearts-row">
+            <span class="h-icon">🌹</span>
+            <span class="h-icon">❤️</span>
+            <span class="h-icon">🌹</span>
+        </div>
+        <h2>Our Story</h2>
+        <p class="subtitle">begin your timeline</p>
+    </div>
+
+    <div class="divider"><span>✦</span></div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create">
+
+        <div class="field">
+            <label>Partner's Name</label>
+            <input type="text" name="partner_name" placeholder="Their name…" required>
+        </div>
+
+        <div class="field">
+            <label>Anniversary Date</label>
+            <input type="date" name="start_date" max="{% now 'Y-m-d' %}" required>
+        </div>
+
+        <div class="field">
+            <label>A Message of Love</label>
+            <textarea name="message" placeholder="Write something from the heart…"></textarea>
+        </div>
+
+        <div class="btn-wrap">
+            <button type="submit">Save our love &nbsp;💕</button>
+        </div>
+    </form>
+
+    <p class="note">Made with love ❤️ for your relationship timeline</p>
+</div>
+
+<script>
+    // Generate falling rose petals
+    const emojis = ['🌸', '🌹', '💗', '✨', '💋', '❤️'];
+    const canvas = document.querySelector('.bg-canvas');
+
+    for (let i = 0; i < 18; i++) {
+        const el = document.createElement('div');
+        el.className = 'petal';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.fontSize = (12 + Math.random() * 14) + 'px';
+        el.style.animationDuration = (8 + Math.random() * 12) + 's';
+        el.style.animationDelay = (Math.random() * 12) + 's';
+        canvas.appendChild(el);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Media
+media/
+couple_images/
+
+# IDEs
+.idea/
+.vscode/
+
+# Vercel
+.vercel/

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LoveTracker — Movie Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet"/>
+  <style>
+:root {
+  --bg-dark: rgba(15, 15, 20, 1);
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.8);
+  --sidebar-w: 80px;
+  --sidebar-w-hover: 260px;
+  --accent: #FF4D6D;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+button { border: none; background: none; cursor: pointer; color: inherit; font-family: inherit; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+/* ═══════════════════════════════════════════════════════════
+   PREMIUM SIDEBAR — Seamless Gradient, Apple Animations
+═══════════════════════════════════════════════════════════ */
+.sidebar {
+  position: fixed; left: 0; top: 0; height: 100vh; width: var(--sidebar-w);
+  background: linear-gradient(180deg,
+    rgba(15, 15, 20, 0.70) 0%,
+    rgba(15, 15, 20, 0.40) 30%,
+    rgba(15, 15, 20, 0.20) 60%,
+    rgba(15, 15, 20, 0.40) 85%,
+    rgba(15, 15, 20, 0.80) 100%);
+  backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  border-right: none; z-index: 5000;
+  transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1), background 0.55s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: visible; white-space: nowrap;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 0;
+}
+.sidebar:hover {
+  width: var(--sidebar-w-hover);
+  background: linear-gradient(180deg,
+    rgba(15, 15, 20, 0.92) 0%,
+    rgba(15, 15, 20, 0.82) 30%,
+    rgba(15, 15, 20, 0.75) 60%,
+    rgba(15, 15, 20, 0.82) 85%,
+    rgba(15, 15, 20, 0.95) 100%);
+  box-shadow: 12px 0 60px rgba(0,0,0,0.6), inset -1px 0 0 rgba(255,255,255,0.04);
+}
+
+/* Logo */
+.sb-logo { display: flex; align-items: center; padding: 0 24px; margin-bottom: 0; cursor: pointer; position: absolute; top: 28px; left: 0; }
+.sb-logo-icon { font-size: 24px; transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+.sidebar:hover .sb-logo-icon { transform: scale(1.1); }
+.sb-logo-text { opacity: 0; width: 0; overflow: hidden; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s, width 0s 0.4s; display: flex; flex-direction: column; margin-left: 14px; }
+.sidebar:hover .sb-logo-text { opacity: 1; width: auto; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, width 0s 0s; }
+.sb-logo-title { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #FF4D6D, #FF8FA3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sb-logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; }
+
+/* Search */
+.sb-search {
+  margin: 0 14px 12px 14px; background: rgba(255,255,255,0.06); border-radius: 10px;
+  display: flex; align-items: center; height: 44px; padding: 0 16px; cursor: text;
+  transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.sidebar:hover .sb-search { background: rgba(255,255,255,0.10); box-shadow: 0 0 20px rgba(255,255,255,0.02); }
+.sb-search-icon {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 24px; height: 24px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sidebar:hover .sb-search-icon { transform: scale(1.08); }
+.sb-search-icon svg { width: 20px; height: 20px; stroke: rgba(255,255,255,0.55); stroke-width: 2; fill: none; transition: stroke 0.3s; }
+.sidebar:hover .sb-search-icon svg { stroke: rgba(255,255,255,0.8); filter: drop-shadow(0 0 6px rgba(255,255,255,0.15)); }
+.sb-search input { background: transparent; border: none; color: #fff; font-size: 14px; width: 100%; outline: none; opacity: 0; transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0s; pointer-events: none; margin-left: 12px; }
+.sidebar:hover .sb-search input { opacity: 1; pointer-events: auto; transition-delay: 0.12s; }
+
+/* Nav Items — centred */
+.sb-nav-group { display: flex; flex-direction: column; gap: 2px; }
+.sb-item {
+  display: flex; align-items: center; height: 50px; padding: 0 28px; color: rgba(255,255,255,0.55);
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0;
+  position: relative;
+}
+.sb-item:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.sb-item.active { color: #fff; background: rgba(255,255,255,0.08); }
+.sb-item.active::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 28px; border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, #FF4D6D, #d63384);
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.5);
+}
+.sb-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 24px; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.sb-item:hover .sb-icon { transform: scale(1.1); }
+.sb-icon svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.8; fill: none; transition: filter 0.3s; }
+.sb-item:hover .sb-icon svg, .sb-item.active .sb-icon svg { filter: drop-shadow(0 0 8px rgba(255,255,255,0.2)); }
+.sb-text { font-weight: 600; font-size: 17px; opacity: 0; width: 0; overflow: hidden; transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0s, margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1); margin-left: 0; }
+.sidebar:hover .sb-text { opacity: 1; width: auto; margin-left: 20px; transition-delay: 0.08s; }
+
+.sb-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); margin: 10px 16px; transition: opacity 0.35s; }
+.sidebar:hover .sb-divider { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════════
+   CINEMATIC HERO CONTAINER
+═══════════════════════════════════════════════════════════ */
+.hero-wrapper { position: relative; width: 100%; height: 85vh; min-height: 650px; display: flex; align-items: flex-end; margin-left: 0; }
+.hero-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1;
+  background-size: cover; background-position: top center; background-repeat: no-repeat;
+}
+.hero-mask {
+  position: absolute; inset: 0; z-index: 2;
+  background: 
+    linear-gradient(to right, rgba(15, 15, 20, 1) 0%, rgba(15, 15, 20, 0.6) 40%, transparent 100%),
+    linear-gradient(to top, rgba(15, 15, 20, 1) 0%, transparent 20%);
+}
+
+.hero-content {
+  position: relative; z-index: 10;
+  padding-left: 100px; padding-bottom: 60px; padding-right: 50px; width: 100%; max-width: 900px;
+}
+
+.sub-brand { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #fff; margin-bottom: 12px; }
+.hero-title { font-family: 'Montserrat', sans-serif; font-size: clamp(3.5rem, 6vw, 5.5rem); font-weight: 800; text-transform: uppercase; color: #fff; line-height: 1.05; margin-bottom: 16px; letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+
+.hero-meta { font-family: 'Inter', sans-serif; font-weight: 400; color: var(--text-muted); font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: capitalize; }
+.hero-desc { font-family: 'Inter', sans-serif; font-weight: 400; color: var(--text-muted); font-size: 16px; line-height: 1.6; margin-bottom: 32px; max-width: 650px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.hero-actions { display: flex; gap: 16px; align-items: center; }
+.btn-primary {
+  background: #000000; color: #FF4D6D; border: 1.5px solid #FF4D6D;
+  padding: 14px 36px; border-radius: 40px; font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px; transition: transform 0.2s, filter 0.2s;
+  box-shadow: 0 4px 15px rgba(255, 77, 109, 0.2);
+}
+.btn-primary:hover { transform: scale(1.03); filter: brightness(1.15); }
+.btn-glass {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: 0.2s; color: #fff;
+}
+.btn-glass:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+
+/* ═══════════════════════════════════════════════════════════
+   GLASSMORPHIC REVIEW MODAL
+═══════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+}
+.modal-overlay.active { display: flex; opacity: 1; }
+
+.glass-modal {
+  width: 95%; max-width: 1100px; max-height: 90vh; overflow-y: auto;
+  background: rgba(20, 20, 25, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6); padding: 48px; position: relative;
+  transform: translateY(30px) scale(0.95); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  color: #fff; font-family: 'Inter', sans-serif; opacity: 0;
+}
+.modal-overlay.active .glass-modal { transform: translateY(0) scale(1); opacity: 1; }
+
+.modal-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+.modal-close:hover { background: rgba(255,255,255,0.2); }
+.modal-close svg { stroke: #fff; width: 16px; height: 16px; }
+
+/* Modal Top */
+.m-top { display: flex; gap: 30px; margin-bottom: 24px; }
+.m-top-left { flex: 2; }
+.m-title-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px; }
+.m-title { font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 800; }
+.m-rating { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 20px; }
+.m-rating svg { fill: #facc15; width: 20px; height: 20px; }
+
+.m-meta-row { display: flex; align-items: center; gap: 16px; font-size: 16px; font-weight: 600; margin-bottom: 20px; color: var(--text-muted); flex-wrap: wrap; }
+.m-match { color: #10b981; }
+.m-badge { border: 1px solid rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 6px; font-size: 14px; }
+
+.m-desc { font-size: 17px; line-height: 1.7; color: rgba(255,255,255,0.85); margin-bottom: 24px; }
+
+.m-top-right { flex: 1; font-size: 16px; line-height: 1.6; color: var(--text-muted); display: flex; flex-direction: column; gap: 16px; }
+.m-top-right span { color: #fff; font-weight: 500; }
+
+/* Modal Middle (Local Reviews) */
+.m-reviews-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 48px; }
+.m-local-review { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; position: relative; }
+.m-local-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; }
+.m-local-edit { font-size: 15px; color: #3b82f6; cursor: pointer; transition: color 0.2s; }
+.m-local-edit:hover { color: #60a5fa; }
+.m-local-text { font-size: 17px; color: rgba(255,255,255,0.85); line-height: 1.6; min-height: 60px; margin-top: 12px; }
+
+.star-input { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; margin-bottom: 16px; }
+.star-input input { display: none; }
+.star-input label { cursor: pointer; color: rgba(255,255,255,0.2); font-size: 24px; transition: color 0.2s, transform 0.2s; }
+.star-input input:checked ~ label, .star-input label:hover, .star-input label:hover ~ label { color: #facc15; transform: scale(1.1); }
+
+.m-textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #fff; padding: 20px; font-size: 17px; resize: vertical; min-height: 120px; margin-bottom: 20px; display: none; font-family: 'Inter', sans-serif; transition: border-color 0.2s, box-shadow 0.2s; }
+.m-textarea:focus { outline: none; border-color: #FF4D6D; box-shadow: 0 0 10px rgba(255,77,109,0.3); }
+.btn-save { background: linear-gradient(135deg, #FF4D6D, #d63384); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: 700; display: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.btn-save:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(214,51,132,0.4); }
+
+/* Modal Bottom (TMDB Reviews) */
+.m-section-title { font-size: 28px; font-weight: 800; margin-bottom: 24px; font-family: 'Inter', sans-serif; }
+.m-tmdb-reviews { display: flex; flex-direction: column; gap: 20px; }
+.tmdb-review-card { background: rgba(255,255,255,0.02); padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
+.tmdb-r-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.tmdb-r-author { font-weight: 700; font-size: 17px; }
+.tmdb-r-rating { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 6px; font-size: 14px; font-weight: 700; }
+.tmdb-r-rating svg { fill: #facc15; width: 14px; height: 14px; }
+.tmdb-r-content { font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.7); max-height: 200px; overflow-y: auto; padding-right: 12px; }
+.tmdb-r-content::-webkit-scrollbar { width: 4px; }
+.tmdb-r-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+/* Mobile scaling + Bottom Nav Bar */
+/* Mobile scaling */
+@media (max-width: 768px) {
+  .m-top { flex-direction: column; gap: 20px; }
+  .m-reviews-grid { grid-template-columns: 1fr; }
+  .glass-modal { width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; align-self: flex-end; padding: 24px; transform: translateY(100%); }
+
+  .hero-wrapper { height: auto; min-height: 300px; padding-top: 40px; }
+  .hero-content { padding-left: 40px !important; padding-right: 20px; padding-bottom: 24px; }
+  .hero-title { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+  .grid-container { padding-left: 20px !important; padding-right: 20px; padding-bottom: 50px; }
+  
+  .sidebar { 
+    left: -260px;
+    width: 260px !important;
+    background: rgba(15, 15, 20, 0.80) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  
+  /* Make text always visible when sidebar is 260px on mobile */
+  .sidebar .sb-text { opacity: 1; width: auto; margin-left: 20px; }
+  .sidebar .sb-search input { opacity: 1; pointer-events: auto; }
+  .sidebar .sb-logo-text { opacity: 1; width: auto; }
+  .sidebar .sb-search { background: rgba(255,255,255,0.10); box-shadow: 0 0 20px rgba(255,255,255,0.02); margin: 0 14px 12px 14px; padding: 0 16px; width: auto; }
+  
+  /* Fix readability and wrapping on mobile */
+  .sb-item, .sb-item.active { color: #FF4D6D; }
+  .sb-logo-sub { white-space: normal; line-height: 1.3; margin-top: 2px; }
+  
+  .main-shell { margin-left: 0; }
+  .hide-on-mobile { display: none !important; }
+  
+  #leftSidebarToggleBtn { display: flex !important; }
+}
+
+/* Sidebar Toggle Button for Mobile */
+#leftSidebarToggleBtn {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  width: 32px;
+  height: 64px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 4999;
+  cursor: pointer;
+  transition: left 0.55s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+  color: #fff;
+}
+#leftSidebarToggleBtn:hover { background: rgba(255,255,255,0.2); }
+#leftSidebarToggleBtn svg { transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+body.sidebar-open #leftSidebarToggleBtn { left: 260px; }
+body.sidebar-open #leftSidebarToggleBtn svg { transform: rotate(180deg); }
+
+/* --- PREMIUM GLASSY MENU --- */
+.premium-menu-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.premium-menu-btn span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--charcoal, #2d2d2d);
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.premium-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.premium-menu-btn.open span:nth-child(2) { opacity: 0; }
+.premium-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.premium-overlay-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    background: rgba(15, 15, 15, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.premium-overlay-menu.open { opacity: 1; pointer-events: all; }
+.premium-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    transition-delay: 0.1s;
+}
+.premium-overlay-menu.open .premium-menu-content { transform: translateY(0) scale(1); opacity: 1; }
+.premium-menu-content a {
+    font-size: 1.4rem; font-weight: 600; color: #ff4d6d;
+    text-decoration: none; letter-spacing: 0.5px;
+    transition: color 0.2s, transform 0.2s;
+}
+.premium-menu-content a:hover { color: var(--rose, #ff4d6d); transform: scale(1.05); }
+
+/* --- APPLE SMOOTH PAGE TRANSITIONS --- */
+body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
+@keyframes fadeInPage {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INLINE WATCHLIST GRID
+═══════════════════════════════════════════════════════════ */
+.grid-container { position: relative; z-index: 10; padding-left: 100px; padding-right: 50px; padding-bottom: 80px; transition: padding-left 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
+
+.tab-system { display: flex; gap: 32px; margin-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+.tab-btn { font-size: 18px; font-weight: 700; color: var(--text-muted); transition: 0.2s; padding-bottom: 8px; position: relative; }
+.tab-btn:hover { color: #fff; }
+.tab-btn.active { color: #fff; }
+.tab-btn.active::after { content: ''; position: absolute; bottom: -9px; left: 0; width: 100%; height: 3px; background: #d63384; border-radius: 3px 3px 0 0; }
+
+.grid-row { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; }
+.grid-row::-webkit-scrollbar { display: none; }
+
+.card-wrap { width: 340px; flex-shrink: 0; scroll-snap-align: start; }
+.card {
+  width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
+  position: relative; transition: transform 0.3s, box-shadow 0.3s;
+  background: #111; border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+}
+.card:hover { transform: scale(1.03); box-shadow: 0 10px 40px rgba(0,0,0,0.8); border-color: rgba(255,255,255,0.2); }
+.card img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-overlay {
+  position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.3s; display: flex; flex-direction: column; padding: 14px;
+}
+.card:hover .card-overlay { opacity: 1; }
+
+.card-drop {
+  position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  transition: 0.2s; border: 1px solid rgba(255,255,255,0.2); color: #fff;
+}
+.card-drop svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; }
+.card-drop:hover { background: #e11d48; border-color: #e11d48; }
+
+.card-below { margin-top: 14px; }
+.card-title { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; margin-bottom: 4px; }
+.card-meta { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.card-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 100%;
+  padding: 10px 0; border-radius: 8px; background: rgba(255,255,255,0.1);
+  color: #fff; font-weight: 600; font-size: 14px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05);
+}
+.card-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* Search Dropdown */
+.search-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 16px; width: 320px; background: rgba(15,15,20,0.95);
+  backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 5000; padding: 8px 0; display: none; overflow: hidden;
+}
+.sb-search:focus-within .search-dropdown { display: block; }
+.sd-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sd-item:hover { background: rgba(255,255,255,0.1); }
+.sd-info { flex: 1; min-width: 0; }
+.sd-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.sd-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; }
+.sd-add { padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; background: #fff; color: #000; cursor: pointer; transition: 0.2s; }
+.sd-add:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+{% load static %}
+
+<button id="leftSidebarToggleBtn" onclick="toggleLeftSidebar()">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+    <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
+  </svg>
+</button>
+
+<!-- PREMIUM SIDEBAR — Seamless Glass -->
+<aside class="sidebar">
+  <!-- Logo (pinned top) -->
+  <div class="sb-logo" onclick="location.href='{% url 'dashboard' %}'">
+    <div class="sb-logo-icon">💕</div>
+    <div class="sb-logo-text">
+      <div class="sb-logo-title">Love Tracker</div>
+      <div class="sb-logo-sub">add movie list with your lovers</div>
+    </div>
+  </div>
+
+  <!-- Centred Nav Group -->
+  <div class="sb-nav-group">
+    <!-- Search -->
+    <div class="sb-search">
+      <div class="sb-search-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+      <input type="text" id="searchInput" placeholder="Search..." autocomplete="off" oninput="searchMovies(this.value)"/>
+      <div id="searchDropdown" class="search-dropdown"></div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-item nav-filter active" data-type="movies">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg></div>
+      <div class="sb-text">Movies</div>
+    </div>
+
+    <div class="sb-item nav-filter" data-type="tv">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg></div>
+      <div class="sb-text">TV Shows</div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-item" onclick="showDropped()">
+      <div class="sb-icon"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
+      <div class="sb-text">Dropped</div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <a href="{% url 'dashboard' %}" class="sb-item">
+      <div class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+      <div class="sb-text">Dashboard</div>
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN APP SHELL -->
+<div class="app-shell">
+  
+  <!-- HERO SECTION -->
+  {% with current=watching.first %}
+  <div class="hero-wrapper">
+    {% if current and current.poster_url %}
+      <div class="hero-bg" style="background-image: url('{{ current.poster_url }}');"></div>
+    {% else %}
+      <div class="hero-bg" style="background-image: url('{% static 'tracker/img/image.jpeg' %}');"></div>
+    {% endif %}
+    
+    <div class="premium-overlay-menu" id="premiumMenu">
+    <div class="premium-menu-content">
+        <a href="{% url 'dashboard' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'profile' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile
+        </a>
+        <a href="{% url 'logout' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+        </a>
+    </div>
+</div>
+    
+    <div class="hero-mask"></div>
+    
+    <div class="hero-content">
+      <div class="sub-brand">LOVETRACKER ORIGINAL</div>
+      
+      <div class="hero-title">
+        {{ current.title|default:"Find a Title" }}
+      </div>
+      
+      <div class="hero-meta">
+        {% if current %}
+          {% if current.year %}<span>{{ current.year }}</span> • {% endif %}
+          <span>★ {{ current.imdb_rating|default:"7.5" }}</span> • 
+          <span>{{ current.genre|default:"General" }}</span> •
+          <span>{{ current.movie_type|upper }}</span>
+        {% else %}
+          <span>Track</span> • <span>Review</span>
+        {% endif %}
+      </div>
+      
+      <div class="hero-desc" id="hero-overview">
+        Loading description...
+      </div>
+      
+      <div class="hero-actions">
+        {% if current %}
+          <button class="btn-primary" id="btn-complete" onclick="heroComplete({{ current.id }}, {{ current.tmdb_id }}, this)">
+            <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Finished
+          </button>
+          <button class="btn-glass" onclick="heroDrop({{ current.id }})" title="Drop">
+            <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:white;stroke-width:2;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Fetch dynamic description for hero
+    {% if current %}
+      const typeStr = '{{ current.movie_type }}' === 'tv' ? 'tv' : 'movie';
+      fetch(`https://api.themoviedb.org/3/${typeStr}/{{ current.tmdb_id }}?api_key=ca94b1eb04b135013095861028945007`)
+        .then(r => r.json())
+        .then(d => { document.getElementById('hero-overview').textContent = d.overview || 'An epic journey begins. Experience it together, log your history, and add your shared review once finished.'; })
+        .catch(() => { document.getElementById('hero-overview').textContent = 'An epic journey begins. Experience it together, log your history, and add your shared review once finished.'; });
+    {% else %}
+      document.getElementById('hero-overview').textContent = "Search for a movie or TV show using the search bar in the left navigation panel to begin your watch journey.";
+    {% endif %}
+  </script>
+  {% endwith %}
+
+  <!-- INLINE GRID (Zero Margin) -->
+  <div class="grid-container" style="position: relative;">
+    
+    <button id="scrollRightBtn" onclick="scrollActiveRowRight()" onmouseover="this.style.background='rgba(255,77,109,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.6)'" style="position: absolute; right: 20px; top: 55%; transform: translateY(-50%); z-index: 10; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; font-size: 28px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.5); padding-bottom: 4px;">&#8250;</button>
+
+    <div class="tab-system">
+      <button class="tab-btn active" onclick="switchTab('my-list', this)">My Watchlist</button>
+      <button class="tab-btn" onclick="switchTab('partner-list', this)">{{ partner.name|default:"Partner" }}'s List</button>
+    </div>
+
+    <!-- MY LIST -->
+    <div class="grid-row content-section" id="my-list">
+      {% for movie in completed %}
+        {% if movie.added_by == request.user %}
+        <div class="card-wrap" data-type="{{ movie.movie_type }}">
+          <div class="card">
+            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}"/>
+            <div class="card-overlay">
+              <button class="card-drop" onclick="dropCard({{ movie.id }}, event)" title="Drop">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-below">
+            <div class="card-title">{{ movie.title }}</div>
+            <div class="card-meta">{{ movie.year }} • {{ movie.movie_type|upper }}</div>
+            <button class="card-btn" onclick="openReviewModal({{ movie.id }}, {{ movie.tmdb_id }}, event)">✍️ Add Review</button>
+          </div>
+        </div>
+        {% endif %}
+      {% empty %}
+        <div style="color:var(--text-muted); font-size:16px; padding: 20px 0;">No completed titles found. Finish a movie to see it here!</div>
+      {% endfor %}
+    </div>
+
+    <!-- PARTNER LIST -->
+    <div class="grid-row content-section" id="partner-list" style="display: none;">
+      {% for movie in completed %}
+        {% if movie.added_by != request.user %}
+        <div class="card-wrap" data-type="{{ movie.movie_type }}">
+          <div class="card">
+            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}"/>
+            <div class="card-overlay">
+              <button class="card-drop" onclick="dropCard({{ movie.id }}, event)" title="Drop">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+          <div class="card-below">
+            <div class="card-title">{{ movie.title }}</div>
+            <div class="card-meta">{{ movie.year }} • {{ movie.movie_type|upper }}</div>
+            <button class="card-btn" onclick="openReviewModal({{ movie.id }}, {{ movie.tmdb_id }}, event)">✍️ Add Review</button>
+          </div>
+        </div>
+        {% endif %}
+      {% empty %}
+        <div style="color:var(--text-muted); font-size:16px; padding: 20px 0;">Your partner hasn't completed any titles yet!</div>
+      {% endfor %}
+    </div>
+
+    <!-- DROPPED -->
+    <div class="grid-row" id="section-dropped" style="display: none;">
+      {% for movie in dropped %}
+      <div class="card-wrap">
+        <div class="card" style="filter: grayscale(80%);" onclick="updateStatus({{ movie.id }},'watching',event)">
+          <img src="{{ movie.poster_url }}" alt="{{ movie.title }}"/>
+          <div class="card-overlay" style="background: rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center;">
+            <div style="font-size:14px; font-weight:700;">↩ Restore</div>
+            <button class="card-drop" style="position:absolute; top:12px; right:12px;" onclick="deleteMovie({{ movie.id }},event)" title="Delete permanently">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="card-below">
+          <div class="card-title">{{ movie.title }}</div>
+        </div>
+      </div>
+      {% empty %}
+        <div style="color:var(--text-muted); font-size:16px; padding: 20px 0;">No dropped titles.</div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+const CSRF = '{{ csrf_token }}';
+const TMDB_KEY = 'ca94b1eb04b135013095861028945007';
+
+// Mapping genre IDs to names dynamically to fix the "General" issue during search
+const GENRE_MAP = {
+  28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime", 99: "Documentary",
+  18: "Drama", 10751: "Family", 14: "Fantasy", 36: "History", 27: "Horror", 10402: "Music",
+  9648: "Mystery", 10749: "Romance", 878: "Science Fiction", 10770: "TV Movie", 53: "Thriller",
+  10752: "War", 37: "Western", 10759: "Action & Adventure", 10765: "Sci-Fi & Fantasy", 10768: "War & Politics"
+};
+
+function checkScroll() {
+  const activeRow = document.querySelector('.grid-row:not([style*="display: none"])');
+  if (!activeRow) return;
+  const btn = document.getElementById('scrollRightBtn');
+  if (btn) {
+    if (activeRow.scrollWidth > activeRow.clientWidth && activeRow.scrollLeft < (activeRow.scrollWidth - activeRow.clientWidth - 10)) {
+      btn.style.display = 'flex';
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+}
+
+function scrollActiveRowRight() {
+  const activeRow = document.querySelector('.grid-row:not([style*="display: none"])');
+  if (activeRow) {
+    activeRow.scrollBy({ left: 360, behavior: 'smooth' });
+  }
+}
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('.grid-row').forEach(row => {
+    row.addEventListener('scroll', checkScroll);
+  });
+  setTimeout(checkScroll, 100);
+});
+window.addEventListener('resize', checkScroll);
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('my-list').style.display = 'none';
+  document.getElementById('partner-list').style.display = 'none';
+  document.getElementById('section-dropped').style.display = 'none';
+  document.getElementById(id).style.display = 'flex';
+  document.querySelectorAll('.nav-filter').forEach(l => l.classList.remove('active'));
+  setTimeout(checkScroll, 50);
+}
+
+document.querySelectorAll('.nav-filter').forEach(link => {
+  link.addEventListener('click', function() {
+    document.querySelectorAll('.nav-filter').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    
+    document.getElementById('section-dropped').style.display = 'none';
+    const activeTab = document.querySelector('.tab-btn.active').textContent.includes('My') ? 'my-list' : 'partner-list';
+    document.getElementById(activeTab).style.display = 'flex';
+    
+    const typeFilter = this.dataset.type;
+    document.querySelectorAll('#' + activeTab + ' .card-wrap').forEach(card => {
+      const isTv = card.dataset.type === 'tv' || card.dataset.type === 'anime';
+      card.style.display = (typeFilter === 'tv' && isTv) || (typeFilter === 'movies' && !isTv) ? 'block' : 'none';
+    });
+    setTimeout(checkScroll, 50);
+  });
+});
+
+function showDropped() {
+  document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+  document.getElementById('section-dropped').style.display = 'flex';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-filter').forEach(l => l.classList.remove('active'));
+}
+
+let debounceTimer;
+window.searchMovies = function(term) {
+  const dropdown = document.getElementById('searchDropdown');
+  clearTimeout(debounceTimer);
+  if (term.trim().length < 3) { dropdown.style.display = 'none'; return; }
+  
+  debounceTimer = setTimeout(async () => {
+    const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&query=${encodeURIComponent(term)}`);
+    const data = await res.json();
+    
+    dropdown.innerHTML = '';
+    (data.results || []).slice(0,6).forEach(r => {
+      if(!r.title && !r.name) return;
+      let type = r.media_type === 'tv' ? 'tv' : 'movie';
+      if(r.genre_ids && r.genre_ids.includes(16) && r.origin_country && r.origin_country.includes('JP')) type = 'tv';
+      
+      const img = r.backdrop_path ? `https://image.tmdb.org/t/p/original${r.backdrop_path}` : '';
+      const title = r.title || r.name;
+      
+      // Determine correct genre
+      let genreName = 'General';
+      if (r.genre_ids && r.genre_ids.length > 0) {
+        genreName = r.genre_ids.map(id => GENRE_MAP[id]).filter(Boolean).join(', ');
+      }
+      
+      const el = document.createElement('div');
+      el.className = 'sd-item';
+      el.innerHTML = `
+        <div class="sd-info"><div class="sd-title">${title}</div><div class="sd-meta">${type.toUpperCase()} • ${genreName.split(',')[0]||'General'}</div></div>
+        <button class="sd-add" onclick="saveToDjango('${r.id}','${title.replace(/'/g,"\\'")}','${img}','${(r.release_date||'').substring(0,4)}','${type}','${genreName.replace(/'/g,"\\'")}','${r.vote_average||0}')">ADD</button>
+      `;
+      dropdown.appendChild(el);
+    });
+    dropdown.style.display = 'block';
+  }, 400);
+};
+
+window.saveToDjango = async function(id, title, img, year, type, genre, rating) {
+  try {
+    const res = await fetch("{% url 'add_movie' %}", {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({ tmdb_id: id, title, poster_url: img, year, movie_type: type, genre, imdb_rating: rating, status: 'watching' })
+    });
+    const data = await res.json();
+    if(data.status === 'success') { location.reload(); } else alert(data.message);
+  } catch(e) { console.error('Error adding movie'); }
+};
+
+window.updateStatus = async function(id, status, e) {
+  if(e) e.stopPropagation();
+  const res = await fetch(`/movies/update/${id}/`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF }, body: JSON.stringify({ status })
+  });
+  if((await res.json()).status === 'success') location.reload();
+};
+
+window.dropCard = async function(id, e) { if(e) e.stopPropagation(); updateStatus(id, 'dropped'); };
+window.deleteMovie = async function(id, e) {
+  if(e) e.stopPropagation();
+  if(!confirm('Delete permanently?')) return;
+  const res = await fetch(`/movies/delete/${id}/`, { method: 'POST', headers: { 'X-CSRFToken': CSRF }});
+  if((await res.json()).status === 'success') location.reload();
+};
+
+async function heroComplete(id, tmdbId, btn) {
+  await fetch(`/movies/update/${id}/`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+    body: JSON.stringify({ status: 'completed' })
+  });
+  btn.innerHTML = '✍️ Add Review';
+  btn.onclick = () => openReviewModal(id, tmdbId, null);
+}
+function heroDrop(id) { updateStatus(id, 'dropped'); }
+
+let currentModalMovieId = null;
+
+window.openReviewModal = async function(movieId, tmdbId, e) {
+  if(e) e.stopPropagation();
+  currentModalMovieId = movieId;
+  document.getElementById('reviewModal').classList.add('active');
+  
+  // Reset fields
+  document.getElementById('m-title').textContent = "Loading...";
+  document.getElementById('m-desc').textContent = "Please wait while we fetch the details...";
+  document.getElementById('m-cast').textContent = "...";
+  document.getElementById('m-genres').textContent = "...";
+  
+  // Display loading/empty state first
+  document.getElementById('my-review-display').style.display = 'block';
+  document.getElementById('my-review-form').style.display = 'none';
+  document.getElementById('my-review-text').style.display = 'none';
+  document.querySelector('.btn-save').style.display = 'none';
+  document.getElementById('my-rating-display').innerHTML = "";
+  document.getElementById('my-review-display-text').textContent = "Loading...";
+  document.getElementById('partner-review-display').textContent = "Loading...";
+  document.getElementById('partner-rating-display').innerHTML = "";
+  document.getElementById('m-tmdb-reviews').innerHTML = '<div style="color:var(--text-muted); font-size:14px;">Loading reviews...</div>';
+  document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+  document.getElementById('my-review-text').value = '';
+
+  // 1. Fetch TMDB details
+  try {
+    // We check if it is TV or Movie by checking dataset if possible, but let's just assume movie first then tv. 
+    // Wait, we don't know type here unless we pass it. I'll pass 'movie' for now, but in the search we know it. 
+    // For now we try movie, if fail try tv.
+    let res = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${TMDB_KEY}&append_to_response=credits,reviews`);
+    if(res.status === 404) {
+       res = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${TMDB_KEY}&append_to_response=credits,reviews`);
+    }
+    if(res.ok) {
+      const d = await res.json();
+      document.getElementById('m-title').textContent = d.title || d.name || "Unknown";
+      document.getElementById('m-star').textContent = (d.vote_average || 0).toFixed(1);
+      document.getElementById('m-year').textContent = (d.release_date || d.first_air_date || '----').substring(0,4);
+      document.getElementById('m-desc').textContent = d.overview || "No overview available.";
+      
+      const cast = d.credits && d.credits.cast ? d.credits.cast.slice(0, 4).map(c => c.name).join(', ') : "N/A";
+      document.getElementById('m-cast').textContent = cast;
+      
+      const genres = d.genres ? d.genres.map(g => g.name).join(', ') : "General";
+      document.getElementById('m-genres').textContent = genres;
+      
+      // TMDB Reviews
+      const tmdbReviews = d.reviews && d.reviews.results ? d.reviews.results : [];
+      let reviewsHTML = '';
+      if(tmdbReviews.length === 0) {
+        reviewsHTML = '<div style="color:var(--text-muted); font-size:14px;">No community reviews available.</div>';
+      } else {
+        tmdbReviews.slice(0, 5).forEach(r => {
+          const rating = r.author_details && r.author_details.rating ? `${r.author_details.rating}/10` : '-/10';
+          reviewsHTML += `
+            <div class="tmdb-review-card">
+              <div class="tmdb-r-header">
+                <div class="tmdb-r-author">${r.author}</div>
+                <div class="tmdb-r-rating"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg> ${rating}</div>
+              </div>
+              <div class="tmdb-r-content">${r.content.replace(/\n/g, '<br/>')}</div>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('m-tmdb-reviews').innerHTML = reviewsHTML;
+    }
+  } catch(e) { console.error(e); }
+
+  // 2. Fetch local review data from Django
+  try {
+    const localRes = await fetch(`/movies/${movieId}/reviews/`, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if(localRes.ok) {
+      const data = await localRes.json();
+      if(data.status === 'success') {
+        // User Review
+        if(data.user_review.rating || data.user_review.review_text) {
+          document.getElementById('my-review-display').style.display = 'block';
+          document.getElementById('my-review-form').style.display = 'none';
+          document.getElementById('my-review-text').style.display = 'none';
+          document.querySelector('.btn-save').style.display = 'none';
+          let uStars = '';
+          for(let i=0; i<data.user_review.rating; i++) uStars += '<span style="color:#facc15; font-size:24px; line-height:1;">★</span>';
+          for(let i=data.user_review.rating; i<5; i++) uStars += '<span style="color:rgba(255,255,255,0.2); font-size:24px; line-height:1;">★</span>';
+          
+          document.getElementById('my-rating-display').innerHTML = uStars;
+          document.getElementById('my-review-display-text').textContent = data.user_review.review_text || '';
+          
+          if(data.user_review.rating) {
+            const rad = document.querySelector(`input[name="rating"][value="${data.user_review.rating}"]`);
+            if(rad) rad.checked = true;
+          }
+          document.getElementById('my-review-text').value = data.user_review.review_text;
+        } else {
+          // No review - show form immediately
+          toggleEditReview();
+        }
+        
+        // Partner Review
+        document.getElementById('m-partner-name').textContent = data.partner_review.user_name;
+        if(data.partner_review.rating || data.partner_review.review_text) {
+          let pStars = '';
+          for(let i=0; i<data.partner_review.rating; i++) pStars += '<span style="color:#facc15; font-size:24px; line-height:1;">★</span>';
+          for(let i=data.partner_review.rating; i<5; i++) pStars += '<span style="color:rgba(255,255,255,0.2); font-size:24px; line-height:1;">★</span>';
+          document.getElementById('partner-rating-display').innerHTML = pStars;
+          document.getElementById('partner-review-display').textContent = data.partner_review.review_text || '';
+        } else {
+          document.getElementById('partner-rating-display').innerHTML = '';
+          document.getElementById('partner-review-display').textContent = "No review written yet.";
+        }
+      }
+    }
+  } catch(e) { console.error(e); }
+};
+
+window.closeReviewModal = function() {
+  document.getElementById('reviewModal').classList.remove('active');
+  currentModalMovieId = null;
+};
+
+window.toggleLeftSidebar = function() {
+  const sb = document.querySelector('.sidebar');
+  if(sb) {
+    sb.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open');
+  }
+};
+
+
+window.toggleEditReview = function() {
+  document.getElementById('my-review-display').style.display = 'none';
+  document.getElementById('my-review-form').style.display = 'block';
+  document.getElementById('my-review-text').style.display = 'block';
+  document.querySelector('.btn-save').style.display = 'inline-block';
+};
+
+window.submitReview = async function() {
+  if(!currentModalMovieId) return;
+  const ratingEl = document.querySelector('input[name="rating"]:checked');
+  const rating = ratingEl ? ratingEl.value : 0;
+  const text = document.getElementById('my-review-text').value;
+  
+  const formData = new FormData();
+  formData.append('rating', rating);
+  formData.append('text', text); // Ensure this matches the Django Form field name
+
+  try {
+    const res = await fetch(`/movies/${currentModalMovieId}/reviews/submit/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': CSRF },
+      body: formData
+    });
+    const data = await res.json();
+    if(data.status === 'success') {
+      location.reload();
+    } else {
+      alert("Error saving review");
+    }
+  } catch(e) {
+    console.error(e);
+  }
+};
+</script>
+<!-- REVIEW MODAL OVERLAY -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="glass-modal">
+    <div class="modal-close" onclick="closeReviewModal()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+    
+    <!-- Top Section -->
+    <div class="m-top">
+      <div class="m-top-left">
+        <div class="m-title-row">
+          <div class="m-title" id="m-title">Loading...</div>
+          <div class="m-rating"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg> <span id="m-star">--</span>/10</div>
+        </div>
+        <div class="m-meta-row">
+          <span class="m-match">91% Match</span>
+          <span id="m-year">----</span>
+          <span class="m-badge">18+</span>
+          <span class="m-badge">HD</span>
+        </div>
+        <div class="m-desc" id="m-desc">Please wait while we fetch the details...</div>
+      </div>
+      <div class="m-top-right">
+        <div>Cast: <span id="m-cast">...</span></div>
+        <div>Genres: <span id="m-genres">...</span></div>
+        <div>This show is: <span>Suspenseful, Exciting</span></div>
+      </div>
+    </div>
+    
+    <!-- Middle Section: Local Reviews -->
+    <div class="m-reviews-grid">
+      <!-- My Review -->
+      <div class="m-local-review">
+        <div class="m-local-title">
+          My Review 
+          <span class="m-local-edit" onclick="toggleEditReview()">Edit</span>
+        </div>
+        <div id="my-review-display">
+          <div class="star-input" style="justify-content: flex-start; flex-direction: row;" id="my-rating-display"></div>
+          <div id="my-review-display-text" class="m-local-text">No review written yet.</div>
+        </div>
+        <div id="my-review-form" style="display: none;">
+          <div class="star-input" id="my-rating-stars">
+            <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+            <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+            <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+            <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+            <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+          </div>
+          <textarea id="my-review-text" class="m-textarea" placeholder="What did you think?"></textarea>
+          <button class="btn-save" onclick="submitReview()" style="display: inline-block;">Save Review</button>
+        </div>
+      </div>
+      
+      <!-- Partner Review -->
+      <div class="m-local-review">
+        <div class="m-local-title"><span id="m-partner-name">Partner</span></div>
+        <div class="star-input" style="justify-content: flex-start; flex-direction: row; margin-bottom: 0;" id="partner-rating-display">
+          <!-- Populated via JS -->
+        </div>
+        <div id="partner-review-display" class="m-local-text">No review written yet.</div>
+      </div>
+    </div>
+    
+    <!-- Bottom Section: TMDB Reviews -->
+    <div class="m-section-title">Community Reviews</div>
+    <div class="m-tmdb-reviews" id="m-tmdb-reviews">
+      <div style="color:var(--text-muted); font-size:14px;">Loading reviews...</div>
+    </div>
+    
+  </div>
+</div>
+
+</body>
+</html>

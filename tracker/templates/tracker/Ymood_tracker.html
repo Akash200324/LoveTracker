@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aria | Wellness Module</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+    <style>
+       :root {
+    --primary: #E8869A;
+    --primary-light: #F4A7B9;
+    --accent: #C06080;
+    --bg: #FDF8F9;
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --text-main: #3D3D3D;
+    --text-sub: #8E8E8E;
+    --shadow: 0 20px 40px rgba(232, 134, 154, 0.1);
+    --pink-bg: #fff5f7;
+    --rose: #ff4d6d;
+    --rose-light: #ff8fa3;
+    --rose-dark: #c9184a;
+    --white: #ffffff;
+    --charcoal: #2d2d2d;
+    --gray: #6b7280;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ─── NAVBAR ─── */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 68px;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,77,109,0.1);
+    box-shadow: 0 4px 30px rgba(255,77,109,0.06);
+    transition: background 0.3s;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.nav-logo .heart-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(255,77,109,0.4);
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    14% {
+        transform: scale(1.15);
+    }
+    28% {
+        transform: scale(1);
+    }
+    42% {
+        transform: scale(1.1);
+    }
+    70% {
+        transform: scale(1);
+    }
+}
+
+.nav-logo span {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--rose);
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    list-style: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--charcoal);
+    position: relative;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--rose);
+}
+
+.couple-avatars {
+    display: flex;
+    align-items: center;
+}
+
+.couple-avatars .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2.5px solid white;
+    background: linear-gradient(135deg, #ffb3c1, #ff8fa3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.couple-avatars .avatar:last-child {
+    margin-left: -10px;
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--charcoal);
+}
+
+/* --- PREMIUM GLASSY MENU --- */
+.premium-menu-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+@media (min-width: 769px) {
+    .premium-menu-btn { display: none; }
+}
+.premium-menu-btn span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--charcoal, #2d2d2d);
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.premium-menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.premium-menu-btn.open span:nth-child(2) { opacity: 0; }
+.premium-menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.premium-overlay-menu {
+    position: fixed; inset: 0; z-index: 10001;
+    background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.premium-overlay-menu.open { opacity: 1; pointer-events: all; }
+.premium-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    transition-delay: 0.1s;
+}
+.premium-overlay-menu.open .premium-menu-content { transform: translateY(0) scale(1); opacity: 1; }
+.premium-menu-content a {
+    font-size: 1.4rem; font-weight: 600; color: #ff4d6d;
+    text-decoration: none; letter-spacing: 0.5px;
+    transition: color 0.2s, transform 0.2s;
+}
+.premium-menu-content a:hover { color: var(--rose, #ff4d6d); transform: scale(1.05); }
+
+/* --- APPLE SMOOTH PAGE TRANSITIONS --- */
+body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
+@keyframes fadeInPage {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none !important; }
+    .nav-couple { display: none; }
+    .nav-toggle { display: none; }
+    .wellness-container { padding-top: 80px; padding-bottom: 90px; }
+}
+
+/* Decorative Orbs */
+.orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.5;
+}
+
+.orb-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary-light);
+    top: -100px;
+    right: -100px;
+}
+
+.orb-2 {
+    width: 300px;
+    height: 300px;
+    background: #DDA0DD;
+    bottom: -50px;
+    left: -50px;
+}
+
+/* Grid Layout */
+.wellness-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 20px 40px;
+}
+
+.pos-header {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.pos-sleep {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.pos-progress {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+}
+
+.pos-energy {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+.pos-journal {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    border-radius: 32px;
+    padding: 30px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+}
+
+.time-chip {
+    background: var(--glass);
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    border: 1px solid var(--glass-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.time-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.section-eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.greeting-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-style: italic;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* Calendar Strip */
+.calendar-strip {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.cal-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cal-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    font-size: 18px;
+    cursor: pointer;
+    border: 1px solid rgba(232, 134, 154, 0.1);
+}
+
+.cal-circle.today {
+    background: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 15px rgba(232, 134, 154, 0.3);
+}
+
+/* Sleep UI */
+.sleep-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.sleep-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.sleep-hours {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.sleep-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+/* Interaction Bars */
+.bar-outer {
+    height: 48px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.bar-fill {
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.energy-fill {
+    background: linear-gradient(90deg, var(--primary-light), var(--accent));
+}
+
+.naughty-fill {
+    background: linear-gradient(90deg, #9b59b6, #8e44ad);
+}
+
+.bar-label {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 12px;
+    font-weight: 700;
+    color: white;
+    mix-blend-mode: exclusion;
+}
+
+/* Mood Selection */
+.mood-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.mood-btn {
+    background: white;
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 15px 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.mood-btn.active {
+    background: var(--primary-light);
+    transform: translateY(-5px);
+    border-color: var(--primary);
+}
+
+.mood-emoji {
+    display: block;
+    font-size: 20px;
+}
+
+.mood-label {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Journaling */
+.journal-area {
+    width: 100%;
+    min-height: 120px;
+    background: transparent;
+    border: none;
+    outline: none;
+    background-image: linear-gradient(transparent 31px, #f0f0f0 31px);
+    background-size: 100% 32px;
+    line-height: 32px;
+    font-size: 16px;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+    border: none;
+    background: var(--text-main);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Animations & Popups */
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.popup.open {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.popup-content {
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    width: 400px;
+    max-width: 90%;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes drop {
+    to { transform: translateY(105vh) rotate(360deg); }
+}
+
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 850px) {
+    .wellness-container {
+        grid-template-columns: 1fr;
+    }
+    .pos-header,
+    .pos-sleep,
+    .pos-progress,
+    .pos-energy,
+    .pos-journal {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+    </style>
+</head>
+<body>
+  <!-- ─── NAVBAR ─── -->
+<nav id="navbar">
+    <a class="nav-logo" href="#">
+        <div class="heart-icon">
+            💞
+        </div>
+        <span>
+            Love Tracker
+        </span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+        <li>
+            <a href="{% url 'dashboard' %}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'profile' %}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Profile
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'logout' %}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Logout
+            </a>
+        </li>
+    </ul>
+    <div class="nav-couple">
+        <div class="couple-avatars" onclick="openSetupModal()" style="cursor:pointer">
+        </div>
+    </div>
+    <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</nav>
+
+<!-- Premium Glassy Hamburger Menu Button -->
+<div class="premium-menu-btn" onclick="togglePremiumMenu()">
+    <span></span><span></span><span></span>
+</div>
+
+<!-- Premium Glassy Overlay Menu -->
+<div class="premium-overlay-menu" id="premiumMenu">
+    <div class="premium-menu-content">
+        <a href="{% url 'dashboard' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+        </a>
+        <a href="{% url 'profile' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile
+        </a>
+        <a href="{% url 'logout' %}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:text-bottom;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+        </a>
+    </div>
+</div>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<main class="wellness-container">
+    <!-- MODULE: HEADER -->
+    <div class="pos-header">
+        <div class="time-chip">
+            <div class="time-dot"></div>
+            <span id="liveTime">
+                --:-- --
+            </span>
+        </div>
+        <section style="margin-bottom: 32px;">
+           <div class="greeting-main" id="greetingText">
+                Good Day, {{ request.user.name|default:request.user.username }} ✨
+            </div>
+            <p style="color: var(--text-sub); font-size: 15px;">
+                Tracking your wellness journey in real-time.
+            </p>
+        </section>
+    </div>
+
+    <!-- MODULE: RECENT HISTORY -->
+    <section class="glass-card fade-up pos-progress">
+        <div class="section-eyebrow">
+            Recent History
+        </div>
+        <div class="calendar-strip" id="calendarStrip">
+            {% for entry in history %}
+            <div class="cal-day">
+                <div class="cal-circle {% if entry.date == today %}today{% endif %}"
+                     onclick="showPopup('{{ entry.date|date:'l, F j' }}', '{{ entry.mood_emoji }}', '{{ entry.sleep_hours }}', '{{ entry.energy_percent }}')">
+                    {{ entry.mood_emoji }}
+                </div>
+                <div class="cal-label">
+                    {{ entry.date|date:"D" }}
+                </div>
+                <div class="cal-date">
+                    {{ entry.date.day }}
+                </div>
+            </div>
+            {% empty %}
+            <p style="font-size: 12px; color: var(--text-sub);">
+                Start your tracking today.
+            </p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- MODULE: SLEEP TRACKER -->
+    <section class="glass-card fade-up pos-sleep">
+        <div class="section-eyebrow">
+            Rest & Vitality
+        </div>
+        <div class="section-title">
+            Sleep Quality
+        </div>
+        <div class="sleep-wrap">
+            <canvas id="sleepCanvas" width="240" height="240"></canvas>
+            <div class="sleep-center">
+                <div class="sleep-hours" id="sleepHoursDisplay">
+                    {{ today_entry.sleep_hours|default:"7.5" }}
+                </div>
+                <div class="sleep-unit">
+                    hrs slept
+                </div>
+            </div>
+        </div>
+        <div class="sleep-times">
+            <div class="time-box">
+                <span>
+                    Bedtime
+                </span>
+                <br>
+                <strong id="bedtimeDisplay">
+                    {{ today_entry.bedtime|default:"11:00 PM" }}
+                </strong>
+            </div>
+            <div class="time-box" style="text-align: right;">
+                <span>
+                    Wake up
+                </span>
+                <br>
+                <strong id="wakeDisplay">
+                    {{ today_entry.wake_time|default:"06:30 AM" }}
+                </strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODULE: VITALITY & MOOD -->
+    <section class="glass-card fade-up pos-energy">
+        <div class="section-eyebrow">
+            Vitality Stats
+        </div>
+        <div class="section-title" style="font-size: 18px; margin-bottom: 10px;">
+            Daily Energy
+        </div>
+        <div class="bar-outer"
+             id="energyOuter"
+             onmousedown="startBar(event, 'energy')"
+             ontouchstart="startBar(event, 'energy')">
+            <div class="bar-fill energy-fill"
+                 id="energyFill"
+                 style="width: {{ today_entry.energy_percent|default:70 }}%;">
+            </div>
+            <div class="bar-label" id="energyLabel">
+                {{ today_entry.energy_percent|default:70 }}%
+            </div>
+        </div>
+        <div class="section-title" style="font-size: 18px; margin-bottom: 10px; margin-top: 20px;">
+            Naughty Level
+        </div>
+        <div class="bar-outer"
+             id="naughtyOuter"
+             onmousedown="startBar(event, 'naughty')"
+             ontouchstart="startBar(event, 'naughty')">
+            <div class="bar-fill naughty-fill"
+                 id="naughtyFill"
+                 style="width: 20%;">
+            </div>
+            <div class="bar-label" id="naughtyLabel">
+                20%
+            </div>
+        </div>
+        <div class="section-eyebrow" style="margin-top: 32px;">
+            Mood Tracker
+        </div>
+        <div class="mood-grid" id="moodGrid">
+            <div class="mood-btn" data-mood="ecstatic" onclick="selectMood(this)">
+                <span class="mood-emoji">🤩</span>
+                <span class="mood-label">Happy</span>
+            </div>
+            <div class="mood-btn active" data-mood="calm" onclick="selectMood(this)">
+                <span class="mood-emoji">😌</span>
+                <span class="mood-label">Calm</span>
+            </div>
+            <div class="mood-btn" data-mood="sad" onclick="selectMood(this)">
+                <span class="mood-emoji">😔</span>
+                <span class="mood-label">Low</span>
+            </div>
+            <div class="mood-btn" data-mood="romantic" onclick="selectMood(this)">
+                <span class="mood-emoji">❤️</span>
+                <span class="mood-label">Love</span>
+            </div>
+            <div class="mood-btn" data-mood="anger" onclick="selectMood(this)">
+                <span class="mood-emoji">💢</span>
+                <span class="mood-label">Anger</span>
+            </div>
+            <div class="mood-btn" data-mood="naughty" onclick="selectMood(this)">
+                <span class="mood-emoji">😈</span>
+                <span class="mood-label">Naughty</span>
+            </div>
+            <div class="mood-btn" data-mood="playful" onclick="selectMood(this)">
+                <span class="mood-emoji">😜</span>
+                <span class="mood-label">Playful</span>
+            </div>
+            <div class="mood-btn" data-mood="tired" onclick="selectMood(this)">
+                <span class="mood-emoji">😴</span>
+                <span class="mood-label">Tired</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODULE: JOURNAL & WAVE -->
+    <section class="glass-card fade-up pos-journal">
+        <div class="section-eyebrow">
+            Reflection
+        </div>
+        <div class="section-title">
+            Journal
+        </div>
+        <textarea class="journal-area"
+                  id="journalText"
+                  placeholder="How is your heart today?">{{ today_entry.journal_text }}</textarea>
+        <div style="margin-top: 20px;">
+            <div class="section-eyebrow">
+                Wave Analysis
+            </div>
+            <canvas id="waveChart" style="width: 100%; height: 160px;"></canvas>
+        </div>
+        <button class="save-btn" onclick="saveDay()" style="margin-top: 32px;">
+            ✨ Save Your Mood
+        </button>
+    </section>
+</main>
+
+<!-- UI OVERLAYS -->
+<div id="dayPopup" class="popup" onclick="closePopup()">
+    <div class="popup-content" onclick="event.stopPropagation()">
+        <div id="popupMood" style="font-size: 50px; margin-bottom: 10px;"></div>
+        <h3 id="popupDate" style="font-family: 'Playfair Display', serif; font-size: 24px;"></h3>
+        <p id="popupInfo" style="color: var(--text-sub);"></p>
+        <button class="save-btn" onclick="closePopup()" style="margin-top: 20px; background: var(--primary);">
+            Close
+        </button>
+    </div>
+</div>
+
+<div id="confettiWrap"></div>
+
+   <script>
+    // Navigation Toggle
+    function toggleNav() {
+        document.getElementById('navLinks').classList.toggle('open');
+    }
+
+    // Real-time Greeting and Clock
+    function updateRealtime() {
+        const now = new Date();
+        let h = now.getHours();
+        let m = now.getMinutes();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        let greet = h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening";
+
+        if (document.getElementById('greetingText')) {
+            document.getElementById('greetingText').innerHTML = `${greet}, {{ request.user.name|default:request.user.username }} ✨`;
+        }
+        document.getElementById('liveTime').textContent = `${h % 12 || 12}:${m.toString().padStart(2, '0')} ${ampm}`;
+    }
+    setInterval(updateRealtime, 1000);
+    updateRealtime();
+
+    // Sleep Canvas Logic
+    const canvas = document.getElementById('sleepCanvas');
+    const ctx = canvas.getContext('2d');
+    const cx = 120, cy = 120, R = 100, r = 75;
+    let bedAngle = 330, wakeAngle = 195, dragging = null;
+
+    function angleToTime(angle) {
+        let h = ((angle / 360) * 24 + 12) % 24;
+        const hr = Math.floor(h);
+        const min = Math.round((h - hr) * 60 / 30) * 30;
+        return `${hr % 12 || 12}:${min.toString().padStart(2, '0')} ${hr >= 12 ? 'PM' : 'AM'}`;
+    }
+
+    function drawSleep() {
+        ctx.clearRect(0, 0, 240, 240);
+
+        // Background track
+        ctx.beginPath();
+        ctx.arc(cx, cy, (R + r) / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(232,134,154,0.05)';
+        ctx.lineWidth = R - r;
+        ctx.stroke();
+
+        // Sleep Duration Arc
+        const sRad = (bedAngle - 90) * Math.PI / 180;
+        const eRad = (wakeAngle - 90) * Math.PI / 180;
+        const grad = ctx.createLinearGradient(0, 0, 240, 240);
+        grad.addColorStop(0, '#F4A7B9');
+        grad.addColorStop(1, '#C06080');
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, (R + r) / 2, sRad, eRad);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = R - r - 2;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        const drawIcon = (ang, emo) => {
+            const rad = (ang - 90) * Math.PI / 180;
+            const hx = cx + (R + r) / 2 * Math.cos(rad);
+            const hy = cy + (R + r) / 2 * Math.sin(rad);
+            ctx.beginPath();
+            ctx.arc(hx, hy, 16, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0,0,0,0.1)';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.font = '14px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emo, hx, hy);
+        };
+
+        drawIcon(bedAngle, '🌙');
+        drawIcon(wakeAngle, '☀️');
+
+        document.getElementById('bedtimeDisplay').textContent = angleToTime(bedAngle);
+        document.getElementById('wakeDisplay').textContent = angleToTime(wakeAngle);
+        document.getElementById('sleepHoursDisplay').textContent = (((wakeAngle - bedAngle + 360) % 360) / 360 * 24).toFixed(1);
+    }
+
+    function getEventPos(e) {
+        if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        return { x: e.clientX, y: e.clientY };
+    }
+
+    function handleStart(e) {
+        const pos = getEventPos(e);
+        const rect = canvas.getBoundingClientRect();
+        const x = (pos.x - rect.left) * (240 / rect.width) - cx;
+        const y = (pos.y - rect.top) * (240 / rect.height) - cy;
+        const a = (Math.atan2(y, x) * 180 / Math.PI + 90 + 360) % 360;
+        dragging = Math.abs(((a - bedAngle + 540) % 360) - 180) < Math.abs(((a - wakeAngle + 540) % 360) - 180) ? 'bed' : 'wake';
+    }
+
+    function handleMove(e) {
+        if (!dragging) return;
+        if (e.cancelable) e.preventDefault();
+        const pos = getEventPos(e);
+        const rect = canvas.getBoundingClientRect();
+        const x = (pos.x - rect.left) * (240 / rect.width) - cx;
+        const y = (pos.y - rect.top) * (240 / rect.height) - cy;
+        const a = (Math.atan2(y, x) * 180 / Math.PI + 90 + 360) % 360;
+        if (dragging === 'bed') bedAngle = a; else wakeAngle = a;
+        drawSleep();
+        updateChart();
+    }
+
+    function handleEnd() { dragging = null; }
+
+    canvas.addEventListener('mousedown', handleStart);
+    canvas.addEventListener('touchstart', handleStart, {passive: false});
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('touchmove', handleMove, {passive: false});
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchend', handleEnd);
+
+    drawSleep();
+
+    // Sliders (Energy & Naughty)
+    let currentBar = null;
+
+    function setBarLevel(e, type) {
+        const rect = document.getElementById(type + 'Outer').getBoundingClientRect();
+        const pos = getEventPos(e);
+        let pct = Math.max(0, Math.min(100, Math.round(((pos.x - rect.left) / rect.width) * 100)));
+        document.getElementById(type + 'Fill').style.width = pct + '%';
+        document.getElementById(type + 'Label').textContent = pct + '%';
+        updateChart();
+    }
+
+    function startBar(e, type) {
+        currentBar = type;
+        setBarLevel(e, type);
+        document.addEventListener('mousemove', moveBar);
+        document.addEventListener('mouseup', stopBar);
+        document.addEventListener('touchmove', moveBar, {passive: false});
+        document.addEventListener('touchend', stopBar);
+    }
+
+    function moveBar(e) {
+        if (currentBar) {
+            if (e.cancelable) e.preventDefault();
+            setBarLevel(e, currentBar);
+        }
+    }
+
+    function stopBar() {
+        currentBar = null;
+        document.removeEventListener('mousemove', moveBar);
+        document.removeEventListener('mouseup', stopBar);
+        document.removeEventListener('touchmove', moveBar);
+        document.removeEventListener('touchend', stopBar);
+    }
+
+    // Mood Selection
+    function selectMood(el) {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        if (el.dataset.mood === 'naughty') {
+            document.getElementById('naughtyFill').style.width = '90%';
+            document.getElementById('naughtyLabel').textContent = '90%';
+        }
+        updateChart();
+    }
+
+    // Chart Logic
+    const wc = document.getElementById('waveChart');
+    const wctx = wc.getContext('2d');
+
+    function updateChart() {
+        const w = wc.offsetWidth, h = 160;
+        wc.width = w * 2;
+        wc.height = h * 2;
+        wctx.scale(2, 2);
+        wctx.clearRect(0, 0, w, h);
+
+        const energy = parseInt(document.getElementById('energyLabel').textContent) || 70;
+        const naughty = parseInt(document.getElementById('naughtyLabel').textContent) || 20;
+        const sleep = Math.min(100, (parseFloat(document.getElementById('sleepHoursDisplay').textContent) / 9) * 100);
+
+        const points = [
+            {v: sleep, label: 'Sleep'},
+            {v: naughty, label: 'Naughty'},
+            {v: energy, label: 'Energy'},
+            {v: (energy + naughty) / 2, label: 'Vibe'}
+        ];
+
+        const pad = 40, stepX = (w - pad * 2) / (points.length - 1);
+
+        wctx.beginPath();
+        points.forEach((p, i) => {
+            const x = pad + i * stepX;
+            const y = 30 + (1 - p.v / 100) * 80;
+            if (i === 0) wctx.moveTo(x, y);
+            else {
+                const px = pad + (i - 1) * stepX;
+                const py = 30 + (1 - points[i - 1].v / 100) * 80;
+                wctx.bezierCurveTo((px + x) / 2, py, (px + x) / 2, y, x, y);
+            }
+        });
+
+        wctx.strokeStyle = '#E8869A';
+        wctx.lineWidth = 3;
+        wctx.stroke();
+
+        points.forEach((p, i) => {
+            const x = pad + i * stepX;
+            const y = 30 + (1 - p.v / 100) * 80;
+            wctx.beginPath();
+            wctx.arc(x, y, 4, 0, Math.PI * 2);
+            wctx.fillStyle = '#C06080';
+            wctx.fill();
+            wctx.font = 'bold 10px DM Sans';
+            wctx.fillStyle = '#8E8E8E';
+            wctx.textAlign = 'center';
+            wctx.fillText(p.label, x, 135);
+        });
+    }
+    setTimeout(updateChart, 100);
+
+    // Save Data to Django
+    async function saveDay() {
+        const btn = document.querySelector('.save-btn');
+        const activeMoodBtn = document.querySelector('.mood-btn.active');
+
+        const payload = {
+            mood_type: activeMoodBtn ? activeMoodBtn.dataset.mood : 'calm',
+            energy_percent: parseInt(document.getElementById('energyLabel').textContent),
+            naughty_percent: parseInt(document.getElementById('naughtyLabel').textContent),
+            sleep_hours: parseFloat(document.getElementById('sleepHoursDisplay').textContent),
+            bedtime: document.getElementById('bedtimeDisplay').textContent,
+            wake_time: document.getElementById('wakeDisplay').textContent,
+            journal_text: document.getElementById('journalText').value
+        };
+
+        btn.textContent = '⌛ Syncing...';
+
+        try {
+            // Using Django Template Tags for URL and CSRF
+            const res = await fetch("{% url 'save_ajax' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                triggerConfetti();
+                btn.textContent = '✅ Mood Saved!';
+            } else {
+                btn.textContent = '❌ Error';
+            }
+        } catch (e) {
+            btn.textContent = '❌ Sync Failed';
+        }
+        setTimeout(() => btn.textContent = '✨ Save Your Mood', 3000);
+    }
+
+    // Feedback Animations
+    function triggerConfetti() {
+        const wrap = document.getElementById('confettiWrap');
+        for (let i = 0; i < 30; i++) {
+            const d = document.createElement('div');
+            d.className = 'confetti-dot';
+            d.style.cssText = `left:${Math.random() * 100}vw; position:fixed; top:-10px; background:#E8869A; width:8px; height:8px; animation:drop ${Math.random() * 2 + 2}s linear forwards;`;
+            wrap.appendChild(d);
+        }
+        setTimeout(() => wrap.innerHTML = '', 3000);
+    }
+
+    const obs = new IntersectionObserver((es) => {
+        es.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+    // Premium Menu toggle & transitions
+    function togglePremiumMenu() {
+        const btn = document.querySelector('.premium-menu-btn');
+        const menu = document.getElementById('premiumMenu');
+        if(btn) btn.classList.toggle('open');
+        if(menu) menu.classList.toggle('open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('a').forEach(link => {
+            if (link.hostname === window.location.hostname && 
+                !link.hasAttribute('target') && 
+                !link.href.includes('#') && 
+                !link.href.startsWith('javascript:')) {
+                
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    const menu = document.getElementById('premiumMenu');
+                    if(menu && menu.classList.contains('open')) {
+                        togglePremiumMenu();
+                    }
+                    document.body.style.transition = 'opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                    document.body.style.opacity = '0';
+                    document.body.style.transform = 'scale(0.98) translateY(10px)';
+                    setTimeout(() => { window.location = link.href; }, 300);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
