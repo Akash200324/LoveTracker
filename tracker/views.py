@@ -1462,3 +1462,12 @@ def period_tracker(request):
     
     return render(request, 'tracker/period_tracker.html', context)
 
+
+from django.core.management import call_command
+
+def auto_migrate(request):
+    try:
+        call_command('migrate')
+        return HttpResponse("Database migrated successfully! You can now visit the homepage.")
+    except Exception as e:
+        return HttpResponse(f"Migration failed: {e}")

@@ -94,6 +94,8 @@ urlpatterns = [
     # Period Tracker
     path('period-tracker/', views.period_tracker, name='period_tracker'),
 
+    # Database migration route
+    path('migrate/', views.auto_migrate, name='auto_migrate'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
