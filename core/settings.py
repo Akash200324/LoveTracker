@@ -78,13 +78,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://postgres:coupleapp123@localhost:5432/coupleapp_db',
-        conn_max_age=600,
-        ssl_require=False
-    )
-}
+db_url = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
+if db_url:
+    DATABASES = {
+        'default': dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='postgresql://postgres:coupleapp123@localhost:5432/coupleapp_db',
+            conn_max_age=600,
+            ssl_require=False
+        )
+    }
 
 
 # Password validation
