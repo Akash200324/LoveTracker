@@ -2365,7 +2365,7 @@ function renderMemories() {
         <img src="${m.src}" alt="memory" loading="lazy" />
         <button class="memory-card-delete" onclick="deleteMemory('${m.id}', event)" title="Remove">✕</button>
       </div>
-      <div class="memory-card-desc">${m.label || 'A beautiful moment 💕'}</div>
+      ${m.label ? `<div class="memory-card-desc">${m.label}</div>` : ''}
     </div>
   `).join('');
 
@@ -2409,7 +2409,7 @@ function deleteMemory(id, e) {
 document.getElementById('memory-photo-input').addEventListener('change', function(e) {
   const files = Array.from(e.target.files);
   if (!files.length) return;
-  const label = prompt('Add a title for these memories (optional):') || 'Dashboard Memory';
+  const label = prompt('Add a title for these memories (optional):') || '';
   
   const fd = new FormData();
   fd.append('title', label);
