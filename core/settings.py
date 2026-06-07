@@ -85,11 +85,10 @@ if db_url:
     }
 else:
     DATABASES = {
-        'default': dj_database_url.config(
-            default='postgresql://postgres:coupleapp123@localhost:5432/coupleapp_db',
-            conn_max_age=600,
-            ssl_require=False
-        )
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 
 

@@ -103,58 +103,33 @@
     .back-btn:hover { background: rgba(0,0,0,0.05); }
     @media (max-width: 768px) { 
         .top-nav { display: none; }
-        .week-calendar { margin-top: 0 !important; padding-top: 20px !important; margin-bottom: 15px !important; }
+        .realtime-date-container { margin-top: 0 !important; padding-top: 20px !important; margin-bottom: 15px !important; }
         .hero-info { padding-top: 5px !important; }
         .day-label { font-size: 48px; }
     }
 
-    /* Week Calendar */
-    .week-calendar {
-        display: flex;
-        justify-content: space-between;
-        padding: 0 10px;
-        margin: 10px 0 30px;
-    }
-    .day-col {
+    /* Realtime Date */
+    .realtime-date-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
-        width: 14%;
-        color: #333;
-    }
-    .day-name {
-        font-size: 10px;
-        color: rgba(51,51,51,0.8);
-        font-weight: 700;
-        text-transform: uppercase;
-    }
-    .day-name.today { color: #333; font-weight: 900; }
-    .day-num {
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
         justify-content: center;
+        margin: 10px 20px 30px;
+        color: white;
+    }
+    .realtime-day {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .realtime-date-str {
         font-size: 16px;
         font-weight: 600;
-        border-radius: 50%;
-        color: #333;
-    }
-    .day-num.period {
-        background: rgba(0,0,0,0.1);
-    }
-    .day-num.period-outline {
-        border: 2px dashed rgba(0,0,0,0.3);
-    }
-    .day-num.ovulation-outline {
-        border: 2px dashed #64b5f6;
-        background: transparent;
-        color: #fff;
-    }
-    .day-num.today {
-        background: transparent;
-        border: 2px dashed #333;
+        opacity: 0.9;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
     .hero-info {
@@ -282,7 +257,7 @@
     .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 8px 4px;
+        gap: 16px 4px;
         text-align: center;
     }
     .cal-day {
@@ -312,7 +287,25 @@
         background: var(--primary-pink);
         color: white;
     }
-    .cal-day.ovulation .cal-day-inner {
+    .cal-day.period-upcoming .cal-day-inner {
+        background: transparent;
+        color: var(--primary-pink);
+        border: 2px dotted var(--primary-pink);
+        border-radius: 50%;
+        transform: scale(1.1);
+        z-index: 10;
+        font-weight: 800;
+    }
+    .cal-day.ovulation-fertile .cal-day-inner {
+        background: transparent;
+        color: #64b5f6;
+        border: 2px dotted #64b5f6;
+        border-radius: 50%;
+        transform: scale(1.1);
+        z-index: 10;
+        font-weight: 800;
+    }
+    .cal-day.ovulation-day .cal-day-inner {
         background: transparent;
         color: #64b5f6;
         border: 2px dashed #64b5f6;
@@ -321,8 +314,17 @@
         z-index: 10;
         font-weight: 800;
     }
-    .cal-day.ovulation .cal-day-inner::before {
-        display: none;
+    .cal-day.ovulation-day::after {
+        content: 'Ovulation';
+        font-size: 8px;
+        position: absolute;
+        bottom: -14px;
+        line-height: 1;
+        color: #64b5f6;
+        font-weight: 800;
+        text-transform: uppercase;
+        width: 100%;
+        text-align: center;
     }
 
     .pregnant-chance-card {
@@ -427,6 +429,32 @@
         color: var(--primary-pink);
         background: #fff0f3;
     }
+    
+    /* Chips */
+    .chip-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .chip-btn {
+        padding: 6px 14px;
+        background: rgba(0,0,0,0.05);
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #555;
+        cursor: pointer;
+        transition: 0.2s;
+        user-select: none;
+    }
+    .chip-btn:hover {
+        background: rgba(0,0,0,0.1);
+    }
+    .chip-btn.active {
+        background: var(--primary-pink);
+        color: white;
+    }
 </style>
 </head>
 <body>
@@ -439,9 +467,10 @@
             </a>
         </div>
 
-        <!-- Week Calendar -->
-        <div class="week-calendar" id="weekCalendar">
-            <!-- JS fills this -->
+        <!-- Realtime Date -->
+        <div class="realtime-date-container">
+            <div class="realtime-day" id="realtimeDay"></div>
+            <div class="realtime-date-str" id="realtimeDateStr"></div>
         </div>
 
         <!-- Hero Info -->
@@ -517,7 +546,13 @@
 
     <!-- Predictive Calendar Section -->
     <div style="padding: 0 20px; margin-bottom: 30px;">
-        <h1 style="font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 20px;">Predict<br><span style="font-weight: 400;">your fertile window</span></h1>
+        <h1 style="font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;">Predict<br><span style="font-weight: 400;">your fertile window</span></h1>
+        
+        <div style="display: flex; justify-content: flex-start; gap: 12px; margin-bottom: 16px; font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-pink);"></span> Menstrual Period</div>
+            <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: transparent; border: 2px dotted var(--primary-pink);"></span> Upcoming Menstrual</div>
+            <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 50%; border: 2px solid #64b5f6;"></span> Ovulation Period</div>
+        </div>
         
         <div class="calendar-card">
             <div class="cal-header">
@@ -599,13 +634,29 @@
                 
                 <div class="form-group">
                     <label>Mood</label>
-                    <input type="text" name="mood" class="form-input" placeholder="e.g. Happy, Crampy, Tired">
+                    <div class="chip-options">
+                        <div class="chip-btn" onclick="toggleChip(this, 'moodInput', 'Happy')">Happy</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'moodInput', 'Sensitive')">Sensitive</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'moodInput', 'Sad')">Sad</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'moodInput', 'Tired')">Tired</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'moodInput', 'Anxious')">Anxious</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'moodInput', 'Angry')">Angry</div>
+                    </div>
+                    <input type="text" name="mood" id="moodInput" class="form-input" placeholder="Or type your mood here...">
                 </div>
                 
                 {% if current_phase == 'Menstrual' %}
                 <div class="form-group">
                     <label>Other Symptoms</label>
-                    <input type="text" name="symptoms" class="form-input" placeholder="Headache, cravings, etc.">
+                    <div class="chip-options">
+                        <div class="chip-btn" onclick="toggleChip(this, 'symptomsInput', 'Cramps')">Cramps</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'symptomsInput', 'Headache')">Headache</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'symptomsInput', 'Bloating')">Bloating</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'symptomsInput', 'Fatigue')">Fatigue</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'symptomsInput', 'Cravings')">Cravings</div>
+                        <div class="chip-btn" onclick="toggleChip(this, 'symptomsInput', 'Backache')">Backache</div>
+                    </div>
+                    <input type="text" name="symptoms" id="symptomsInput" class="form-input" placeholder="Or type your symptoms here...">
                 </div>
                 {% endif %}
                 
@@ -638,59 +689,12 @@
         cycleStart = new Date(sYear, sMonth - 1, sDay);
     }
 
-    // Week Calendar Generation Logic
-    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    // Realtime Date Logic
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const fullDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     
-    let weekHtml = '';
-    let startOfWeek = new Date(today);
-    let day = startOfWeek.getDay() || 7; 
-    startOfWeek.setDate(today.getDate() - day + 1);
-
-    for(let i=0; i<7; i++) {
-        let loopDate = new Date(startOfWeek);
-        loopDate.setDate(loopDate.getDate() + i);
-        
-        let isToday = loopDate.toDateString() === today.toDateString();
-        let d = loopDate.getDate();
-
-        let dayInCycle = 999;
-        if (cycleStart) {
-            let diffTime = Date.UTC(loopDate.getFullYear(), loopDate.getMonth(), loopDate.getDate()) - 
-                           Date.UTC(cycleStart.getFullYear(), cycleStart.getMonth(), cycleStart.getDate());
-            let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays >= 0) {
-                dayInCycle = diffDays % cycleLength;
-            }
-        }
-
-        if(isToday) {
-            weekHtml += `
-            <div class="day-col">
-                <span class="day-name today">TODAY</span>
-                <div class="day-num today">${d}</div>
-            </div>`;
-        } else if (dayInCycle < periodLength) {
-            weekHtml += `
-            <div class="day-col">
-                <span class="day-name">${days[i]}</span>
-                <div class="day-num period-outline">${d}</div>
-            </div>`;
-        } else if (dayInCycle >= (cycleLength - 19) && dayInCycle <= (cycleLength - 14)) {
-            weekHtml += `
-            <div class="day-col">
-                <span class="day-name">${days[i]}</span>
-                <div class="day-num ovulation-outline">${d}</div>
-            </div>`;
-        } else {
-            weekHtml += `
-            <div class="day-col">
-                <span class="day-name">${days[i]}</span>
-                <div class="day-num">${d}</div>
-            </div>`;
-        }
-    }
-    document.getElementById('weekCalendar').innerHTML = weekHtml;
+    document.getElementById('realtimeDay').innerText = fullDays[today.getDay()];
+    document.getElementById('realtimeDateStr').innerText = monthNames[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
 
     // Full Month Calendar Generation Logic
     let currentMonthOffset = 0;
@@ -722,10 +726,19 @@
                 
                 let dayInCycle = ((diffDays % cycleLength) + cycleLength) % cycleLength;
                 if (dayInCycle >= 0 && dayInCycle < periodLength) {
-                    classes.push('period');
+                    let todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    if (loopDate.getTime() <= todayMidnight.getTime()) {
+                        classes.push('period');
+                    } else {
+                        classes.push('period-upcoming');
+                    }
                 }
                 if (dayInCycle >= (cycleLength - 19) && dayInCycle <= (cycleLength - 14)) {
-                    classes.push('ovulation');
+                    if (dayInCycle === (cycleLength - 14)) {
+                        classes.push('ovulation-day');
+                    } else {
+                        classes.push('ovulation-fertile');
+                    }
                 }
             }
             calHtml += `<div class="${classes.join(' ')}"><div class="cal-day-inner">${d}</div></div>`;
@@ -790,6 +803,20 @@
         document.getElementById('flowInput').value = flowType;
         document.querySelectorAll('.flow-option').forEach(el => el.classList.remove('selected'));
         event.target.classList.add('selected');
+    }
+
+    // Toggle Chip Logic
+    function toggleChip(chipElement, inputId, value) {
+        chipElement.classList.toggle('active');
+        let input = document.getElementById(inputId);
+        let currentVals = input.value.split(',').map(s => s.trim()).filter(s => s);
+        
+        if (chipElement.classList.contains('active')) {
+            if (!currentVals.includes(value)) currentVals.push(value);
+        } else {
+            currentVals = currentVals.filter(v => v !== value);
+        }
+        input.value = currentVals.join(', ');
     }
 </script>
 </body>

@@ -341,6 +341,23 @@ def dashboard(request):
     # Moods and Statuses
     today_mood = YourMoodEntry.objects.filter(user=request.user, date=today).first()
     partner_mood = YourMoodEntry.objects.filter(user=partner, date=today).first() if partner else None
+    
+    def get_mood_completion(mood_entry):
+        if not mood_entry:
+            return 0
+        filled = 0
+        total = 6
+        if getattr(mood_entry, 'sleep_hours', 0) > 0: filled += 1
+        if getattr(mood_entry, 'energy_percent', 0) > 0: filled += 1
+        if getattr(mood_entry, 'naughty_percent', 0) > 0: filled += 1
+        if getattr(mood_entry, 'stress_percent', 0) > 0: filled += 1
+        if getattr(mood_entry, 'mood_type', ''): filled += 1
+        if getattr(mood_entry, 'journal_text', '').strip(): filled += 1
+        return int((filled / total) * 100)
+
+    my_mood_completion = get_mood_completion(today_mood)
+    partner_mood_completion = get_mood_completion(partner_mood)
+
     activities = Activity.objects.filter(couple=couple)[:20]
     my_status = StatusUpdate.objects.filter(user=request.user, is_active=True).first()
     partner_status = StatusUpdate.objects.filter(user=partner, is_active=True).first() if partner else None
@@ -401,6 +418,8 @@ def dashboard(request):
         'recent_memories': recent_memories,
         'bucket_items': bucket_items,
         'milestones': milestones,
+        'my_mood_completion': my_mood_completion,
+        'partner_mood_completion': partner_mood_completion,
         'show_welcome_message': show_welcome_message,
         'total': all_movies.count(),
         'completed': all_movies.filter(status='completed'),
@@ -652,7 +671,8 @@ def save_mood(request):
                     'couple': user_couple,
                     'mood_type': data.get('mood_type', 'calm'),
                     'energy_percent': data.get('energy_percent', 70),
-                    'naughty_percent': data.get('naughty_percent', 20), # ADD THIS LINE
+                    'naughty_percent': data.get('naughty_percent', 20),
+                    'stress_percent': data.get('stress_percent', 20),
                     'sleep_hours': data.get('sleep_hours', 0.0),
                     'bedtime': data.get('bedtime', '11:00 PM'),
                     'wake_time': data.get('wake_time', '06:30 AM'),

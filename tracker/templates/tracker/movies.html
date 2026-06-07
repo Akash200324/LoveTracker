@@ -438,7 +438,7 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
     <div class="sb-logo-icon">💕</div>
     <div class="sb-logo-text">
       <div class="sb-logo-title">Love Tracker</div>
-      <div class="sb-logo-sub">add movie list with your lovers</div>
+      <div class="sb-logo-sub">add movie list with your lover</div>
     </div>
   </div>
 
@@ -525,8 +525,6 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
           <span>★ {{ current.imdb_rating|default:"7.5" }}</span> • 
           <span>{{ current.genre|default:"General" }}</span> •
           <span>{{ current.movie_type|upper }}</span>
-        {% else %}
-          <span>Track</span> • <span>Review</span>
         {% endif %}
       </div>
       
@@ -557,7 +555,7 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
         .then(d => { document.getElementById('hero-overview').textContent = d.overview || 'An epic journey begins. Experience it together, log your history, and add your shared review once finished.'; })
         .catch(() => { document.getElementById('hero-overview').textContent = 'An epic journey begins. Experience it together, log your history, and add your shared review once finished.'; });
     {% else %}
-      document.getElementById('hero-overview').textContent = "Search for a movie or TV show using the search bar in the left navigation panel to begin your watch journey.";
+      document.getElementById('hero-overview').textContent = "Keep track of movies you want to watch together, share your ratings, and write reviews!";
     {% endif %}
   </script>
   {% endwith %}

@@ -432,37 +432,44 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
 
 /* Interaction Bars */
 .bar-outer {
-    height: 48px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 16px;
+    height: 40px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 20px;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--glass-border);
-    cursor: pointer;
     margin-bottom: 15px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
 }
 
 .bar-fill {
     height: 100%;
+    border-radius: 20px;
     transition: width 0.3s;
 }
 
 .energy-fill {
-    background: linear-gradient(90deg, var(--primary-light), var(--accent));
+    background: linear-gradient(90deg, #ff8fa3, #ff4d6d);
 }
 
 .naughty-fill {
-    background: linear-gradient(90deg, #9b59b6, #8e44ad);
+    background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+}
+
+.stress-fill {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
 }
 
 .bar-label {
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
     color: white;
-    mix-blend-mode: exclusion;
+    mix-blend-mode: difference;
 }
 
 /* Mood Selection */
@@ -512,14 +519,16 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
 }
 
 .save-btn {
-    width: 100%;
-    padding: 20px;
-    border-radius: 20px;
+    width: auto;
+    padding: 15px 40px;
+    border-radius: 30px;
     border: none;
     background: var(--text-main);
     color: white;
     font-weight: 700;
     cursor: pointer;
+    display: block;
+    margin: 20px auto 0;
 }
 
 /* Animations & Popups */
@@ -707,14 +716,15 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
         <div class="section-eyebrow">
             Rest & Vitality
         </div>
-        <div class="section-title">
-            Sleep Quality
+        <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Sleep Quality</span>
+            <button onclick="openSleepEdit()" style="background: none; border: 1px solid var(--glass-border); padding: 5px 12px; border-radius: 12px; cursor: pointer; color: var(--text-main); font-size: 14px;">✏️ Edit</button>
         </div>
         <div class="sleep-wrap">
             <canvas id="sleepCanvas" width="240" height="240"></canvas>
             <div class="sleep-center">
-                <div class="sleep-hours" id="sleepHoursDisplay">
-                    {{ today_entry.sleep_hours|default:"7.5" }}
+                <div class="sleep-hours" id="sleepHoursDisplay" data-hours="{% if today_entry %}{{ today_entry.sleep_hours }}{% else %}0{% endif %}">
+                    {% if today_entry %}{{ today_entry.sleep_hours }}h{% else %}0h 0m{% endif %}
                 </div>
                 <div class="sleep-unit">
                     hrs slept
@@ -728,7 +738,7 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
                 </span>
                 <br>
                 <strong id="bedtimeDisplay">
-                    {{ today_entry.bedtime|default:"11:00 PM" }}
+                    {% if today_entry %}{{ today_entry.bedtime }}{% else %}Not Set{% endif %}
                 </strong>
             </div>
             <div class="time-box" style="text-align: right;">
@@ -737,7 +747,7 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
                 </span>
                 <br>
                 <strong id="wakeDisplay">
-                    {{ today_entry.wake_time|default:"06:30 AM" }}
+                    {% if today_entry %}{{ today_entry.wake_time }}{% else %}Not Set{% endif %}
                 </strong>
             </div>
         </div>
@@ -776,6 +786,21 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
             </div>
             <div class="bar-label" id="naughtyLabel">
                 20%
+            </div>
+        </div>
+        <div class="section-title" style="font-size: 18px; margin-bottom: 10px; margin-top: 20px;">
+            Stress Level
+        </div>
+        <div class="bar-outer"
+             id="stressOuter"
+             onmousedown="startBar(event, 'stress')"
+             ontouchstart="startBar(event, 'stress')">
+            <div class="bar-fill stress-fill"
+                 id="stressFill"
+                 style="width: {{ today_entry.stress_percent|default:20 }}%;">
+            </div>
+            <div class="bar-label" id="stressLabel">
+                {{ today_entry.stress_percent|default:20 }}%
             </div>
         </div>
         <div class="section-eyebrow" style="margin-top: 32px;">
@@ -828,13 +853,13 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
         <textarea class="journal-area"
                   id="journalText"
                   placeholder="How is your heart today?">{{ today_entry.journal_text }}</textarea>
-        <div style="margin-top: 20px;">
+        <div style="margin-top: 40px;">
             <div class="section-eyebrow">
-                Wave Analysis
+                Stat Analysis
             </div>
             <canvas id="waveChart" style="width: 100%; height: 160px;"></canvas>
         </div>
-        <button class="save-btn" onclick="saveDay()" style="margin-top: 32px;">
+        <button class="save-btn" onclick="saveDay()" style="margin-top: 32px; display: block; margin-left: auto; margin-right: auto;">
             ✨ Save Your Mood
         </button>
     </section>
@@ -849,6 +874,17 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
         <button class="save-btn" onclick="closePopup()" style="margin-top: 20px; background: var(--primary);">
             Close
         </button>
+    </div>
+</div>
+
+<div id="sleepEditModal" class="popup" onclick="closeSleepEdit()">
+    <div class="popup-content" onclick="event.stopPropagation()">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 24px;">Edit Sleep Time</h3>
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <label style="color: var(--text-sub); font-size: 14px;">Bedtime: <input type="time" id="editBedtime" style="padding:10px; border-radius:10px; border:1px solid #ccc; width:100%; margin-top:5px; font-size:16px;"></label>
+            <label style="color: var(--text-sub); font-size: 14px;">Wake up: <input type="time" id="editWake" style="padding:10px; border-radius:10px; border:1px solid #ccc; width:100%; margin-top:5px; font-size:16px;"></label>
+        </div>
+        <button class="save-btn" onclick="saveSleepEdit()" style="margin-top: 20px; background: var(--primary);">Save Exact Time</button>
     </div>
 </div>
 
@@ -880,13 +916,31 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
     const canvas = document.getElementById('sleepCanvas');
     const ctx = canvas.getContext('2d');
     const cx = 120, cy = 120, R = 100, r = 75;
-    let bedAngle = 330, wakeAngle = 195, dragging = null;
+    function parseAmPmToAngle(str) {
+        if(!str) return 0;
+        let match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if(!match) return 0;
+        let h = parseInt(match[1]);
+        let m = parseInt(match[2]);
+        let ampm = match[3].toUpperCase();
+        if(ampm === 'PM' && h !== 12) h += 12;
+        if(ampm === 'AM' && h === 12) h = 0;
+        let decimalHours = h + (m / 60);
+        return (((decimalHours - 12 + 24) % 24) / 24) * 360;
+    }
+    let bedAngle = {% if today_entry %}parseAmPmToAngle("{{ today_entry.bedtime|escapejs }}") || 330{% else %}330{% endif %};
+    let wakeAngle = {% if today_entry %}parseAmPmToAngle("{{ today_entry.wake_time|escapejs }}") || 195{% else %}195{% endif %};
+    let dragging = null, hasInteractedSleep = {% if today_entry %}true{% else %}false{% endif %};
+    let isSleepLocked = {% if today_entry %}true{% else %}false{% endif %};
 
     function angleToTime(angle) {
-        let h = ((angle / 360) * 24 + 12) % 24;
-        const hr = Math.floor(h);
-        const min = Math.round((h - hr) * 60 / 30) * 30;
-        return `${hr % 12 || 12}:${min.toString().padStart(2, '0')} ${hr >= 12 ? 'PM' : 'AM'}`;
+        let decimalHours = ((angle / 360) * 24 + 12) % 24;
+        let h = Math.floor(decimalHours);
+        let m = Math.round((decimalHours - h) * 60);
+        if (m === 60) { h = (h + 1) % 24; m = 0; }
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hr12 = h % 12 || 12;
+        return `${hr12}:${m.toString().padStart(2, '0')} ${ampm}`;
     }
 
     function drawSleep() {
@@ -933,9 +987,19 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
         drawIcon(bedAngle, '🌙');
         drawIcon(wakeAngle, '☀️');
 
-        document.getElementById('bedtimeDisplay').textContent = angleToTime(bedAngle);
-        document.getElementById('wakeDisplay').textContent = angleToTime(wakeAngle);
-        document.getElementById('sleepHoursDisplay').textContent = (((wakeAngle - bedAngle + 360) % 360) / 360 * 24).toFixed(1);
+        if (hasInteractedSleep) {
+            document.getElementById('bedtimeDisplay').textContent = angleToTime(bedAngle);
+            document.getElementById('wakeDisplay').textContent = angleToTime(wakeAngle);
+            
+            let diffHours = ((wakeAngle - bedAngle + 360) % 360) / 360 * 24;
+            let h = Math.floor(diffHours);
+            let m = Math.round((diffHours - h) * 60);
+            if (m === 60) { h += 1; m = 0; }
+            
+            const display = document.getElementById('sleepHoursDisplay');
+            display.textContent = `${h}h ${m}m`;
+            display.dataset.hours = diffHours.toFixed(2);
+        }
     }
 
     function getEventPos(e) {
@@ -944,6 +1008,8 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
     }
 
     function handleStart(e) {
+        if (isSleepLocked) return;
+        hasInteractedSleep = true;
         const pos = getEventPos(e);
         const rect = canvas.getBoundingClientRect();
         const x = (pos.x - rect.left) * (240 / rect.width) - cx;
@@ -975,6 +1041,33 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
     document.addEventListener('touchend', handleEnd);
 
     drawSleep();
+
+    function openSleepEdit() {
+        document.getElementById('sleepEditModal').classList.add('open');
+    }
+    function closeSleepEdit() {
+        document.getElementById('sleepEditModal').classList.remove('open');
+    }
+    function timeToAngle(timeStr) {
+        if (!timeStr) return 0;
+        let [h, m] = timeStr.split(':').map(Number);
+        let decimalHours = h + (m / 60);
+        return (((decimalHours - 12 + 24) % 24) / 24) * 360;
+    }
+    function saveSleepEdit() {
+        const bed = document.getElementById('editBedtime').value;
+        const wake = document.getElementById('editWake').value;
+        if (bed && wake) {
+            hasInteractedSleep = true;
+            bedAngle = timeToAngle(bed);
+            wakeAngle = timeToAngle(wake);
+            drawSleep();
+            updateChart();
+            closeSleepEdit();
+        } else {
+            alert('Please select both times');
+        }
+    }
 
     // Sliders (Energy & Naughty)
     let currentBar = null;
@@ -1036,17 +1129,19 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
 
         const energy = parseInt(document.getElementById('energyLabel').textContent) || 70;
         const naughty = parseInt(document.getElementById('naughtyLabel').textContent) || 20;
-        const sleep = Math.min(100, (parseFloat(document.getElementById('sleepHoursDisplay').textContent) / 9) * 100);
+        const stress = parseInt(document.getElementById('stressLabel').textContent) || 20;
+        const sleep = Math.min(100, (parseFloat(document.getElementById('sleepHoursDisplay').dataset.hours || 0) / 9) * 100);
 
         const points = [
             {v: sleep, label: 'Sleep'},
             {v: naughty, label: 'Naughty'},
             {v: energy, label: 'Energy'},
-            {v: (energy + naughty) / 2, label: 'Vibe'}
+            {v: stress, label: 'Stress'}
         ];
 
         const pad = 40, stepX = (w - pad * 2) / (points.length - 1);
 
+        // Draw Area Fill
         wctx.beginPath();
         points.forEach((p, i) => {
             const x = pad + i * stepX;
@@ -1058,19 +1153,57 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
                 wctx.bezierCurveTo((px + x) / 2, py, (px + x) / 2, y, x, y);
             }
         });
+        wctx.lineTo(pad + (points.length - 1) * stepX, h);
+        wctx.lineTo(pad, h);
+        wctx.closePath();
+        
+        const areaGrad = wctx.createLinearGradient(0, 0, 0, h);
+        areaGrad.addColorStop(0, 'rgba(232, 134, 154, 0.4)');
+        areaGrad.addColorStop(1, 'rgba(232, 134, 154, 0.0)');
+        wctx.fillStyle = areaGrad;
+        wctx.fill();
 
+        // Draw Line Stroke
+        wctx.beginPath();
+        points.forEach((p, i) => {
+            const x = pad + i * stepX;
+            const y = 30 + (1 - p.v / 100) * 80;
+            if (i === 0) wctx.moveTo(x, y);
+            else {
+                const px = pad + (i - 1) * stepX;
+                const py = 30 + (1 - points[i - 1].v / 100) * 80;
+                wctx.bezierCurveTo((px + x) / 2, py, (px + x) / 2, y, x, y);
+            }
+        });
         wctx.strokeStyle = '#E8869A';
-        wctx.lineWidth = 3;
+        wctx.lineWidth = 4;
+        wctx.lineCap = 'round';
+        wctx.lineJoin = 'round';
+        wctx.shadowColor = 'rgba(232, 134, 154, 0.4)';
+        wctx.shadowBlur = 12;
+        wctx.shadowOffsetY = 6;
         wctx.stroke();
+
+        wctx.shadowBlur = 0;
+        wctx.shadowOffsetY = 0;
 
         points.forEach((p, i) => {
             const x = pad + i * stepX;
             const y = 30 + (1 - p.v / 100) * 80;
+            
+            // Outer white glow
             wctx.beginPath();
-            wctx.arc(x, y, 4, 0, Math.PI * 2);
-            wctx.fillStyle = '#C06080';
+            wctx.arc(x, y, 7, 0, Math.PI * 2);
+            wctx.fillStyle = 'white';
             wctx.fill();
-            wctx.font = 'bold 10px DM Sans';
+            
+            // Inner colored dot
+            wctx.beginPath();
+            wctx.arc(x, y, 4.5, 0, Math.PI * 2);
+            wctx.fillStyle = '#E8869A';
+            wctx.fill();
+            
+            wctx.font = 'bold 11px DM Sans';
             wctx.fillStyle = '#8E8E8E';
             wctx.textAlign = 'center';
             wctx.fillText(p.label, x, 135);
@@ -1087,7 +1220,8 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
             mood_type: activeMoodBtn ? activeMoodBtn.dataset.mood : 'calm',
             energy_percent: parseInt(document.getElementById('energyLabel').textContent),
             naughty_percent: parseInt(document.getElementById('naughtyLabel').textContent),
-            sleep_hours: parseFloat(document.getElementById('sleepHoursDisplay').textContent),
+            stress_percent: parseInt(document.getElementById('stressLabel').textContent),
+            sleep_hours: parseFloat(document.getElementById('sleepHoursDisplay').dataset.hours || 0),
             bedtime: document.getElementById('bedtimeDisplay').textContent,
             wake_time: document.getElementById('wakeDisplay').textContent,
             journal_text: document.getElementById('journalText').value
@@ -1109,6 +1243,7 @@ body { animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) both; }
             if (res.ok) {
                 triggerConfetti();
                 btn.textContent = '✅ Mood Saved!';
+                isSleepLocked = true;
             } else {
                 btn.textContent = '❌ Error';
             }

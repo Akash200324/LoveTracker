@@ -267,6 +267,7 @@ class YourMoodEntry(models.Model):
     mood_type = models.CharField(max_length=20, choices=MOOD_KEYS, default='calm')
     energy_percent = models.IntegerField(default=70)
     naughty_percent = models.IntegerField(default=0) # Added back for you
+    stress_percent = models.IntegerField(default=20)
     sleep_hours = models.FloatField(default=0.0)
     bedtime = models.CharField(max_length=20, default="11:00 PM")
     wake_time = models.CharField(max_length=20, default="06:30 AM")

@@ -449,30 +449,42 @@
         }
 
         .battery-outer {
-            height: 48px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 16px;
+            height: 40px;
+            background: rgba(0,0,0,0.04);
+            border-radius: 20px;
             position: relative;
             overflow: hidden;
-            border: 1px solid var(--glass-border);
+            margin-bottom: 15px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
         }
 
         .battery-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-light), var(--accent));
+            border-radius: 20px;
+            background: linear-gradient(90deg, #ff8fa3, #ff4d6d);
             width: 0%;
             transition: width 1s ease-in-out;
+        }
+
+        .naughty-fill {
+            background: linear-gradient(90deg, #a78bfa, #8b5cf6) !important;
+        }
+
+        .stress-fill {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6) !important;
         }
 
         .battery-label {
             position: absolute;
             width: 100%;
             text-align: center;
-            top: 12px;
+            top: 50%;
+            transform: translateY(-50%);
             font-weight: 700;
             font-size: 14px;
+            letter-spacing: 0.5px;
             color: white;
-            mix-blend-mode: exclusion;
+            mix-blend-mode: difference;
         }
 
         .mood-grid {
@@ -687,7 +699,7 @@
                 {% for entry in history %}
                 <div class="cal-day">
                     <div class="cal-circle {% if entry.date == today %}today{% endif %}"
-                         onclick="showPopup('{{ entry.date|date:'l, F j' }}', '{{ entry.mood_emoji }}', '{{ entry.sleep_hours }}', '{{ entry.energy_percent }}')">
+                         onclick="showPopup('{{ entry.date|date:'l, F j' }}', '{{ entry.mood_emoji }}', '{{ entry.sleep_hours }}', '{{ entry.energy_percent }}', '{{ entry.journal_text|escapejs }}')">
                         {{ entry.mood_emoji }}
                     </div>
                     <div class="cal-label">{{ entry.date|date:"D" }}</div>
@@ -724,11 +736,23 @@
 
         <!-- 4. ENERGY & MOOD -->
         <section class="glass-card fade-up pos-energy">
-            <div class="section-eyebrow">Mind & Body</div>
-            <div class="section-title">Daily Energy</div>
+            <div class="section-eyebrow">Vitality Stats</div>
+            <div class="section-title" style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Daily Energy</div>
             <div class="battery-outer">
                 <div class="battery-fill" style="width: {{ today_entry.energy_percent|default:0 }}%;"></div>
                 <div class="battery-label">{{ today_entry.energy_percent|default:0 }}%</div>
+            </div>
+
+            <div class="section-title" style="font-size: 18px; margin-bottom: 10px; margin-top: 20px; font-weight: bold;">Naughty Level</div>
+            <div class="battery-outer">
+                <div class="battery-fill naughty-fill" style="width: {{ today_entry.naughty_percent|default:0 }}%;"></div>
+                <div class="battery-label">{{ today_entry.naughty_percent|default:0 }}%</div>
+            </div>
+
+            <div class="section-title" style="font-size: 18px; margin-bottom: 10px; margin-top: 20px; font-weight: bold;">Stress Level</div>
+            <div class="battery-outer">
+                <div class="battery-fill stress-fill" style="width: {{ today_entry.stress_percent|default:0 }}%;"></div>
+                <div class="battery-label">{{ today_entry.stress_percent|default:0 }}%</div>
             </div>
 
             <div class="section-eyebrow" style="margin-top: 32px;">Reported Mood</div>
@@ -745,6 +769,18 @@
                 <div class="mood-btn {% if today_entry.mood_type == 'romantic' %}active{% endif %}">
                     <span class="mood-emoji">❤️</span><span class="mood-label">Love</span>
                 </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'anger' %}active{% endif %}">
+                    <span class="mood-emoji">💢</span><span class="mood-label">Anger</span>
+                </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'naughty' %}active{% endif %}">
+                    <span class="mood-emoji">😈</span><span class="mood-label">Naughty</span>
+                </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'playful' %}active{% endif %}">
+                    <span class="mood-emoji">😜</span><span class="mood-label">Playful</span>
+                </div>
+                <div class="mood-btn {% if today_entry.mood_type == 'tired' %}active{% endif %}">
+                    <span class="mood-emoji">😴</span><span class="mood-label">Tired</span>
+                </div>
             </div>
         </section>
 
@@ -754,16 +790,14 @@
             <div class="section-title">Daily Journal</div>
             <textarea class="journal-area" readonly>{{ today_entry.journal_text|default:"No notes shared for today." }}</textarea>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 70px;">
                 <div class="section-eyebrow">Stat Analysis</div>
-                <canvas id="waveChart" style="width: 100%; height: 120px;"></canvas>
+                <canvas id="waveChart" style="width: 100%; height: 160px;"></canvas>
             </div>
         </section>
     </main>
 
-    <footer style="text-align: center; padding: 20px; color: var(--text-sub); font-size: 12px; font-weight: 700; letter-spacing: 1px;">
-        PARTNER VIEW &bull; 2026
-    </footer>
+
 
     <!-- History Popup -->
     <div id="dayPopup" class="popup" onclick="closePopup()">
@@ -771,6 +805,7 @@
             <div id="popupMood" style="font-size: 50px; margin-bottom: 10px;"></div>
             <h3 id="popupDate" style="font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 10px;"></h3>
             <p id="popupInfo" style="color: var(--text-sub); font-size: 14px;"></p>
+            <p id="popupJournal" style="margin-top: 15px; font-style: italic; color: var(--text-main); font-size: 15px; padding: 10px; background: #fff5f7; border-radius: 12px; display: none;"></p>
             <button class="close-btn" onclick="closePopup()">Close History</button>
         </div>
     </div>
@@ -804,10 +839,16 @@
         updateTime();
         setInterval(updateTime, 30000);
 
-        function showPopup(date, mood, sleep, energy) {
+        function showPopup(date, mood, sleep, energy, journal) {
             document.getElementById('popupDate').textContent = date;
             document.getElementById('popupMood').textContent = mood;
-            document.getElementById('popupInfo').innerHTML = `Slept <b>${sleep}h</b> · Energy <b>${energy}%</b>`;
+            document.getElementById('popupInfo').innerHTML = `Slept <b>${sleep}h</b> &middot; Energy <b>${energy}%</b>`;
+            if (journal && journal.trim() !== '') {
+                document.getElementById('popupJournal').style.display = 'block';
+                document.getElementById('popupJournal').textContent = '"' + journal + '"';
+            } else {
+                document.getElementById('popupJournal').style.display = 'none';
+            }
             document.getElementById('dayPopup').classList.add('open');
         }
 
@@ -815,28 +856,84 @@
             document.getElementById('dayPopup').classList.remove('open');
         }
 
-        // Static Sleep Draw
+        // Sleep Canvas Logic
         const canvas = document.getElementById('sleepCanvas');
         const ctx = canvas.getContext('2d');
         const cx = 120, cy = 120, R = 100, r = 75;
 
+        function parseAmPmToAngle(str) {
+            if(!str) return 0;
+            let match = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if(!match) return 0;
+            let h = parseInt(match[1]);
+            let m = parseInt(match[2]);
+            let ampm = match[3].toUpperCase();
+            if(ampm === 'PM' && h !== 12) h += 12;
+            if(ampm === 'AM' && h === 12) h = 0;
+            let decimalHours = h + (m / 60);
+            return (((decimalHours - 12 + 24) % 24) / 24) * 360;
+        }
+
+        let bedAngle = parseAmPmToAngle("{{ today_entry.bedtime|default:'11:00 PM'|escapejs }}");
+        let wakeAngle = parseAmPmToAngle("{{ today_entry.wake_time|default:'06:30 AM'|escapejs }}");
+
         function drawSleep() {
             ctx.clearRect(0, 0, 240, 240);
+
+            // Background track
             ctx.beginPath();
             ctx.arc(cx, cy, (R + r) / 2, 0, Math.PI * 2);
             ctx.strokeStyle = 'rgba(232,134,154,0.05)';
             ctx.lineWidth = R - r;
             ctx.stroke();
 
+            {% if today_entry %}
+            // Sleep Duration Arc
+            const sRad = (bedAngle - 90) * Math.PI / 180;
+            const eRad = (wakeAngle - 90) * Math.PI / 180;
             const grad = ctx.createLinearGradient(0, 0, 240, 240);
             grad.addColorStop(0, '#F4A7B9');
             grad.addColorStop(1, '#C06080');
+
             ctx.beginPath();
-            ctx.arc(cx, cy, (R + r) / 2, 5.5, 3.5);
+            ctx.arc(cx, cy, (R + r) / 2, sRad, eRad);
             ctx.strokeStyle = grad;
             ctx.lineWidth = R - r - 2;
             ctx.lineCap = 'round';
             ctx.stroke();
+
+            const drawIcon = (ang, emo) => {
+                const rad = (ang - 90) * Math.PI / 180;
+                const hx = cx + (R + r) / 2 * Math.cos(rad);
+                const hy = cy + (R + r) / 2 * Math.sin(rad);
+                ctx.beginPath();
+                ctx.arc(hx, hy, 16, 0, Math.PI * 2);
+                ctx.fillStyle = 'white';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.font = '14px serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(emo, hx, hy);
+            };
+
+            drawIcon(bedAngle, '🌙');
+            drawIcon(wakeAngle, '☀️');
+
+            let diffHours = parseFloat("{{ today_entry.sleep_hours|default:'0.0' }}");
+            if (diffHours > 0) {
+                let h = Math.floor(diffHours);
+                let m = Math.round((diffHours - h) * 60);
+                if (m === 60) { h += 1; m = 0; }
+                document.querySelector('.sleep-hours').textContent = `${h}h ${m}m`;
+            } else {
+                document.querySelector('.sleep-hours').textContent = "0h 0m";
+            }
+            {% else %}
+            document.querySelector('.sleep-hours').textContent = "0h 0m";
+            {% endif %}
         }
         drawSleep();
 
@@ -844,20 +941,87 @@
         const wc = document.getElementById('waveChart');
         const wctx = wc.getContext('2d');
         function initChart() {
-            const w = wc.offsetWidth, h = 120;
+            const w = wc.offsetWidth, h = 160;
             wc.width = w * 2; wc.height = h * 2; wctx.scale(2, 2);
-            const energy = {{ today_entry.energy_percent|default:50 }};
-            const sleep = {{ today_entry.sleep_hours|default:0 }} * 10;
-            const points = [{v: sleep}, {v: energy}, {v: (energy+sleep)/2}];
+            const energy = {{ today_entry.energy_percent|default:0 }};
+            const naughty = {{ today_entry.naughty_percent|default:0 }};
+            const stress = {{ today_entry.stress_percent|default:0 }};
+            const sleep = Math.min(100, (parseFloat("{{ today_entry.sleep_hours|default:'0.0' }}") / 9) * 100);
+            
+            const points = [
+                {v: sleep, label: 'Sleep'},
+                {v: naughty, label: 'Naughty'},
+                {v: energy, label: 'Energy'},
+                {v: stress, label: 'Stress'}
+            ];
             const pad = 40; const stepX = (w - pad * 2) / (points.length - 1);
+            // Draw Area Fill
             wctx.beginPath();
             points.forEach((p, i) => {
                 const x = pad + i * stepX;
-                const y = 30 + (1 - p.v / 100) * 60;
+                const y = 30 + (1 - p.v / 100) * 80;
                 if (i === 0) wctx.moveTo(x, y);
-                else wctx.lineTo(x,y);
+                else {
+                    const px = pad + (i - 1) * stepX;
+                    const py = 30 + (1 - points[i - 1].v / 100) * 80;
+                    wctx.bezierCurveTo((px + x) / 2, py, (px + x) / 2, y, x, y);
+                }
             });
-            wctx.strokeStyle = '#E8869A'; wctx.lineWidth = 3; wctx.stroke();
+            wctx.lineTo(pad + (points.length - 1) * stepX, h);
+            wctx.lineTo(pad, h);
+            wctx.closePath();
+            
+            const areaGrad = wctx.createLinearGradient(0, 0, 0, h);
+            areaGrad.addColorStop(0, 'rgba(232, 134, 154, 0.4)');
+            areaGrad.addColorStop(1, 'rgba(232, 134, 154, 0.0)');
+            wctx.fillStyle = areaGrad;
+            wctx.fill();
+
+            // Draw Line Stroke
+            wctx.beginPath();
+            points.forEach((p, i) => {
+                const x = pad + i * stepX;
+                const y = 30 + (1 - p.v / 100) * 80;
+                if (i === 0) wctx.moveTo(x, y);
+                else {
+                    const px = pad + (i - 1) * stepX;
+                    const py = 30 + (1 - points[i - 1].v / 100) * 80;
+                    wctx.bezierCurveTo((px + x) / 2, py, (px + x) / 2, y, x, y);
+                }
+            });
+            wctx.strokeStyle = '#E8869A';
+            wctx.lineWidth = 4;
+            wctx.lineCap = 'round';
+            wctx.lineJoin = 'round';
+            wctx.shadowColor = 'rgba(232, 134, 154, 0.4)';
+            wctx.shadowBlur = 12;
+            wctx.shadowOffsetY = 6;
+            wctx.stroke();
+
+            wctx.shadowBlur = 0;
+            wctx.shadowOffsetY = 0;
+
+            points.forEach((p, i) => {
+                const x = pad + i * stepX;
+                const y = 30 + (1 - p.v / 100) * 80;
+                
+                // Outer white glow
+                wctx.beginPath();
+                wctx.arc(x, y, 7, 0, Math.PI * 2);
+                wctx.fillStyle = 'white';
+                wctx.fill();
+                
+                // Inner colored dot
+                wctx.beginPath();
+                wctx.arc(x, y, 4.5, 0, Math.PI * 2);
+                wctx.fillStyle = '#E8869A';
+                wctx.fill();
+                
+                wctx.font = 'bold 11px DM Sans';
+                wctx.fillStyle = '#8E8E8E';
+                wctx.textAlign = 'center';
+                wctx.fillText(p.label, x, 135);
+            });
         }
         initChart();
 
