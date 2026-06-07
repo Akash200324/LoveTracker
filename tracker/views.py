@@ -358,9 +358,9 @@ def dashboard(request):
     my_mood_completion = get_mood_completion(today_mood)
     partner_mood_completion = get_mood_completion(partner_mood)
 
-    activities = Activity.objects.filter(couple=couple)[:20]
-    my_status = StatusUpdate.objects.filter(user=request.user, is_active=True).first()
-    partner_status = StatusUpdate.objects.filter(user=partner, is_active=True).first() if partner else None
+    activities = Activity.objects.filter(couple=couple).select_related('user')[:20]
+    my_status = StatusUpdate.objects.filter(user=request.user, is_active=True).select_related('user').first()
+    partner_status = StatusUpdate.objects.filter(user=partner, is_active=True).select_related('user').first() if partner else None
 
     # Calculate Stats
     all_movies = MovieTracker.objects.filter(couple=couple)
@@ -378,7 +378,7 @@ def dashboard(request):
 
     images = couple.images.all() if couple else []
 
-    recent_memories = DashboardSnap.objects.filter(couple=couple).order_by('-added_at')[:30]
+    recent_memories = DashboardSnap.objects.filter(couple=couple).select_related('couple').order_by('-added_at')[:30]
 
     bucket_items = BucketList.objects.filter(couple=couple)
     milestones = Milestone.objects.filter(couple=couple).order_by('date')
@@ -743,7 +743,7 @@ def movie_tracker(request):
         messages.success(request, f'"{movie.title}" added!')
         return redirect('movie_tracker')
 
-    all_movies = MovieTracker.objects.filter(couple=couple)
+    all_movies = MovieTracker.objects.filter(couple=couple).prefetch_related('movie_reviews__user')
 
     context = {
         'form': form,
@@ -901,7 +901,7 @@ def fetch_oembed_data(url):
 def songs(request):
     couple = get_couple(request.user)
     partner = get_partner(request.user, couple)
-    all_songs = SongMemory.objects.filter(couple=couple)
+    all_songs = SongMemory.objects.filter(couple=couple).select_related('added_by')
     all_playlists = Playlist.objects.filter(couple=couple)
     return render(request, 'tracker/song_tracker.html', {'songs': all_songs, 'playlists': all_playlists, 'partner': partner})
 
@@ -1139,7 +1139,7 @@ def memories(request):
         else:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
-    all_memories = Memory.objects.filter(couple=couple).prefetch_related('photos')
+    all_memories = Memory.objects.filter(couple=couple).select_related('added_by').prefetch_related('photos')
     return render(request, 'tracker/memory_tracker.html', {'memories': all_memories})
 
 @login_required
