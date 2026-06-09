@@ -54,6 +54,7 @@ urlpatterns = [
     path('profile/update/', views.update_profile, name='update_profile'),
     path('profile/photo/', views.update_photo, name='update_photo'),
     path('profile/photo/remove/', views.remove_photo, name='remove_photo'),
+    path('profile/delete/', views.delete_account, name='delete_account'),
 
     # MoodTracker
     path('mood/', views.yourmoodtracker, name='moodtracker'),
@@ -96,6 +97,9 @@ urlpatterns = [
 
     # Database migration route
     path('migrate/', views.auto_migrate, name='auto_migrate'),
+
+    # API
+    path('api/tutorial-seen/', views.mark_tutorial_seen, name='mark_tutorial_seen'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -576,8 +576,29 @@
                     </div>
                     {% endif %}
 
+                    <!-- Danger Zone -->
+                    <div style="margin-top: 40px; border-top: 1px solid #FCA5A5; padding-top: 30px;">
+                        <h3 class="section-title-small" style="color: #DC2626; margin-bottom: 10px;">Danger Zone</h3>
+                        <p style="font-size: 13px; color: #6B7280; margin-bottom: 20px;">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button type="button" onclick="document.getElementById('deleteModal').classList.add('open')" class="btn-secondary" style="color: #DC2626; border-color: #FCA5A5;">Delete Account</button>
+                    </div>
+
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="premium-overlay-menu" style="z-index:10005;">
+        <div class="premium-menu-content" style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; gap: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #DC2626;"></i>
+            <h2 style="font-size: 24px; color: #111827; font-family: 'Inter', sans-serif;">Are you absolutely sure?</h2>
+            <p style="font-size: 14px; color: #6B7280; font-family: 'Inter', sans-serif; font-weight: normal; line-height: 1.5;">This action cannot be undone. This will permanently delete your account, profile, and uncouple you from your partner.</p>
+            <form method="POST" action="{% url 'delete_account' %}" style="display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 10px;">
+                {% csrf_token %}
+                <button type="button" class="btn-secondary" onclick="document.getElementById('deleteModal').classList.remove('open')">Cancel</button>
+                <button type="submit" class="btn-save" style="background: #DC2626; box-shadow: none; margin-top: 0;">Yes, delete account</button>
+            </form>
         </div>
     </div>
 

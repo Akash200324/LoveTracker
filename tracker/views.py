@@ -1491,3 +1491,26 @@ def auto_migrate(request):
         return HttpResponse("Database migrated successfully! You can now visit the homepage.")
     except Exception as e:
         return HttpResponse(f"Migration failed: {e}")
+
+@login_required
+@require_POST
+def mark_tutorial_seen(request):
+    try:
+        profile = request.user.profile
+        profile.has_seen_tutorial = True
+        profile.save()
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+from django.contrib.auth import logout
+from django.contrib import messages
+
+@login_required
+@require_POST
+def delete_account(request):
+    user = request.user
+    logout(request)
+    user.delete()
+    messages.success(request, 'Your account has been permanently deleted.')
+    return redirect('login')

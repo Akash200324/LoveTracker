@@ -8,7 +8,86 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<!-- Intro.js for guided tour -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css" rel="stylesheet" />
 <style>
+  /* Custom Intro.js styles for Love Tracker */
+  .introjs-tooltip {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 15px 35px rgba(255,77,109,0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    padding: 10px;
+  }
+  .introjs-tooltiptext {
+    font-size: 1.05rem;
+    color: var(--charcoal);
+    line-height: 1.5;
+    padding-bottom: 10px;
+  }
+  .introjs-tooltip-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--rose-dark);
+    font-weight: 600;
+  }
+  .introjs-skipbutton {
+    color: var(--rose-light) !important;
+    text-shadow: none !important;
+  }
+  .introjs-skipbutton:hover {
+    color: var(--rose) !important;
+  }
+  .introjs-button {
+    background-color: var(--pink-bg);
+    border: 1px solid #ffb3c6;
+    color: var(--rose);
+    border-radius: 50px;
+    text-shadow: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+  }
+  .introjs-button:hover, .introjs-button:focus {
+    background-color: #ffe6eb;
+    color: var(--rose-dark);
+    box-shadow: none;
+    transform: translateY(-1px);
+  }
+  .introjs-nextbutton {
+    background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(255,77,109,0.3);
+  }
+  .introjs-nextbutton:hover, .introjs-nextbutton:focus {
+    background: linear-gradient(135deg, #ff3355, #ff6b8b);
+    color: white;
+    box-shadow: 0 6px 14px rgba(255,77,109,0.4);
+  }
+  .introjs-bullets ul li a.active {
+    background: var(--rose);
+    transform: scale(1.2);
+  }
+  .introjs-bullets ul li a {
+    background: #ffb3c6;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  .introjs-progress {
+    background-color: #ffe6eb;
+    border-radius: 10px;
+    height: 8px;
+    margin: 15px 0;
+  }
+  .introjs-progressbar {
+    background-color: var(--rose);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(255,77,109,0.2);
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -1626,7 +1705,7 @@
         <div class="mood-grid-6">
 
           <!-- Your Mood Card -->
-          <a href="{% url 'moodtracker' %}" style="text-decoration: none; color: inherit;">
+          <a id="tour-mood-yours" href="{% url 'moodtracker' %}" style="text-decoration: none; color: inherit;">
             <div class="mood-card" style="animation-delay: 0s; cursor: pointer;">
               <div class="mood-emoji">
                 {% if today_mood %}
@@ -1666,7 +1745,7 @@
           </a>
 
           <!-- Partner's Mood Card -->
-          <a href="{% url 'partner_mood' %}" style="text-decoration: none; color: inherit;">
+          <a id="tour-mood-partner" href="{% url 'partner_mood' %}" style="text-decoration: none; color: inherit;">
             <div class="mood-card" style="animation-delay: 0.1s; cursor: pointer;">
               <div class="mood-emoji">
                 {% if partner_mood %}
@@ -1706,7 +1785,7 @@
           </a>
 
           <!-- Movie List Card -->
-          <a href="{% url 'movie_tracker' %}" style="text-decoration: none; color: inherit;">
+          <a id="tour-movies" href="{% url 'movie_tracker' %}" style="text-decoration: none; color: inherit;">
             <div class="mood-card" style="animation-delay: 0.2s; cursor: pointer;">
               <div class="mood-emoji">🍿</div>
               <div class="mood-label">Movie List</div>
@@ -1724,7 +1803,7 @@
           </a>
 
           <!-- Music Card -->
-          <a href="{% url 'songs' %}" style="text-decoration: none; color: inherit;">
+          <a id="tour-songs" href="{% url 'songs' %}" style="text-decoration: none; color: inherit;">
             <div class="mood-card" style="animation-delay: 0.4s; cursor: pointer;">
               <div class="mood-emoji">🎵</div>
               <div class="mood-label">Music</div>
@@ -1733,7 +1812,7 @@
           </a>
 
           <!-- Period Tracker Card -->
-          <a href="{% url 'period_tracker' %}" style="text-decoration: none; color: inherit;">
+          <a id="tour-period" href="{% url 'period_tracker' %}" style="text-decoration: none; color: inherit;">
             <div class="mood-card" style="animation-delay: 0.5s; cursor: pointer;">
               <div class="mood-emoji">🌸</div>
               <div class="mood-label">Period Tracker</div>
@@ -2871,6 +2950,88 @@ init();
       console.warn('Error whilst registering service worker', err);
     });
   }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% if not request.user.profile.has_seen_tutorial %}
+      // Only start if they have a partner so they can actually see the dash
+      {% if couple and couple.is_complete %}
+        setTimeout(() => {
+          introJs().setOptions({
+            showProgress: true,
+            showBullets: true,
+            exitOnOverlayClick: false,
+            exitOnEsc: false,
+            doneLabel: 'Done ✨',
+            nextLabel: 'Next →',
+            prevLabel: '← Back',
+            steps: [
+              {
+                title: "Welcome! 💕",
+                intro: "Let's take a quick tour of your new Love Tracker dashboard."
+              },
+              {
+                element: document.querySelector('#hero'),
+                intro: "This is your Cover Story. It counts your days of love and cycles through your beautiful photos!"
+              },
+              {
+                element: document.querySelector('#navLinks'),
+                intro: "Here you can navigate to your profile or log out."
+              },
+              {
+                element: document.querySelector('#memories'),
+                intro: "Your memories will live here. Add photos to create a beautiful scrolling gallery!"
+              },
+              {
+                element: document.querySelector('#tour-mood-yours'),
+                intro: "Track how you are feeling every day with the Mood Tracker."
+              },
+              {
+                element: document.querySelector('#tour-mood-partner'),
+                intro: "Check your partner's mood so you know how to support them today."
+              },
+              {
+                element: document.querySelector('#tour-movies'),
+                intro: "Keep a watchlist of movies or shows you want to watch together."
+              },
+              {
+                element: document.querySelector('#tour-songs'),
+                intro: "Add your favorite songs that remind you of each other."
+              },
+              {
+                element: document.querySelector('#tour-period'),
+                intro: "Track period cycles to stay in sync with each other's needs."
+              },
+              {
+                element: document.querySelector('#notebookCover'),
+                intro: "Build a shared Bucket List of dreams you'll chase together!"
+              },
+              {
+                element: document.querySelector('#timeline'),
+                intro: "Record your biggest Relationship Milestones in this timeline."
+              }
+            ]
+          }).oncomplete(function() {
+            markTutorialSeen();
+          }).onexit(function() {
+            markTutorialSeen();
+          }).start();
+        }, 1000); // Wait 1 second to let animations finish
+
+        function markTutorialSeen() {
+          const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}';
+          fetch('/api/tutorial-seen/', {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': csrftoken,
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+        }
+      {% endif %}
+    {% endif %}
+  });
 </script>
 </body>
 </html>

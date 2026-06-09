@@ -82,6 +82,7 @@ class Profile(models.Model):
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
     bio = models.TextField(max_length=500, blank=True)
     age = models.IntegerField(null=True, blank=True)
+    has_seen_tutorial = models.BooleanField(default=False)
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),

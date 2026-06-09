@@ -79,17 +79,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 db_url = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
-if db_url:
-    DATABASES = {
-        'default': dj_database_url.parse(db_url, conn_max_age=600, ssl_require=True)
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+if not db_url:
+    db_url = 'postgresql://postgres:coupleapp123@localhost:5432/coupleapp_db'
+
+DATABASES = {
+    'default': dj_database_url.parse(db_url, conn_max_age=600, ssl_require=not DEBUG)
+}
 
 
 # Password validation
