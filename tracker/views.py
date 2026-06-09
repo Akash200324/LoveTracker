@@ -252,10 +252,9 @@ def create_couple(request):
 
     # Create the new couple
     couple = Couple.objects.create(user1=request.user)
-
-    return render(request, 'tracker/create_couple.html', {
-        'couple': couple
-    })
+    
+    # Redirect back to where they clicked it from (profile or dashboard)
+    return redirect(request.META.get('HTTP_REFERER', 'profile'))
 
 # Updated join_couple to handle duplicates and self-linking
 @login_required
