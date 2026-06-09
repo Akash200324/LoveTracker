@@ -149,3 +149,7 @@ EMAIL_HOST_USER = 'manbeast9011@gmail.com'
 # IMPORTANT: This must be a 16-letter Google App Password, NOT your regular password!
 EMAIL_HOST_PASSWORD = 'kwzpewazcnuaigjw'
 DEFAULT_FROM_EMAIL = f'LoveTracker <{EMAIL_HOST_USER}>'
+# VAPID KEYS FOR WEB PUSH NOTIFICATIONS
+VAPID_PUBLIC_KEY = "BC_rdiVkrPz2NfWmSmSTPIlrxi-60H0UdYvhjt6lLM7j-rC8ARxFTW6Nfl_D9Td0NOuC9tTCl7xz9h2bhWo_qJ4"
+VAPID_PRIVATE_KEY = "vEEVOyQH3a8ekC1H2ukvqhNVNCU09lkpKwN6ge-yE0g"
+VAPID_ADMIN_EMAIL = "mailto:admin@lovetracker.com"

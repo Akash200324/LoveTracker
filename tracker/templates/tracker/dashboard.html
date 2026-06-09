@@ -2951,6 +2951,67 @@ init();
     });
   }
 </script>
+
+<script>
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
+
+  function subscribeUserToPush() {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.ready.then(function(registration) {
+        const vapidPublicKey = "{{ vapid_public_key }}";
+        if (!vapidPublicKey) return;
+        
+        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+        registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: convertedVapidKey
+        }).then(function(subscription) {
+          console.log('User is subscribed.');
+          
+          fetch('/api/push/subscribe/', {
+            method: 'POST',
+            body: JSON.stringify(subscription),
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}'
+            }
+          });
+        }).catch(function(err) {
+          console.log('Failed to subscribe the user: ', err);
+        });
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        subscribeUserToPush();
+      } else if (Notification.permission !== 'denied') {
+        // Automatically ask for permission
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            subscribeUserToPush();
+          }
+        });
+      }
+    }
+  });
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {

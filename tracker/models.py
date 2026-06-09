@@ -372,3 +372,12 @@ class SymptomLog(models.Model):
 
     def __str__(self):
         return f"Symptoms on {self.date}"
+class PushSubscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='push_subscriptions')
+    endpoint = models.URLField(max_length=500)
+    auth = models.CharField(max_length=100)
+    p256dh = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'Push Subscription for {self.user.name}'

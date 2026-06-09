@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404,HttpResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,8 @@ from django.views.decorators.http import require_POST
 import random
 from django.core.mail import send_mail
 
+from .utils import send_push_message
+import threading
 from .models import (
     User, Couple, Activity, MovieTracker,MovieReview, SongMemory,
     Memory, MemoryPhoto, BucketList, StatusUpdate, CoupleImage,Profile,YourMoodEntry, DashboardSnap, Milestone,
@@ -45,6 +48,16 @@ def partner_required(view_func):
 @login_required
 def no_partner_view(request):
     return render(request, 'tracker/no_partner.html')
+
+
+def notify_partner_background(partner, title, body, url):
+    if not partner: return
+    def _send():
+        subs = partner.push_subscriptions.all()
+        for sub in subs:
+            send_push_message(sub, title, body, url)
+    threading.Thread(target=_send).start()
+
 
 def get_partner(user, couple):
     if not couple:
@@ -209,6 +222,7 @@ def logout_view(request):
     return redirect('login')
 
 import json
+from django.conf import settings
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
@@ -331,6 +345,7 @@ def dashboard(request):
             'stats': stats,
             'images': [],
             'show_welcome_message': show_welcome_message,
+            'vapid_public_key': getattr(settings, 'VAPID_PUBLIC_KEY', ''),
         })
 
     # ───── MAIN DATA ─────
@@ -420,6 +435,7 @@ def dashboard(request):
         'my_mood_completion': my_mood_completion,
         'partner_mood_completion': partner_mood_completion,
         'show_welcome_message': show_welcome_message,
+            'vapid_public_key': getattr(settings, 'VAPID_PUBLIC_KEY', ''),
         'total': all_movies.count(),
         'completed': all_movies.filter(status='completed'),
         'watching': all_movies.filter(status='watching'),
@@ -610,7 +626,9 @@ def update_profile(request):
             request.user.last_name = " ".join(names[1:]) if len(names) > 1 else ""
             request.user.save()
 
-        profile.age = request.POST.get('age')
+        age_val = request.POST.get('age')
+        profile.age = age_val if age_val else None
+        
         profile.bio = request.POST.get('bio')
         profile.gender = request.POST.get('gender')
 
@@ -874,6 +892,7 @@ def movie_review_detail(request, movie_id):
 from .models import Playlist
 import re
 import json
+from django.conf import settings
 import requests
 from urllib.parse import quote
 from bs4 import BeautifulSoup
@@ -1513,3 +1532,49 @@ def delete_account(request):
     user.delete()
     messages.success(request, 'Your account has been permanently deleted.')
     return redirect('login')
+
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.conf import settings
+@login_required
+@require_POST
+def save_push_subscription(request):
+    try:
+        data = json.loads(request.body)
+        endpoint = data.get('endpoint')
+        keys = data.get('keys', {})
+        p256dh = keys.get('p256dh')
+        auth = keys.get('auth')
+        if not endpoint or not p256dh or not auth:
+            return JsonResponse({'error': 'Invalid subscription data'}, status=400)
+        
+        PushSubscription.objects.update_or_create(
+            user=request.user,
+            endpoint=endpoint,
+            defaults={'p256dh': p256dh, 'auth': auth}
+        )
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def cron_inactivity_reminders(request):
+    if getattr(settings, "CRON_SECRET", None) and request.headers.get("Authorization") != f"Bearer {settings.CRON_SECRET}":
+        return HttpResponse("Unauthorized", status=401)
+    
+    now = timezone.now()
+    subs = PushSubscription.objects.all()
+    users_notified = 0
+    for sub in subs:
+        user = sub.user
+        last_mood = YourMoodEntry.objects.filter(user=user).order_by("-date").first()
+        if not last_mood or last_mood.date < now.date():
+            send_push_message(
+                sub, 
+                "Missing You! 🥺", 
+                "Hey, did you forget to add how your day was today? Your partner might be waiting to know!", 
+                "/yourmoodtracker/"
+            )
+            users_notified += 1
+            
+    return JsonResponse({"status": "success", "notified": users_notified})

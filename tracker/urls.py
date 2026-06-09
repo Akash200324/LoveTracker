@@ -100,6 +100,8 @@ urlpatterns = [
 
     # API
     path('api/tutorial-seen/', views.mark_tutorial_seen, name='mark_tutorial_seen'),
+    path('api/push/subscribe/', views.save_push_subscription, name='save_push_subscription'),
+    path('api/cron/inactivity/', views.cron_inactivity_reminders, name='cron_inactivity'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
