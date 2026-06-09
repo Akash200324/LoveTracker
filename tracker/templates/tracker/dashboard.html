@@ -812,23 +812,23 @@
   .memory-section { background: var(--white); }
 
   .memory-track-wrapper {
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 20px;
     position: relative;
-    cursor: grab;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch; /* smooth momentum scrolling on iOS */
+    scrollbar-width: none; /* Firefox */
   }
-  .memory-track-wrapper:active { cursor: grabbing; }
+  .memory-track-wrapper::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
 
   .memory-track {
     display: flex;
     gap: 18px;
-    animation: scrollMemory 30s linear infinite;
     width: max-content;
     padding-bottom: 8px;
-  }
-  @keyframes scrollMemory {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
   }
 
   .memory-card {
