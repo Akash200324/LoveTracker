@@ -582,6 +582,7 @@ def dashboard_snap_upload(request):
             cap = captions[i] if i < len(captions) else ''
             DashboardSnap.objects.create(couple=couple, image=f, caption=cap)
             
+        notify_partner_background(get_partner(request.user, couple), f"{request.user.username} added a memory! 📸", "Check out the new memory in the gallery.", "/dashboard/#memories")
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
 
