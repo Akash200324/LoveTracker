@@ -24,7 +24,7 @@
   }
   .introjs-tooltiptext {
     font-size: 1.05rem;
-    color: var(--charcoal);
+    color: #2d3436;
     line-height: 1.5;
     padding-bottom: 10px;
   }
@@ -109,7 +109,7 @@
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--pink-bg);
-    color: var(--charcoal);
+    color: #2d3436;
     overflow-x: hidden;
   }
 
@@ -179,7 +179,7 @@
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--charcoal);
+    color: #2d3436;
     letter-spacing: 0.3px;
     position: relative;
     transition: color 0.2s;
@@ -250,7 +250,7 @@
   .nav-toggle span {
     display: block;
     width: 24px; height: 2px;
-    background: var(--charcoal);
+    background: #2d3436;
     border-radius: 2px;
     transition: all 0.3s;
   }
@@ -735,7 +735,7 @@
   .modal h3 {
     font-family: 'Playfair Display', serif;
     font-size: 1.5rem;
-    color: var(--charcoal);
+    color: #2d3436;
     margin-bottom: 0.5rem;
   }
   .modal p { color: var(--gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
@@ -786,7 +786,7 @@
   .section-title h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.9rem;
-    color: var(--charcoal);
+    color: #2d3436;
     font-weight: 700;
   }
   .section-icon {
@@ -868,7 +868,7 @@
     text-align: center;
     font-family: 'Caveat', cursive;
     font-size: 1.3rem;
-    color: var(--charcoal);
+    color: #2d3436;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -973,7 +973,7 @@
     transform: scale(1.1) rotate(5deg);
   }
   .mood-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray); font-weight: 600; }
-  .mood-value { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--charcoal); font-weight: 700; }
+  .mood-value { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: #2d3436; font-weight: 700; }
 
   .mood-bar-wrap {
     height: 6px;
@@ -1061,7 +1061,7 @@
   .timeline-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.05rem;
-    color: var(--charcoal);
+    color: #2d3436;
     margin-bottom: 3px;
   }
   .timeline-desc { font-size: 0.85rem; color: var(--gray); }
@@ -1082,7 +1082,7 @@
     position: fixed;
     bottom: 2rem; right: 2rem;
     z-index: 3000;
-    background: var(--charcoal);
+    background: #2d3436;
     color: white;
     padding: 12px 20px;
     border-radius: 12px;
@@ -1341,7 +1341,7 @@
     background: transparent;
     font-family: 'Caveat', cursive;
     font-size: 1.5rem;
-    color: var(--charcoal);
+    color: #2d3436;
     outline: none;
     padding: 4px 8px;
     min-width: 140px;
@@ -1434,7 +1434,7 @@
     flex: 1;
     font-family: 'Caveat', cursive;
     font-size: 1.65rem;
-    color: var(--charcoal);
+    color: #2d3436;
     position: relative;
     line-height: 1.3;
     transition: color 0.3s;
@@ -1918,7 +1918,7 @@
           <div class="timeline-title" style="margin-bottom: 0;">{{ milestone.title }}</div>
           <div style="display: flex; align-items: center; gap: 10px;">
             <div class="timeline-date" style="margin-bottom: 0;">{{ milestone.date|date:"F j, Y" }}</div>
-            <button onclick="openEditMilestoneModal({{ milestone.id }}, '{{ milestone.date|date:'Y-m-d' }}', '{{ milestone.title|escapejs }}', '{{ milestone.description|escapejs }}', '{{ milestone.icon|escapejs }}')" style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.9rem;" title="Edit">✏️</button>
+            <button onclick="openEditMilestoneModal({{ milestone.id }}, '{{ milestone.date|date:'Y-m-d' }}', '{{ milestone.title|escapejs }}', '{{ milestone.description|escapejs }}', '{{ milestone.icon|escapejs }}')" style="background: none; border: none; cursor: pointer; color: #636e72; font-size: 0.9rem;" title="Edit">✏️</button>
             <form method="POST" action="{% url 'delete_milestone' milestone.id %}" style="margin: 0;" onsubmit="return confirm('Are you sure you want to remove this milestone?');">
               {% csrf_token %}
               <button type="submit" style="background: none; border: none; cursor: pointer; color: var(--rose); font-size: 0.9rem;" title="Remove">✖️</button>
@@ -1944,28 +1944,28 @@
 <!-- ─── MILESTONE MODAL ─── -->
 <div class="modal-overlay" id="addMilestoneModal">
   <div class="modal" style="background: var(--pink-bg); font-family: var(--font);">
-    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--charcoal); margin-top: 0; margin-bottom: 20px;">Add Milestone</h3>
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #2d3436; margin-top: 0; margin-bottom: 20px;">Add Milestone</h3>
     <form method="POST" action="{% url 'add_milestone' %}">
       {% csrf_token %}
       <div class="form-group" style="margin-bottom: 15px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
-        <input type="date" name="date" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
+        <input type="date" name="date" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; outline: none; font-family: inherit;">
       </div>
       <div class="form-group" style="margin-bottom: 15px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Title</label>
-        <input type="text" name="title" placeholder="e.g. First Trip Together" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Title</label>
+        <input type="text" name="title" placeholder="e.g. First Trip Together" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; outline: none; font-family: inherit;">
       </div>
       <div class="form-group" style="margin-bottom: 15px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Description</label>
-        <textarea name="description" rows="3" placeholder="A small text about it..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); font-family: inherit; outline: none;"></textarea>
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Description</label>
+        <textarea name="description" rows="3" placeholder="A small text about it..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; font-family: inherit; outline: none;"></textarea>
       </div>
       <div class="form-group" style="margin-bottom: 25px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Icon (Emoji)</label>
-        <input type="text" id="milestoneEmojiInput" name="icon" value="💞" maxlength="10" placeholder="Tap to open emoji keyboard" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit; font-size: 1.2rem;">
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Tap the box above and use your phone's native emoji keyboard to select any emoji!</div>
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Icon (Emoji)</label>
+        <input type="text" id="milestoneEmojiInput" name="icon" value="💞" maxlength="10" placeholder="Tap to open emoji keyboard" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; outline: none; font-family: inherit; font-size: 1.2rem;">
+        <div style="font-size: 0.8rem; color: #636e72; margin-top: 8px;">Tap the box above and use your phone's native emoji keyboard to select any emoji!</div>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 12px;">
-        <button type="button" class="btn-milestone" style="background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none;" onclick="closeMilestoneModal()">Cancel</button>
+        <button type="button" class="btn-milestone" style="background: rgba(0,0,0,0.05); color: #2d3436; box-shadow: none;" onclick="closeMilestoneModal()">Cancel</button>
         <button type="submit" class="btn-milestone">Add Milestone</button>
       </div>
     </form>
@@ -1975,28 +1975,28 @@
 <!-- ─── EDIT MILESTONE MODAL ─── -->
 <div class="modal-overlay" id="editMilestoneModal">
   <div class="modal" style="background: var(--pink-bg); font-family: var(--font);">
-    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--charcoal); margin-top: 0; margin-bottom: 20px;">Edit Milestone</h3>
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #2d3436; margin-top: 0; margin-bottom: 20px;">Edit Milestone</h3>
     <form method="POST" id="editMilestoneForm" action="">
       {% csrf_token %}
       <div class="form-group" style="margin-bottom: 15px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
-        <input type="date" id="editMilestoneDate" name="date" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
+        <input type="date" id="editMilestoneDate" name="date" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; outline: none; font-family: inherit;">
       </div>
       <div class="form-group" style="margin-bottom: 15px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Title</label>
-        <input type="text" id="editMilestoneTitle" name="title" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit;">
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Title</label>
+        <input type="text" id="editMilestoneTitle" name="title" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; outline: none; font-family: inherit;">
       </div>
       <div class="form-group" style="margin-bottom: 15px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Description</label>
-        <textarea id="editMilestoneDesc" name="description" rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); font-family: inherit; outline: none;"></textarea>
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Description</label>
+        <textarea id="editMilestoneDesc" name="description" rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; font-family: inherit; outline: none;"></textarea>
       </div>
       <div class="form-group" style="margin-bottom: 25px;">
-        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Icon (Emoji)</label>
-        <input type="text" id="editMilestoneEmojiInput" name="icon" maxlength="10" placeholder="Tap to open emoji keyboard" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: var(--text-main); outline: none; font-family: inherit; font-size: 1.2rem;">
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Tap the box above and use your phone's native emoji keyboard to select any emoji!</div>
+        <label style="font-size: 12px; font-weight: 700; color: #636e72; text-transform: uppercase; margin-bottom: 8px; display: block;">Icon (Emoji)</label>
+        <input type="text" id="editMilestoneEmojiInput" name="icon" maxlength="10" placeholder="Tap to open emoji keyboard" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); color: #2d3436; outline: none; font-family: inherit; font-size: 1.2rem;">
+        <div style="font-size: 0.8rem; color: #636e72; margin-top: 8px;">Tap the box above and use your phone's native emoji keyboard to select any emoji!</div>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 12px;">
-        <button type="button" class="btn-milestone" style="background: rgba(0,0,0,0.05); color: var(--text-main); box-shadow: none;" onclick="closeEditMilestoneModal()">Cancel</button>
+        <button type="button" class="btn-milestone" style="background: rgba(0,0,0,0.05); color: #2d3436; box-shadow: none;" onclick="closeEditMilestoneModal()">Cancel</button>
         <button type="submit" class="btn-milestone">Save Changes</button>
       </div>
     </form>
@@ -2032,22 +2032,22 @@
   <div class="modal" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; max-width: 400px; border-radius: 16px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
     <!-- Header -->
     <div style="padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--charcoal);">📸 New Snap</h3>
-      <button onclick="closeMemoryModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);">✕</button>
+      <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #2d3436;">📸 New Snap</h3>
+      <button onclick="closeMemoryModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #636e72;">✕</button>
     </div>
     
     <!-- Action Buttons -->
     <div id="viewSelection" style="padding: 30px 20px; display: flex; flex-direction: column; gap: 15px; text-align: center;">
-      <button onclick="document.getElementById('nativeCameraInput').click()" style="padding: 18px 20px; border-radius: 12px; background: var(--pink-main); border: none; color: white; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255,107,152,0.3); transition: 0.2s;">
+      <button onclick="document.getElementById('nativeCameraInput').click()" style="padding: 18px 20px; border-radius: 12px; background: #ff4d6d; border: none; color: white; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255,107,152,0.3); transition: 0.2s;">
         📷 Take Photo
       </button>
-      <button onclick="document.getElementById('galleryInput').click()" style="padding: 18px 20px; border-radius: 12px; background: rgba(255,107,152,0.1); border: 2px dashed var(--pink-main); color: var(--pink-main); width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.2s;">
+      <button onclick="document.getElementById('galleryInput').click()" style="padding: 18px 20px; border-radius: 12px; background: rgba(255,107,152,0.1); border: 2px dashed #ff4d6d; color: #ff4d6d; width: 100%; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.2s;">
         🖼 Choose from Gallery
       </button>
       
       <!-- Hidden Native Inputs -->
-      <input type="file" id="nativeCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="previewNativeSnap(this)" />
-      <input type="file" id="galleryInput" accept="image/*" style="display: none;" onchange="previewNativeSnap(this)" />
+      <input type="file" id="nativeCameraInput" accept="image/*" capture="environment" style="opacity:0; position:absolute; width:0; height:0; z-index:-1;" onchange="previewNativeSnap(this)" />
+      <input type="file" id="galleryInput" accept="image/*" style="opacity:0; position:absolute; width:0; height:0; z-index:-1;" onchange="previewNativeSnap(this)" />
     </div>
 
     <!-- Preview View -->
@@ -2056,7 +2056,7 @@
         <img id="nativePreviewImg" style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" />
         <button onclick="clearNativeSelection()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">✕</button>
       </div>
-      <textarea id="snapCaption" placeholder="Add a caption..." style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit; resize: none; background: rgba(0,0,0,0.02); color: var(--text-main);" rows="2"></textarea>
+      <textarea id="snapCaption" placeholder="Add a caption..." style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); outline: none; font-family: inherit; resize: none; background: rgba(0,0,0,0.02); color: #2d3436;" rows="2"></textarea>
       <button onclick="uploadNativeSnap()" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px; border-radius: 12px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(255,107,152,0.3);">Save Memory ✨</button>
     </div>
   </div>
@@ -2068,7 +2068,7 @@
   <div class="modal" style="max-width: 500px; padding: 20px; text-align: center; background: #fff; position: relative;">
     <button class="btn-cancel" onclick="closeSnapModal()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.05); border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; z-index: 100;">✕ Back</button>
     <img id="snapModalImg" src="" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-top: 20px;" />
-    <p id="snapModalDesc" style="margin-top: 15px; font-family: 'Caveat', cursive; font-size: 1.8rem; color: var(--charcoal); word-wrap: break-word;"></p>
+    <p id="snapModalDesc" style="margin-top: 15px; font-family: 'Caveat', cursive; font-size: 1.8rem; color: #2d3436; word-wrap: break-word;"></p>
   </div>
 </div>
 
@@ -2959,8 +2959,8 @@ init();
 {% if show_welcome_message %}
 <div class="modal-overlay open" id="welcomeModal" style="z-index: 3000;">
   <div class="modal" style="background: var(--pink-bg); font-family: var(--font); text-align: center;">
-    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--charcoal); margin-top: 0; margin-bottom: 10px;">Welcome to Love Tracker</h3>
-    <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 25px; line-height: 1.5;">Every love story is unique—capture your moments, count your days, and grow together.</p>
+    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #2d3436; margin-top: 0; margin-bottom: 10px;">Welcome to Love Tracker</h3>
+    <p style="color: #636e72; font-size: 1rem; margin-bottom: 25px; line-height: 1.5;">Every love story is unique—capture your moments, count your days, and grow together.</p>
     <button type="button" class="btn-milestone" style="width: 100%;" onclick="document.getElementById('welcomeModal').classList.remove('open')">Get Started</button>
   </div>
 </div>
