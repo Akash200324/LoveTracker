@@ -28,6 +28,7 @@ SECRET_KEY = 'django-insecure-y1&=fjoz0&#v5!$9(b7ff+fe9gji36fp9=uroc0rg45rx18p^j
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://*.loca.lt', 'https://*.vercel.app', 'https://*.lhr.life', 'https://lovetrackerdev99.loca.lt']
 
 
 # Application definition

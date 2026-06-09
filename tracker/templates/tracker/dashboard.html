@@ -2069,6 +2069,7 @@
     <button class="btn-cancel" onclick="closeSnapModal()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.05); border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; z-index: 100;">✕ Back</button>
     <img id="snapModalImg" src="" style="width: 100%; max-height: 60vh; object-fit: contain; border-radius: 12px; margin-top: 20px;" />
     <p id="snapModalDesc" style="margin-top: 15px; font-family: 'Caveat', cursive; font-size: 1.8rem; color: #2d3436; word-wrap: break-word;"></p>
+    <a id="snapModalDownload" href="" download="memory.jpg" class="btn" style="display: inline-block; margin-top: 10px; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; background: var(--pink-light, #ffeaa7); color: var(--pink-main, #e84393); border: 1px solid var(--pink-main, #e84393);">📥 Download Image</a>
   </div>
 </div>
 
@@ -2667,9 +2668,16 @@ function closeMemoryModal() {
 }
 
 function openSnapModal(src, cardEl) {
-    const desc = cardEl.querySelector('.memory-card-desc').textContent;
+    const descEl = cardEl.querySelector('.memory-card-desc');
+    const desc = descEl ? descEl.textContent : '';
     document.getElementById('snapModalImg').src = src;
     document.getElementById('snapModalDesc').textContent = desc;
+    document.getElementById('snapModalDownload').href = src;
+    
+    // Extract filename from src for download attribute if possible
+    const filename = src.split('/').pop().split('?')[0] || 'memory.jpg';
+    document.getElementById('snapModalDownload').download = filename;
+
     document.getElementById('snapModal').classList.add('open');
     const track = document.getElementById('memoryTrack');
     if (track) track.style.animationPlayState = 'paused';
@@ -3043,6 +3051,7 @@ init();
       // Only start if they have a partner so they can actually see the dash
       {% if couple and couple.is_complete %}
         setTimeout(() => {
+          markTutorialSeen();
           introJs().setOptions({
             showProgress: true,
             showBullets: true,
@@ -3123,9 +3132,6 @@ init();
 // ═══════════════════════════════════════════════
 let selectedFile = null;
 
-function openSnapModal(src, el) {
-    if (src) return; 
-}
 
 function openMemoryModal() {
     document.getElementById('memoryModal').classList.add('open');
@@ -3158,6 +3164,38 @@ function clearNativeSelection() {
     document.getElementById('viewPreview').style.display = 'none';
 }
 
+function compressImage(file, maxWidth, maxHeight, quality, callback) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function() {
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob(function(blob) {
+                callback(blob);
+            }, 'image/jpeg', quality);
+        };
+    };
+}
+
 function uploadNativeSnap() {
     if (!selectedFile) {
         alert("Please select a photo first.");
@@ -3165,48 +3203,50 @@ function uploadNativeSnap() {
     }
     
     const caption = document.getElementById('snapCaption').value.trim();
-    
-    const fd = new FormData();
-    fd.append('title', caption);
-    
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    fd.append('date', `${yyyy}-${mm}-${dd}`);
-    
-    fd.append('images', selectedFile);
-    fd.append('captions', caption);
+    const btn = document.querySelector('button[onclick="uploadNativeSnap()"]') || document.querySelector('.snap-upload-btn');
+    const origText = btn ? btn.innerHTML : 'Save';
+    if(btn) {
+        btn.innerHTML = 'Optimizing... ⏳';
+        btn.disabled = true;
+    }
 
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const btn = document.querySelector('button[onclick="uploadNativeSnap()"]');
-    const origText = btn.innerHTML;
-    btn.innerHTML = 'Saving... ⏳';
-    btn.disabled = true;
+    compressImage(selectedFile, 1200, 1200, 0.8, function(compressedBlob) {
+        const fd = new FormData();
+        fd.append('title', caption);
+        
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        fd.append('date', `${yyyy}-${mm}-${dd}`);
+        
+        fd.append('images', compressedBlob, selectedFile.name || 'snap.jpg');
+        fd.append('captions', caption);
 
-    fetch('/dashboard/snap/upload/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrftoken,
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: fd
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'success') {
-            location.reload();
-        } else {
-            alert("Error saving memory.");
-            btn.innerHTML = origText;
-            btn.disabled = false;
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Upload failed. Check console.');
-        btn.innerHTML = origText;
-        btn.disabled = false;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        if(btn) btn.innerHTML = 'Uploading... 🚀';
+
+        fetch('/dashboard/snap/upload/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: fd
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            } else {
+                alert("Error saving memory.");
+                if(btn) { btn.innerHTML = origText; btn.disabled = false; }
+            }
+        }).catch(err => {
+            console.error(err);
+            alert("Network error.");
+            if(btn) { btn.innerHTML = origText; btn.disabled = false; }
+        });
     });
 }
 

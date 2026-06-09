@@ -1,0 +1,17 @@
+{
+  "name": "Love Tracker",
+  "short_name": "Love Tracker",
+  "start_url": "/dashboard/",
+  "display": "standalone",
+  "background_color": "#ff4d6d",
+  "theme_color": "#ff4d6d",
+  "description": "Our beautiful love tracking application.",
+  "icons": [
+    {
+      "src": "/static/images/pwa_icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
