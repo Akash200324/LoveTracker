@@ -1,4 +1,4 @@
-const CACHE_NAME = 'love-tracker-cache-v1';
+const CACHE_NAME = 'love-tracker-cache-v2';
 const urlsToCache = [
   '/dashboard/',
   '/static/manifest.json',
@@ -59,6 +59,21 @@ self.addEventListener('notificationclick', function(event) {
       if (clients.openWindow) {
         return clients.openWindow(urlToOpen);
       }
+    })
+  );
+});
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
     })
   );
 });
