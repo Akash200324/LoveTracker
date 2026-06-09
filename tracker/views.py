@@ -17,7 +17,7 @@ import threading
 from .models import (
     User, Couple, Activity, MovieTracker,MovieReview, SongMemory,
     Memory, MemoryPhoto, BucketList, StatusUpdate, CoupleImage,Profile,YourMoodEntry, DashboardSnap, Milestone,
-    EmailVerificationOTP, PeriodCycle, SymptomLog
+    EmailVerificationOTP, PeriodCycle, SymptomLog, PushSubscription
 )
 
 from .forms import (
