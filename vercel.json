@@ -18,7 +18,7 @@
   "crons": [
     {
       "path": "/api/cron/inactivity/",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
