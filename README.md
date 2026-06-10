@@ -55,39 +55,6 @@ Discover a magical ecosystem crafted specifically for couples:
 
 ---
 
-## ⚙️ How It Works
-
-1. **Onboarding**: Users register for an account (Standard or via Google).
-2. **Pairing**: A user creates a "Couple" and generates a link/code for their partner. Their partner joins, linking their accounts in the database.
-3. **The Dashboard**: Once paired, both users land on a shared dashboard where they can interact with the various modules.
-4. **Real-time Syncing**: As you upload a memory, add a movie, or update your mood, it reflects directly in your partner's dashboard seamlessly!
-
----
-
-## 🛠 Tech Stack & Languages Used
-
-This project relies on a robust set of modern technologies:
-
-### 🎨 Frontend
-- **HTML5 & CSS3**: For structural layout and beautiful custom styling.
-- **JavaScript (Vanilla/ES6)**: To handle interactive UI, AJAX requests, DOM manipulation, Modal interactions, and Web Push Service Workers.
-- *(Note: Embellished with beautiful typography via Google Fonts and crisp icons)*
-
-### 🧠 Backend
-- **Python (v3.x)**: The core programming language powering the logic.
-- **Django (v5.0.6)**: A high-level Python web framework encouraging rapid development and clean design.
-- **Authentication**: `google-auth` for seamless Google logins and Django's robust default authentication system.
-
-### 🗄 Database & Storage
-- **PostgreSQL**: Relational database handling structured data (Users, Couples, Movies, Reviews).
-- **Cloudinary**: High-performance cloud storage for all couple images and memories.
-
-### 🚀 Deployment & Utilities
-- **Vercel**: `vercel.json`, `gunicorn`, `whitenoise`, and `dj-database-url` perfectly configured to deploy as a serverless or managed platform application.
-- **Asynchronous/Push Services**: `pywebpush` and `py-vapid` for web push notifications.
-- **Payments (Optional Module)**: `razorpay` integration included for any premium upgrade options.
-
----
 
 ## ⚙️ How It Works
 
