@@ -114,7 +114,7 @@ This project relies on a robust set of modern technologies:
 ### 🚀 Deployment & Utilities
 - **Vercel**: `vercel.json`, `gunicorn`, `whitenoise`, and `dj-database-url` perfectly configured to deploy as a serverless or managed platform application.
 - **Asynchronous/Push Services**: `pywebpush` and `py-vapid` for web push notifications.
-- **Payments (Optional Module)**: `razorpay` integration included for any premium upgrade options.
+
 
 ---
 
