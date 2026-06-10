@@ -1530,8 +1530,11 @@ from django.contrib import messages
 def delete_account(request):
     user = request.user
     logout(request)
-    user.delete()
-    messages.success(request, 'Your account has been permanently deleted.')
+    try:
+        user.delete()
+        messages.success(request, 'Your account has been permanently deleted.')
+    except Exception as e:
+        messages.error(request, f'Failed to delete account (Missing DB Table). Please visit /migrate/ first.')
     return redirect('login')
 
 from django.views.decorators.csrf import csrf_exempt

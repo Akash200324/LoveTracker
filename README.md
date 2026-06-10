@@ -16,14 +16,13 @@
 
   <h3><strong>✨ Track, Cherish, and Grow Your Love Live! ✨</strong></h3>
 
+  <!-- 3D Animation Placeholder -->
   <img src="https://i.pinimg.com/originals/18/bf/7a/18bf7a342416f4061a9cb99a18413a2a.gif" alt="3D Heart Animation" width="220" style="border-radius: 50%; box-shadow: 0 0 35px rgba(255, 94, 98, 0.8); margin: 15px 0; animation: pulse 2s infinite alternate;"/>
 
   <p align="center">
     <a href="#about-the-project"><b>📖 About</b></a> •
-    <a href="#system-architecture--deep-dive"><b>🧠 Architecture</b></a> •
-    <a href="#outstanding-features"><b>✨ Features</b></a> •
     <a href="#how-it-works"><b>⚙️ Workflow</b></a> •
-    <a href="#local-installation--setup"><b>🚀 Installation</b></a> •
+    <a href="#outstanding-features"><b>✨ Features</b></a> •
     <a href="#tech-stack--languages-used"><b>🛠 Tech Stack</b></a>
   </p>
 </div>
@@ -54,7 +53,6 @@ Discover a magical ecosystem crafted specifically for couples:
 - 🔔 **Push Notifications & Reminders**: Web push notifications (via pywebpush) and automated inactivity cron jobs ensure you are always engaged and reminded of your love.
 
 ---
-
 
 ## ⚙️ How It Works
 
@@ -114,7 +112,7 @@ This project relies on a robust set of modern technologies:
 ### 🚀 Deployment & Utilities
 - **Vercel**: `vercel.json`, `gunicorn`, `whitenoise`, and `dj-database-url` perfectly configured to deploy as a serverless or managed platform application.
 - **Asynchronous/Push Services**: `pywebpush` and `py-vapid` for web push notifications.
-
+- **Payments (Optional Module)**: `razorpay` integration included for any premium upgrade options.
 
 ---
 
@@ -122,11 +120,3 @@ This project relies on a robust set of modern technologies:
   <p><i>Made with ❤️ by AKASH</i></p>
   <img src="https://capsule-render.vercel.app/api?type=waving&color=timeGradient&height=100&section=footer" width="100%"/>
 </div>
-
-
-
-
-
-
-
-
