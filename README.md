@@ -16,12 +16,14 @@
 
   <h3><strong>✨ Track, Cherish, and Grow Your Love Live! ✨</strong></h3>
 
-  <img src="https://i.pinimg.com/originals/18/bf/7a/18bf7a342416f4061a9cb99a18413a2a.gif" alt="3D Heart Animation" width="220" style="border-radius: 50%; box-shadow: 0 0 25px rgba(255, 94, 98, 0.6); margin: 15px 0;"/>
+  <img src="https://i.pinimg.com/originals/18/bf/7a/18bf7a342416f4061a9cb99a18413a2a.gif" alt="3D Heart Animation" width="220" style="border-radius: 50%; box-shadow: 0 0 35px rgba(255, 94, 98, 0.8); margin: 15px 0; animation: pulse 2s infinite alternate;"/>
 
   <p align="center">
     <a href="#about-the-project"><b>📖 About</b></a> •
+    <a href="#system-architecture--deep-dive"><b>🧠 Architecture</b></a> •
     <a href="#outstanding-features"><b>✨ Features</b></a> •
     <a href="#how-it-works"><b>⚙️ Workflow</b></a> •
+    <a href="#local-installation--setup"><b>🚀 Installation</b></a> •
     <a href="#tech-stack--languages-used"><b>🛠 Tech Stack</b></a>
   </p>
 </div>
@@ -31,51 +33,22 @@
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4d6/512.webp" width="28" height="28"> 📖 About The Project
 
 > [!NOTE]  
-> **Couple Tracker** is an interactive, feature-rich ecosystem built to eliminate physical distance and bring couples closer. Whether you're aligning your daily moods, chronicling precious milestones, or coordinating your next late-night movie marathon, this application transforms your relationship logs into a private digital diary.
+> **Couple Tracker** is an interactive, secure, private digital ecosystem built to eliminate physical distance and bridge emotional gaps between partners. Whether you are navigating a long-distance relationship or preserving daily memories under one roof, this application serves as a dedicated virtual home shared exclusively by two individuals.
 
-Featuring a carefully polished interface, smooth responsive actions, and secure multi-tier user authentications, Couple Tracker behaves as an intimate virtual home exclusively shared by you and your partner.
-
----
-
-## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp" width="28" height="28"> ✨ Outstanding Features
-
-<details open>
-<summary>📂 <b>🔒 Privacy & Core Foundation</b></summary>
-<br>
-
-* **🔐 Dual-End Authentication:** Secure standard access & Google OAuth integrations, automated OTP verification cycles, and protected state management.
-* **👩‍❤️‍👨 Couple Pairing Gateway:** Generates unique crypto-secure connection links to easily hook your database profiles together instantly.
-</details>
-
-<details open>
-<summary>📂 <b>📸 Memories & Dynamic Interactions</b></summary>
-<br>
-
-* **📸 Memory Lane Album:** Instantly stream shared photos directly to your dashboard backed by blazing-fast cloud delivery.
-* **📅 Milestone Tracker:** Dynamic chronological countdown timers marking upcoming anniversaries and unforgettable occasions.
-* **😊 Live Mood Sync:** Real-time updates alerting you of your partner’s mood shifts instantly to bridge communications smoothly.
-</details>
-
-<details>
-<summary>📂 <b>🍿 Entertainment & Lifestyle Synced (Click to Expand)</b></summary>
-<br>
-
-* **🍿 Shared Movie Theater:** Log a shared watch queue, append community-driven review panels, and rank joint cinematic favorites.
-* **🎶 Shared Playlists:** Embedded modules to stream and attach mutual Spotify links or thematic soundscapes.
-* **🎯 Co-op Bucket List:** A beautiful real-time checkable scoreboard tracking mutual goals and lifelong dreams.
-* **🌸 Period Tracker:** Discrete, smart-prediction cycle monitoring to foster supportive insights.
-* **🔔 Web Push Engine:** Asynchronous updates driven by `pywebpush` keeping couples alert, engaged, and actively notified.
-</details>
+Unlike generic social media networks, **Couple Tracker** emphasizes **absolute privacy, atomic 1:1 synchronization, and collaborative milestone tracking**. Powered by a robust Python/Django backend architecture, secure relational databases, and dynamic web asynchronous push networks, it records real-time moods, shared cinema lists, and lifecycle milestones inside an aesthetic, custom-engineered interface.
 
 ---
 
-## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2699_fe0f/512.webp" width="28" height="28"> ⚙️ How It Works
+## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f9e0/512.webp" width="28" height="28"> 🧠 System Architecture & Deep Dive
+
+To ensure data sovereignty and rapid response cycles, the application breaks functions down across distinct decoupled operations:
 
 ```mermaid
-graph LR
-    A[👤 Registration & Google OAuth] --> B[🔗 Invite Partner via Link Code]
-    B --> C[✨ Secure Database Linkage]
-    C --> D[💝 Live Shared Dashboard Ready]
-    D --> E{Real-time Syncing Engines}
-    E -->|Mood Tracker| F[⚡ instant Push Notice]
-    E -->|Cloud Memory Store| G[📷 Cloudinary Uploads]
+graph TD
+    UserA[👤 Partner A] <-->|HTTPS / Session Auth| Django[🚂 Django Application Server]
+    UserB[👤 Partner B] <-->|HTTPS / Session Auth| Django
+    Django <-->|ORM Dialect| Postgres[(🐘 PostgreSQL Database)]
+    Django -->|Asynchronous Delivery Engine| WebPush[🔔 PyWebPush Service Worker]
+    Django <-->|Media Engine Payload| Cloudinary[☁️ Cloudinary CDN]
+    WebPush -->|Instant Alert| UserA
+    WebPush -->|Instant Alert| UserB
